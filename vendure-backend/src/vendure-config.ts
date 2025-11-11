@@ -1,6 +1,7 @@
 import {
     dummyPaymentHandler,
     DefaultJobQueuePlugin,
+    DefaultSchedulerPlugin,
     DefaultSearchPlugin,
     VendureConfig,
 } from '@vendure/core';
@@ -103,6 +104,7 @@ export const config: VendureConfig = {
                 };
             }
         }),
+        DefaultSchedulerPlugin.init(),
         DefaultJobQueuePlugin.init({ useDatabaseForBuffer: true }),
         DefaultSearchPlugin.init({ bufferUpdates: false, indexStockStatus: true }),
         EmailPlugin.init({
@@ -120,8 +122,8 @@ export const config: VendureConfig = {
             route: 'admin',
             port: 3002,
             adminUiConfig: {
-                apiHost: isDev ? `http://${process.env.PUBLIC_DOMAIN}` : `https://${process.env.PUBLIC_DOMAIN}`,
-                // apiPort: +(process.env.PORT || 3000),
+                apiHost: isDev ? undefined : `https://${process.env.PUBLIC_DOMAIN}`,
+                apiPort: isDev ? +(process.env.PORT || 3000) : undefined,
             },
         }),
     ],

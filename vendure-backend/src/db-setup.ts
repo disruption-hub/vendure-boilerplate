@@ -1,7 +1,7 @@
-import { DataSource } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 
 
-export const dbSeeded = async (dbConfig: DbConnectionOptions): Promise<boolean> => {
+export const dbSeeded = async (dbConfig: DataSourceOptions): Promise<boolean> => {
   console.log('Checking if database has been seeded...');
   try {
     const dataSource = new DataSource(dbConfig);
@@ -31,7 +31,7 @@ export const dbSeeded = async (dbConfig: DbConnectionOptions): Promise<boolean> 
 export interface DbConnectionOptions {
   type: "oracle" | "postgres";
   synchronize: boolean;
-  migrations: string[];
+  migrations: string[] | string;
   logging: boolean;
   database: string | undefined;
   schema: string | undefined;
