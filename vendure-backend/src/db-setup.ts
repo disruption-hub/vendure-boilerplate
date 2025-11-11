@@ -10,18 +10,20 @@ export const dbSeeded = async (dbConfig: DataSourceOptions): Promise<boolean> =>
 
     const queryRunner = dataSource.createQueryRunner();
 
-    // Check if the database has been seeded by looking for the superadmin user
-    // that gets created during initial seeding
-    const superadminExists = await queryRunner.manager.query(`
-      SELECT COUNT(*) as count FROM administrator
-      WHERE identifier = $1
-    `, [process.env.SUPERADMIN_USERNAME || 'superadmin']);
+    // Check if the database has been seeded by checking if any tables exist
+    const tables = await queryRunner.manager.query(`
+      SELECT table_name
+      FROM information_schema.tables
+      WHERE table_schema = $1
+      AND table_type = 'BASE TABLE'
+      LIMIT 1
+    `, ['public']);
 
     await queryRunner.release();
     await dataSource.destroy();
 
-    const isSeeded = parseInt(superadminExists[0].count) > 0;
-    console.log('Database seeded:', isSeeded);
+    const isSeeded = tables.length > 0;
+    console.log('Database seeded:', isSeeded, tables.length > 0 ? '(tables exist)' : '(no tables found)');
 
     return isSeeded;
   } catch (error) {
