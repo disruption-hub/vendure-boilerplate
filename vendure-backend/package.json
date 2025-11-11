@@ -5,12 +5,12 @@
   "scripts": {
     "dev:server": "ts-node ./src/index.ts",
     "dev:worker": "ts-node ./src/index-worker.ts",
-    "dev": "concurrently npm:dev:*",
+    "dev": "concurrently pnpm:dev:*",
     "build": "tsc",
     "seed:once": "node ./dist/seed-once.js",
     "start:server": "node ./dist/index.js",
     "start:worker": "node ./dist/index-worker.js",
-    "start": "concurrently npm:start:*"
+    "start": "pnpm seed:once && concurrently pnpm:start:*"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.4",
