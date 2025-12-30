@@ -5,9 +5,9 @@ import { useCart } from '@/app/providers/cart-context';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { shopClient } from '@/app/providers/cart-data.client';
-import { graphql } from '@/app/providers/gql';
 
-const activeOrderQuery = graphql(`
+// Raw GraphQL query string (bypassing codegen issues)
+const activeOrderQueryString = `
   query ActiveOrderInTray {
     activeOrder {
       id
@@ -31,7 +31,7 @@ const activeOrderQuery = graphql(`
       }
     }
   }
-`);
+`;
 
 export function CartTray() {
     const { isCartOpen, setIsCartOpen } = useCart();

@@ -1,8 +1,8 @@
-import { graphql } from '@/app/providers/gql';
 import { API_URL } from '@/app/constants';
 import { GraphQLClient } from 'graphql-request';
 
-const addItemToOrderMutation = graphql(`
+// Raw GraphQL mutation string (bypassing codegen issues)
+const addItemToOrderMutationString = `
   mutation AddItemToOrder($productVariantId: ID!, $quantity: Int!) {
     addItemToOrder(productVariantId: $productVariantId, quantity: $quantity) {
       ... on Order {
@@ -22,7 +22,7 @@ const addItemToOrderMutation = graphql(`
       }
     }
   }
-`);
+`;
 
 // Client-side request helper with credentials
 export const shopClient = new GraphQLClient(API_URL, {
@@ -30,9 +30,7 @@ export const shopClient = new GraphQLClient(API_URL, {
 });
 
 export async function addItemToOrder(productVariantId: string, quantity: number) {
-  // Extract the mutation string from the codegen document
-  const mutationString = (addItemToOrderMutation as any)?.loc?.source?.body || addItemToOrderMutation;
-  const response = await shopClient.rawRequest<any>(mutationString, { productVariantId, quantity });
+  const response = await shopClient.rawRequest<any>(addItemToOrderMutationString, { productVariantId, quantity });
 
   // Capture token if returned in headers (common when using 'bearer' or when cookie is set but we want to be sure)
   const token = response.headers.get('vendure-auth-token');
