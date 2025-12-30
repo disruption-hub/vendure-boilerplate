@@ -5,7 +5,9 @@
     "scripts": {
         "dev": "concurrently \"npm run dev:backend\" \"npm run dev:storefront\" --kill-others --names \"BACKEND,FRONTEND\" --prefix-colors \"blue,magenta\"",
         "dev:backend": "cd vendure-backend && npm run dev:server",
-        "dev:storefront": "cd vendure-storefront-next && npm run dev"
+        "dev:storefront": "cd vendure-storefront-next && npm run dev",
+        "start": "npm run start:backend",
+        "start:backend": "cd vendure-backend && npm start"
     },
     "devDependencies": {
         "concurrently": "9.2.1"
