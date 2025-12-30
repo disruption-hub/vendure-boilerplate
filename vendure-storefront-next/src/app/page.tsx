@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { HeroSection } from "@/components/layout/hero-section";
 import { FeaturedProducts } from "@/components/commerce/featured-products";
 import { SITE_NAME, SITE_URL, buildCanonicalUrl } from "@/lib/metadata";
@@ -25,35 +26,42 @@ export const metadata: Metadata = {
     },
 };
 
-export default async function Home(_props: PageProps<'/'>) {
+async function AuthNav() {
     const { isAuthenticated, claims } = await getLogtoContext(logtoConfig);
+    return (
+        <div className="flex items-center">
+            {isAuthenticated ? (
+                <div className="flex items-center space-x-4">
+                    <span className="text-sm text-gray-700">Hello, {claims?.name || claims?.sub}</span>
+                    <SignOut
+                        onSignOut={async () => {
+                            'use server';
+                            await signOut(logtoConfig);
+                        }}
+                    />
+                </div>
+            ) : (
+                <SignIn
+                    onSignIn={async () => {
+                        'use server';
+                        await signIn(logtoConfig);
+                    }}
+                />
+            )}
+        </div>
+    );
+}
 
+export default async function Home(_props: PageProps<'/'>) {
     return (
         <div className="min-h-screen">
             <nav className="bg-white border-b border-gray-200 px-4 py-2.5 flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                     <span className="text-xl font-bold">{SITE_NAME}</span>
                 </div>
-                <div className="flex items-center">
-                    {isAuthenticated ? (
-                        <div className="flex items-center space-x-4">
-                            <span className="text-sm text-gray-700">Hello, {claims?.name || claims?.sub}</span>
-                            <SignOut
-                                onSignOut={async () => {
-                                    'use server';
-                                    await signOut(logtoConfig);
-                                }}
-                            />
-                        </div>
-                    ) : (
-                        <SignIn
-                            onSignIn={async () => {
-                                'use server';
-                                await signIn(logtoConfig);
-                            }}
-                        />
-                    )}
-                </div>
+                <Suspense fallback={<div className="h-10 w-20 bg-gray-100 animate-pulse rounded" />}>
+                    <AuthNav />
+                </Suspense>
             </nav>
             <HeroSection />
             <FeaturedProducts />
