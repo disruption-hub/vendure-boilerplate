@@ -35,34 +35,22 @@ export default async function CheckoutPage(_props: PageProps<'/checkout'>) {
             query(GetEligiblePaymentMethodsQuery, {}, { useAuthToken: true }),
         ]);
 
-    const activeOrder = orderRes.data?.activeOrder;
+    const activeOrder = orderRes.data.activeOrder;
 
-    if (!activeOrder && process.env.NODE_ENV === 'production' && !process.env.NEXT_PHASE) {
-        return redirect('/cart');
-    }
-
-    if (activeOrder && activeOrder.lines.length === 0 && process.env.NODE_ENV === 'production' && !process.env.NEXT_PHASE) {
+    if (!activeOrder || activeOrder.lines.length === 0) {
         return redirect('/cart');
     }
 
     // If the order is no longer in AddingItems state, it's been completed
     // Redirect to the order confirmation page
-    if (activeOrder && activeOrder.state !== 'AddingItems' && activeOrder.state !== 'ArrangingPayment' && process.env.NODE_ENV === 'production' && !process.env.NEXT_PHASE) {
+    if (activeOrder.state !== 'AddingItems' && activeOrder.state !== 'ArrangingPayment') {
         return redirect(`/order-confirmation/${activeOrder.code}`);
     }
 
-    const addresses = addressesRes.data?.activeCustomer?.addresses || [];
-    const shippingMethods = shippingMethodsRes.data?.eligibleShippingMethods || [];
+    const addresses = addressesRes.data.activeCustomer?.addresses || [];
+    const shippingMethods = shippingMethodsRes.data.eligibleShippingMethods || [];
     const paymentMethods =
-        paymentMethodsRes.data?.eligiblePaymentMethods?.filter((m) => m.isEligible) || [];
-
-    if (!activeOrder) {
-        return (
-            <div className="container mx-auto px-4 py-8">
-                <p className="text-center py-12">Your cart is empty or the session expired.</p>
-            </div>
-        );
-    }
+        paymentMethodsRes.data.eligiblePaymentMethods?.filter((m) => m.isEligible) || [];
 
     return (
         <div className="container mx-auto px-4 py-8">

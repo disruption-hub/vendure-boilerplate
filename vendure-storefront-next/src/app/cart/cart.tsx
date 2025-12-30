@@ -11,7 +11,7 @@ export async function Cart() {
         useAuthToken: true,
     });
 
-    const activeOrder = data?.activeOrder;
+    const activeOrder = data.activeOrder;
 
     // Handle empty cart case
     if (!activeOrder || activeOrder.lines.length === 0) {

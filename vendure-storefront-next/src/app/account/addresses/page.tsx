@@ -13,8 +13,8 @@ export default async function AddressesPage(_props: PageProps<'/account/addresse
         query(GetAvailableCountriesQuery, {}),
     ]);
 
-    const addresses = addressesResult.data?.activeCustomer?.addresses || [];
-    const countries = countriesResult.data?.availableCountries || [];
+    const addresses = addressesResult.data.activeCustomer?.addresses || [];
+    const countries = countriesResult.data.availableCountries || [];
 
     return (
         <div className="space-y-6">

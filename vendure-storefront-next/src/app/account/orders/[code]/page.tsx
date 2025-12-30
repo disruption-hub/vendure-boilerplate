@@ -34,23 +34,15 @@ export default async function OrderDetailPage(props: PageProps<'/account/orders/
         { useAuthToken: true, fetch: {} }
     );
 
-    if (!data?.orderByCode && process.env.NODE_ENV === 'production' && !process.env.NEXT_PHASE) {
+    if (!data.orderByCode) {
         return redirect('/account/orders');
     }
 
-    if (data?.orderByCode?.customer?.id !== activeCustomer?.id && activeCustomer) {
+    if (data.orderByCode.customer?.id !== activeCustomer?.id) {
         return notFound();
     }
 
-    const order = data?.orderByCode;
-
-    if (!order) {
-        return (
-            <div className="text-center py-12">
-                <p className="text-muted-foreground">Order not found</p>
-            </div>
-        );
-    }
+    const order = data.orderByCode;
 
     return (
         <div>

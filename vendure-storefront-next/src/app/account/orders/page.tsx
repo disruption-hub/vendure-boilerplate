@@ -47,12 +47,12 @@ export default async function OrdersPage(props: PageProps<'/account/orders'>) {
         { useAuthToken: true }
     );
 
-    if (!data?.activeCustomer && process.env.NODE_ENV === 'production' && !process.env.NEXT_PHASE) {
+    if (!data.activeCustomer) {
         return redirect('/sign-in');
     }
 
-    const orders = data?.activeCustomer?.orders?.items || [];
-    const totalItems = data?.activeCustomer?.orders?.totalItems || 0;
+    const orders = data.activeCustomer.orders.items;
+    const totalItems = data.activeCustomer.orders.totalItems;
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
     return (
@@ -137,7 +137,7 @@ export default async function OrdersPage(props: PageProps<'/account/orders'>) {
                                                 return (
                                                     <PaginationItem key={page}>
                                                         <PaginationLink
-                                                            href={`/account/orders?page=${page}`}
+                                                            href={`/src/app/%5Blocale%5D/account/orders?page=${page}`}
                                                             isActive={page === currentPage}
                                                         >
                                                             {page}
