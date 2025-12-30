@@ -21,7 +21,9 @@
     "src/plugins/**/ui/*",
     "admin-ui",
     "src/plugins/**/dashboard/*",
-    "src/gql/*"
+    "src/gql/*",
+    "prisma.config.ts",
+    "vite.config.mts"
   ],
   "ts-node": {
     "files": true
