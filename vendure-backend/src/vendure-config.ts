@@ -11,6 +11,7 @@ import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
 import { StripePlugin } from '@vendure/payments-plugin/package/stripe';
 import 'dotenv/config';
 import path from 'path';
+import { LogtoAuthenticationStrategy } from './plugins/logto/logto-auth-strategy';
 
 const isDev: Boolean = process.env.APP_ENV === 'dev';
 
@@ -28,7 +29,9 @@ class SendgridEmailSender {
     }
 }
 
-const emailPluginOptions = isDev || !process.env.SENDGRID_API_KEY ? {
+const isSendgridValid = process.env.SENDGRID_API_KEY?.startsWith('SG.');
+
+const emailPluginOptions = isDev || !isSendgridValid ? {
     devMode: true,
     outputPath: path.join(__dirname, '../static/email/test-emails'),
     route: 'mailbox'
@@ -69,6 +72,9 @@ export const config: VendureConfig = {
     },
     authOptions: {
         tokenMethod: ['bearer', 'cookie'],
+        ...(process.env.LOGTO_ENDPOINT ? {
+            shopAuthenticationStrategy: [new LogtoAuthenticationStrategy()],
+        } : {}),
         superadminCredentials: {
             identifier: process.env.SUPERADMIN_USERNAME,
             password: process.env.SUPERADMIN_PASSWORD,
@@ -98,7 +104,21 @@ export const config: VendureConfig = {
     },
     // When adding or altering custom field definitions, the database will
     // need to be updated. See the "Migrations" section in README.md.
-    customFields: {},
+    customFields: {
+        Customer: [
+            {
+                name: 'logtoUserId',
+                type: 'string',
+                unique: true,
+                nullable: true,
+            },
+            {
+                name: 'logtoData',
+                type: 'text',
+                nullable: true,
+            }
+        ]
+    },
     plugins: [
         AssetServerPlugin.init({
             route: 'assets',

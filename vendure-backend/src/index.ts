@@ -14,6 +14,10 @@ if (assetDir) {
 
 runMigrations(config)
     .then(() => bootstrap(config))
+    .then(app => {
+        // Set trust proxy to true for Railway's proxy setup
+        app.getHttpAdapter().getInstance().set('trust proxy', 1);
+    })
     .catch(err => {
         console.log(err);
     });
