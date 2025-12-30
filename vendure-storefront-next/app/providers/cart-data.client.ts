@@ -1,7 +1,6 @@
 import { graphql } from '@/app/providers/gql';
 import { API_URL } from '@/app/constants';
 import { GraphQLClient } from 'graphql-request';
-import { print } from 'graphql';
 
 const addItemToOrderMutation = graphql(`
   mutation AddItemToOrder($productVariantId: ID!, $quantity: Int!) {
@@ -31,7 +30,8 @@ export const shopClient = new GraphQLClient(API_URL, {
 });
 
 export async function addItemToOrder(productVariantId: string, quantity: number) {
-  const mutationString = print(addItemToOrderMutation as any);
+  // Extract the mutation string from the codegen document
+  const mutationString = (addItemToOrderMutation as any)?.loc?.source?.body || addItemToOrderMutation;
   const response = await shopClient.rawRequest<any>(mutationString, { productVariantId, quantity });
 
   // Capture token if returned in headers (common when using 'bearer' or when cookie is set but we want to be sure)
