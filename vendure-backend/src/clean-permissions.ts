@@ -3,15 +3,26 @@ import path from 'path';
 import { config } from './vendure-config';
 
 async function cleanPermissions() {
+    // If DB_HOST is internal and fails, we might want to override it with a public one provided via env
+    const dbHost = process.env.CLEANUP_DB_HOST || config.dbConnectionOptions.host;
+
     // Modify config to remove plugins that cause issues during remote cleanup
     const cleanupConfig = {
         ...config,
+        dbConnectionOptions: {
+            ...config.dbConnectionOptions,
+            host: dbHost,
+            // Ensure we use the correct port for public access if needed
+            port: process.env.CLEANUP_DB_PORT ? parseInt(process.env.CLEANUP_DB_PORT) : config.dbConnectionOptions.port,
+        },
         plugins: (config.plugins || []).filter(p => {
             // Remove AssetServerPlugin and AdminUiPlugin to avoid path/port issues
             const name = (p as any).name || p.constructor.name;
             return name !== 'AssetServerPlugin' && name !== 'AdminUiPlugin';
         })
     };
+
+    console.log(`Bostrapping with DB Host: ${dbHost}`);
 
     const app = await bootstrap(cleanupConfig);
     const roleService = app.get(RoleService);
