@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { shopClient } from '@/app/providers/cart-data.client';
 import { API_URL } from '@/app/constants';
 import { graphql } from '@/app/providers/gql';
-import { print } from 'graphql';
+import { print, type DocumentNode } from 'graphql';
 
 const activeOrderQuery = graphql(`
   query ActiveOrderInTray {
@@ -42,7 +42,7 @@ export function CartTray() {
     useEffect(() => {
         if (isCartOpen) {
             // Fetch cart data whenever tray opens
-            const query = typeof activeOrderQuery === 'string' ? activeOrderQuery : print(activeOrderQuery);
+            const query = typeof activeOrderQuery === 'string' ? activeOrderQuery : print(activeOrderQuery as DocumentNode);
             shopClient.request<any>(query)
                 .then((data: any) => setOrder(data.activeOrder))
                 .catch(err => console.error('Failed to fetch cart', err));
