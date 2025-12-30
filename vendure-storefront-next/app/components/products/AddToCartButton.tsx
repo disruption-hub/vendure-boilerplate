@@ -3,10 +3,12 @@
 import { addItemToOrder } from '@/app/providers/cart-data.client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useCart } from '@/app/providers/cart-context';
 
 export function AddToCartButton({ productVariantId }: { productVariantId?: string }) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const { setIsCartOpen } = useCart();
 
     async function handleAddToCart() {
         if (!productVariantId) {
@@ -17,8 +19,7 @@ export function AddToCartButton({ productVariantId }: { productVariantId?: strin
             const result = await addItemToOrder(productVariantId, 1);
             console.log('AddToCart Result:', result);
             router.refresh();
-            // Ideally show a toast notification here
-            router.push('/cart');
+            setIsCartOpen(true);
         } catch (error) {
             console.error('Failed to add to cart', error);
         } finally {

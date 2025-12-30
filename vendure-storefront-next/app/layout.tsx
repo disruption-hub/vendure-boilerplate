@@ -19,6 +19,8 @@ export const metadata: Metadata = {
 
 import { Header } from "./components/header/Header";
 import { getHeaderData } from "./providers/header-data";
+import { CartProvider } from "./providers/cart-context";
+import { CartTray } from "./components/cart/CartTray";
 
 export default async function RootLayout({
   children,
@@ -32,12 +34,15 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Header
-          activeCustomer={activeCustomer}
-          collections={collections}
-          cartQuantity={activeOrder?.totalQuantity || 0}
-        />
-        {children}
+        <CartProvider>
+          <Header
+            activeCustomer={activeCustomer}
+            collections={collections}
+            cartQuantity={activeOrder?.totalQuantity || 0}
+          />
+          <CartTray />
+          {children}
+        </CartProvider>
       </body>
     </html>
   );

@@ -8,22 +8,22 @@ import { useScrollingUp } from '../../utils/use-scrolling-up';
 import { classNames } from '../../utils/class-names';
 import { useState, Suspense } from 'react';
 import Image from 'next/image';
+import { useCart } from '../../providers/cart-context';
 
 function useTranslation() {
     return { t: (key: string) => key };
 }
 
 export function Header({
-    onCartIconClick,
     cartQuantity,
     collections = [],
     activeCustomer = null,
 }: {
-    onCartIconClick?: () => void;
     cartQuantity?: number;
     collections?: any[];
     activeCustomer?: any;
 }) {
+    const { setIsCartOpen } = useCart();
     const isSignedIn = !!activeCustomer?.id;
     const isScrollingUp = useScrollingUp();
     const { t } = useTranslation();
@@ -93,7 +93,7 @@ export function Header({
                 <div className="">
                     <button
                         className="relative w-9 h-9 bg-white bg-opacity-20 rounded text-white p-1"
-                        onClick={onCartIconClick}
+                        onClick={() => setIsCartOpen(true)}
                         aria-label="Open cart tray"
                     >
                         <ShoppingBagIcon />
