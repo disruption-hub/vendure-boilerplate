@@ -1,9 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import {Button} from '@/components/ui/button';
-import {Minus, Plus, X} from 'lucide-react';
-import {Price} from '@/components/commerce/price';
-import {removeFromCart, adjustQuantity} from './actions';
+import { Button } from '@/components/ui/button';
+import { Minus, Plus, X } from 'lucide-react';
+import { Price } from '@/components/commerce/price';
+import { removeFromCart, adjustQuantity } from './actions';
 
 type ActiveOrder = {
     id: string;
@@ -28,7 +28,7 @@ type ActiveOrder = {
     }>;
 };
 
-export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null }) {
+export async function CartItems({ activeOrder }: { activeOrder: ActiveOrder | null }) {
     if (!activeOrder || activeOrder.lines.length === 0) {
         return (
             <div className="container mx-auto px-4 py-16">
@@ -54,7 +54,7 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
                 >
                     {line.productVariant.product.featuredAsset && (
                         <Link
-                            href={`/src/app/%5Blocale%5D/product/${line.productVariant.product.slug}`}
+                            href={`/product/${line.productVariant.product.slug}`}
                             className="flex-shrink-0"
                         >
                             <Image
@@ -69,7 +69,7 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
 
                     <div className="flex-grow min-w-0">
                         <Link
-                            href={`/src/app/%5Blocale%5D/product/${line.productVariant.product.slug}`}
+                            href={`/product/${line.productVariant.product.slug}`}
                             className="font-semibold hover:underline block"
                         >
                             {line.productVariant.product.name}
@@ -83,7 +83,7 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
                             SKU: {line.productVariant.sku}
                         </p>
                         <p className="text-sm text-muted-foreground mt-2 sm:hidden">
-                            <Price value={line.unitPriceWithTax} currencyCode={activeOrder.currencyCode}/> each
+                            <Price value={line.unitPriceWithTax} currencyCode={activeOrder.currencyCode} /> each
                         </p>
 
                         <div className="flex items-center gap-3 mt-4">
@@ -101,7 +101,7 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
                                         className="h-9 w-9 rounded-none"
                                         disabled={line.quantity <= 1}
                                     >
-                                        <Minus className="h-4 w-4"/>
+                                        <Minus className="h-4 w-4" />
                                     </Button>
                                 </form>
 
@@ -119,7 +119,7 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
                                         size="icon"
                                         className="h-9 w-9 rounded-none"
                                     >
-                                        <Plus className="h-4 w-4"/>
+                                        <Plus className="h-4 w-4" />
                                     </Button>
                                 </form>
                             </div>
@@ -136,14 +136,14 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
                                     size="icon"
                                     className="h-9 w-9 text-destructive hover:text-destructive hover:bg-destructive/10"
                                 >
-                                    <X className="h-5 w-5"/>
+                                    <X className="h-5 w-5" />
                                 </Button>
                             </form>
 
                             <div className="sm:hidden ml-auto">
                                 <p className="font-semibold text-lg">
                                     <Price value={line.linePriceWithTax}
-                                           currencyCode={activeOrder.currencyCode}/>
+                                        currencyCode={activeOrder.currencyCode} />
                                 </p>
                             </div>
                         </div>
@@ -151,10 +151,10 @@ export async function CartItems({activeOrder}: { activeOrder: ActiveOrder | null
 
                     <div className="hidden sm:block text-right flex-shrink-0">
                         <p className="font-semibold text-lg">
-                            <Price value={line.linePriceWithTax} currencyCode={activeOrder.currencyCode}/>
+                            <Price value={line.linePriceWithTax} currencyCode={activeOrder.currencyCode} />
                         </p>
                         <p className="text-sm text-muted-foreground mt-1">
-                            <Price value={line.unitPriceWithTax} currencyCode={activeOrder.currencyCode}/> each
+                            <Price value={line.unitPriceWithTax} currencyCode={activeOrder.currencyCode} /> each
                         </p>
                     </div>
                 </div>

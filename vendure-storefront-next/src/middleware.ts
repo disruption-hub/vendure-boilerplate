@@ -10,7 +10,16 @@ export async function middleware(request: NextRequest) {
     const protectedPaths = ['/account', '/checkout', '/orders'];
     const path = request.nextUrl.pathname;
 
+    const isPrefetch = request.headers.get('x-middleware-prefetch') === '1' ||
+        request.headers.get('purpose') === 'prefetch';
+    const isRSC = request.headers.get('rsc') === '1';
+
     if (protectedPaths.some((p) => path.startsWith(p)) && !isAuthenticated) {
+        if (isPrefetch || isRSC) {
+            // For prefetch/RSC requests, don't redirect (causes CORS issues).
+            // Return a 401 and let the actual navigation trigger the redirect.
+            return new NextResponse(null, { status: 401 });
+        }
         const signInUrl = new URL('/api/auth/sign-in', request.url);
         signInUrl.searchParams.set('redirectUrl', path); // preserve intended destination
         return NextResponse.redirect(signInUrl);
