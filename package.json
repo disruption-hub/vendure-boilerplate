@@ -3,12 +3,11 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "dev": "concurrently \"npm run dev:backend\" \"npm run dev:storefront\" --kill-others --names \"BACKEND,FRONTEND\" --prefix-colors \"blue,magenta\"",
-        "dev:backend": "cd vendure-backend && npm run dev:server",
-        "dev:storefront": "cd vendure-storefront-next && npm run dev",
-        "build": "cd vendure-backend && npm run build",
-        "start": "npm run start:backend",
-        "start:backend": "cd vendure-backend && npm start"
+        "dev": "concurrently \"pnpm run dev:backend\" \"pnpm run dev:storefront\" --kill-others --names \"BACKEND,FRONTEND\" --prefix-colors \"blue,magenta\"",
+        "dev:backend": "pnpm --filter vendure-boilerplate dev",
+        "dev:storefront": "pnpm --filter nextjs-starter-vendure dev",
+        "build": "pnpm --filter \"*\" build",
+        "start": "pnpm --filter vendure-boilerplate start"
     },
     "engines": {
         "node": ">=20.0.0"
