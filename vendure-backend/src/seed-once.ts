@@ -17,7 +17,7 @@ const seedDb = async () => {
     console.warn('Failed to rebuild native modules, continuing anyway:', (error as Error).message);
   }
   const dbAlreadySeeded = await dbSeeded(config.dbConnectionOptions);
-  const assetDir = (config.plugins.find(p => (p as any).options?.assetUploadDir) as any)?.options?.assetUploadDir || path.resolve(process.cwd(), 'static/assets');
+  const assetDir = (config.plugins?.find(p => (p as any).options?.assetUploadDir) as any)?.options?.assetUploadDir || path.resolve(process.cwd(), 'static/assets');
   const assetsExist = fs.existsSync(assetDir) && fs.readdirSync(assetDir).length > 0;
 
   if (dbAlreadySeeded && assetsExist) {

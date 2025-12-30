@@ -91,11 +91,13 @@ export const config: VendureConfig = {
     plugins: [
         AssetServerPlugin.init({
             route: 'assets',
-            assetUploadDir: process.env.ASSET_VOLUME_PATH || path.join(__dirname, '../static/assets'),
+            assetUploadDir: process.env.ASSET_VOLUME_PATH || path.resolve(process.cwd(), 'static/assets'),
             // For local dev, the correct value for assetUrlPrefix should
             // be guessed correctly, but for production it will usually need
             // to be set manually to match your production url.
-            assetUrlPrefix: isDev ? undefined : `https://${process.env.PUBLIC_DOMAIN}/assets/`,
+            assetUrlPrefix: isDev ? undefined : (process.env.PUBLIC_DOMAIN?.startsWith('http')
+                ? `${process.env.PUBLIC_DOMAIN}/assets/`
+                : `https://${process.env.PUBLIC_DOMAIN}/assets/`),
         }),
         StripePlugin.init({
             storeCustomersInStripe: true,
