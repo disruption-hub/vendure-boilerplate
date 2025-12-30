@@ -19,14 +19,16 @@ export function AddToCartButton({ productVariantId }: { productVariantId?: strin
             const result: any = await addItemToOrder(productVariantId, 1);
             console.log('AddToCart Result:', result);
 
-            if (result?.__typename === 'Order') {
+            // Check if we got an Order back (has id and code) vs an ErrorResult (has errorCode)
+            if (result?.id && result?.code) {
                 router.refresh();
                 setIsCartOpen(true);
-            } else if (result?.message) {
-                console.error('Vendure Error:', result.message);
-                alert(`Error: ${result.message}`);
+            } else if (result?.errorCode || result?.message) {
+                console.error('Vendure Error:', result.message || result.errorCode);
+                alert(`Error: ${result.message || result.errorCode}`);
             } else {
-                console.error('Unknown AddToCart Result:', result);
+                console.error('Unexpected AddToCart Result:', result);
+                alert('Unexpected response from server. Please try again.');
             }
         } catch (error) {
             console.error('Failed to add to cart (Network/System Error)', error);
