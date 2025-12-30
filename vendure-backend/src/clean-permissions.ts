@@ -6,7 +6,7 @@ async function cleanPermissions() {
     // Modify config to remove plugins that cause issues during remote cleanup
     const cleanupConfig = {
         ...config,
-        plugins: config.plugins.filter(p => {
+        plugins: (config.plugins || []).filter(p => {
             // Remove AssetServerPlugin and AdminUiPlugin to avoid path/port issues
             const name = (p as any).name || p.constructor.name;
             return name !== 'AssetServerPlugin' && name !== 'AdminUiPlugin';
