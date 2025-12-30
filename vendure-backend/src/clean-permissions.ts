@@ -3,14 +3,20 @@ import path from 'path';
 import { config } from './vendure-config';
 
 async function cleanPermissions() {
-    // Override asset volume path to a temporary local one to avoid ENOENT during bootstrap
-    process.env.ASSET_VOLUME_PATH = path.join(process.cwd(), 'static/assets');
+    // Modify config to remove plugins that cause issues during remote cleanup
+    const cleanupConfig = {
+        ...config,
+        plugins: config.plugins.filter(p => {
+            // Remove AssetServerPlugin and AdminUiPlugin to avoid path/port issues
+            const name = (p as any).name || p.constructor.name;
+            return name !== 'AssetServerPlugin' && name !== 'AdminUiPlugin';
+        })
+    };
 
-    const app = await bootstrap(config);
+    const app = await bootstrap(cleanupConfig);
     const roleService = app.get(RoleService);
     const requestContextService = app.get(RequestContextService);
 
-    // Create a superadmin context to perform the operation
     const ctx = await requestContextService.create({
         apiType: 'admin',
     });
