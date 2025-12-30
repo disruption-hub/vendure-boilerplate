@@ -59,6 +59,7 @@ export const config: VendureConfig = {
             },
             shopApiDebug: true,
         } : {}),
+        cors: true,
     },
     authOptions: {
         tokenMethod: ['bearer', 'cookie'],
