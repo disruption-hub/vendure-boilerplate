@@ -27,6 +27,9 @@ export async function GET(request: NextRequest, context: { params: Promise<{ log
         if (action === 'sign-out') {
             return client.handleSignOut(`${logtoConfig.baseUrl}`)(request);
         }
+        if (action === 'user') {
+            return client.handleUser()(request);
+        }
     } catch (error: any) {
         console.error(`[Logto Route] Error handling action ${action}:`, error);
         return new Response(JSON.stringify({
