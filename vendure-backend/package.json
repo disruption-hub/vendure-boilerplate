@@ -13,7 +13,7 @@
     "seed:once": "node ./dist/seed-once.js",
     "start:server": "node ./dist/index.js",
     "start:worker": "node ./dist/index-worker.js",
-    "start": "pnpm seed:once && concurrently pnpm:start:*"
+    "start": "concurrently pnpm:start:*"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.4",
