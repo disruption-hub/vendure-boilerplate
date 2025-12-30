@@ -3,6 +3,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, type PluginOption } from 'vite';
 
+// @ts-ignore
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
