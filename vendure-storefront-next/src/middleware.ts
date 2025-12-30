@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getLogtoContext } from '@logto/next/server-actions';
+import { getLogtoContext } from '@logto/next/edge';
 import { logtoConfig } from './lib/auth-config';
 
 export async function middleware(request: NextRequest) {

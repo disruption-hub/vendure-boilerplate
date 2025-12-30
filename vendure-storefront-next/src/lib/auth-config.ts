@@ -4,9 +4,13 @@ const baseUrl = process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
     'https://vendure-boilerplate-vendure-storefront-next.vercel.app';
 
-console.log('[Logto Config] Initializing with baseUrl:', baseUrl);
-if (!process.env.LOGTO_ENDPOINT) console.warn('[Logto Config] Missing LOGTO_ENDPOINT');
-if (!process.env.LOGTO_APPID) console.warn('[Logto Config] Missing LOGTO_APPID');
+const isBuild = process.env.NEXT_PHASE === 'phase-production-build' || process.env.PRISMA_GENERATING === 'true';
+
+if (!isBuild) {
+    console.log('[Logto Config] Initializing with baseUrl:', baseUrl);
+    if (!process.env.LOGTO_ENDPOINT) console.warn('[Logto Config] Missing LOGTO_ENDPOINT');
+    if (!process.env.LOGTO_APPID) console.warn('[Logto Config] Missing LOGTO_APPID');
+}
 
 export const logtoConfig: LogtoNextConfig = {
     endpoint: process.env.LOGTO_ENDPOINT || 'https://logto-auth-production-c717.up.railway.app/',
