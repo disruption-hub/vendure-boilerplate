@@ -8,20 +8,34 @@ export async function GET(request: NextRequest, context: { params: Promise<{ log
     const { logto } = await context.params;
     const action = logto[0];
 
-    if (action === 'sign-in') {
-        return client.handleSignIn(`${logtoConfig.baseUrl}/callback`)(request);
-    }
-    if (action === 'sign-up') {
-        return client.handleSignIn({
-            redirectUri: `${logtoConfig.baseUrl}/callback`,
-            interactionMode: 'signUp',
-        })(request);
-    }
-    if (action === 'callback') {
-        return client.handleSignInCallback(`${logtoConfig.baseUrl}`)(request);
-    }
-    if (action === 'sign-out') {
-        return client.handleSignOut(`${logtoConfig.baseUrl}`)(request);
+    console.log(`[Logto Route] Handling action: ${action} for URL: ${request.url}`);
+    console.log(`[Logto Route] Using baseUrl: ${logtoConfig.baseUrl}`);
+
+    try {
+        if (action === 'sign-in') {
+            return client.handleSignIn(`${logtoConfig.baseUrl}/callback`)(request);
+        }
+        if (action === 'sign-up') {
+            return client.handleSignIn({
+                redirectUri: `${logtoConfig.baseUrl}/callback`,
+                interactionMode: 'signUp',
+            })(request);
+        }
+        if (action === 'callback') {
+            return client.handleSignInCallback(`${logtoConfig.baseUrl}`)(request);
+        }
+        if (action === 'sign-out') {
+            return client.handleSignOut(`${logtoConfig.baseUrl}`)(request);
+        }
+    } catch (error: any) {
+        console.error(`[Logto Route] Error handling action ${action}:`, error);
+        return new Response(JSON.stringify({
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        }), {
+            status: 500,
+            headers: { 'content-type': 'application/json' }
+        });
     }
 
     return new Response(null, { status: 404 });
