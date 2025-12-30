@@ -9,10 +9,10 @@
     "dev:server": "ts-node ./src/index.ts",
     "dev:worker": "ts-node ./src/index-worker.ts",
     "dev": "concurrently pnpm:dev:*",
-    "build": "tsc",
-    "seed:once": "node ./dist/seed-once.js",
-    "start:server": "node ./dist/index.js",
-    "start:worker": "node ./dist/index-worker.js",
+    "build": "prisma generate && tsc",
+    "seed:once": "node ./dist/src/seed-once.js",
+    "start:server": "node ./dist/src/index.js",
+    "start:worker": "node ./dist/src/index-worker.js",
     "start": "pnpm seed:once && concurrently pnpm:start:*"
   },
   "dependencies": {
