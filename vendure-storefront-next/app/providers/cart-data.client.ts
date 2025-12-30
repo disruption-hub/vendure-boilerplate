@@ -31,7 +31,7 @@ export const shopClient = new GraphQLClient(API_URL, {
 });
 
 export async function addItemToOrder(productVariantId: string, quantity: number) {
-  const mutationString = print(addItemToOrderMutation);
+  const mutationString = print(addItemToOrderMutation as any);
   const response = await shopClient.rawRequest<any>(mutationString, { productVariantId, quantity });
 
   // Capture token if returned in headers (common when using 'bearer' or when cookie is set but we want to be sure)
