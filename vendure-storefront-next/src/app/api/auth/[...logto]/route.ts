@@ -13,11 +13,11 @@ export async function GET(request: NextRequest, context: { params: Promise<{ log
 
     try {
         if (action === 'sign-in') {
-            return client.handleSignIn(`${logtoConfig.baseUrl}/callback`)(request);
+            return client.handleSignIn(`${logtoConfig.baseUrl}/api/auth/callback`)(request);
         }
         if (action === 'sign-up') {
             return client.handleSignIn({
-                redirectUri: `${logtoConfig.baseUrl}/callback`,
+                redirectUri: `${logtoConfig.baseUrl}/api/auth/callback`,
                 interactionMode: 'signUp',
             })(request);
         }
