@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { shopClient } from '@/app/providers/cart-data.client';
 import { graphql } from '@/app/providers/gql';
+import { print } from 'graphql';
 
 const activeOrderQuery = graphql(`
   query ActiveOrderInTray {
@@ -40,7 +41,8 @@ export function CartTray() {
     useEffect(() => {
         if (isCartOpen) {
             // Fetch cart data whenever tray opens
-            shopClient.request<any>(activeOrderQuery as any)
+            const queryString = print(activeOrderQuery);
+            shopClient.request<any>(queryString)
                 .then((data: any) => setOrder(data.activeOrder))
                 .catch(err => console.error('Failed to fetch cart', err));
         }
