@@ -32,6 +32,9 @@
   "references": [
     {
       "path": "./tsconfig.dashboard.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
     }
   ]
 }

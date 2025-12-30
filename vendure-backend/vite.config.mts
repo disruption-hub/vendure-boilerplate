@@ -18,13 +18,16 @@ export default defineConfig({
             // and custom fields that are configured.
             vendureConfigPath: resolve(__dirname, 'src/vendure-config.ts'),
             // Points to the location of your Vendure server.
-            api: { host: 'http://localhost', port: 3000 },
+            api: {
+                host: process.env.PUBLIC_DOMAIN?.startsWith('http') ? process.env.PUBLIC_DOMAIN : `https://${process.env.PUBLIC_DOMAIN || 'localhost'}`,
+                port: process.env.PUBLIC_DOMAIN ? undefined : 3000
+            },
             // When you start the Vite server, your Admin API schema will
             // be introspected and the types will be generated in this location.
             // These types can be used in your dashboard extensions to provide
             // type safety when writing queries and mutations.
             gqlOutputPath: resolve(__dirname, 'src/gql'),
-        }) as any as PluginOption[],
+        }) as any,
     ],
     resolve: {
         alias: {
