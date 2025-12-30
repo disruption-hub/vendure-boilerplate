@@ -1,5 +1,4 @@
 import { graphql } from '@/app/providers/gql';
-import { print } from 'graphql';
 import { API_URL } from '@/app/constants';
 import { GraphQLClient } from 'graphql-request';
 
@@ -31,8 +30,7 @@ export const shopClient = new GraphQLClient(API_URL, {
 });
 
 export async function addItemToOrder(productVariantId: string, quantity: number) {
-  const query = typeof addItemToOrderMutation === 'string' ? addItemToOrderMutation : print(addItemToOrderMutation);
-  const response = await shopClient.rawRequest<any>(query, { productVariantId, quantity });
+  const response = await shopClient.rawRequest<any>(addItemToOrderMutation, { productVariantId, quantity });
 
   // Capture token if returned in headers (common when using 'bearer' or when cookie is set but we want to be sure)
   const token = response.headers.get('vendure-auth-token');
