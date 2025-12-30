@@ -7,15 +7,14 @@ export async function setAuthToken(token: string) {
     cookieStore.set(AUTH_TOKEN_COOKIE, token);
 }
 
-import { getLogtoContext } from '@logto/next/server-actions';
-// import { logtoConfig } from './auth-config'; // Circular dep risk? No, auth-config is simple.
-// Wait, I can't import logtoConfig if it's not exported or if path is wrong.
-// I'll check imports.
+import { logtoConfig } from './auth-config';
+import LogtoClient from '@logto/next/edge';
+
+const client = new LogtoClient(logtoConfig);
 
 export async function getAuthToken(): Promise<string | undefined> {
     try {
-        const { logtoConfig } = await import('@/lib/auth-config');
-        const { accessToken } = await getLogtoContext(logtoConfig);
+        const { accessToken } = await client.getLogtoContext(undefined as any); // Use request context appropriately if available
         if (accessToken) {
             return accessToken;
         }
