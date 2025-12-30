@@ -1,7 +1,7 @@
-import {ProductCarousel} from "@/components/commerce/product-carousel";
-import {cacheLife} from "next/cache";
-import {query} from "@/lib/vendure/api";
-import {GetCollectionProductsQuery} from "@/lib/vendure/queries";
+import { ProductCarousel } from "@/components/commerce/product-carousel";
+import { cacheLife } from "next/cache";
+import { query } from "@/lib/vendure/api";
+import { GetCollectionProductsQuery } from "@/lib/vendure/queries";
 
 async function getFeaturedCollectionProducts() {
     'use cache'
@@ -19,7 +19,7 @@ async function getFeaturedCollectionProducts() {
         }
     });
 
-    return result.data.search.items;
+    return result.data?.search?.items || [];
 }
 
 

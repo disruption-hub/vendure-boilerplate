@@ -26,7 +26,7 @@ async function getRelatedProducts(collectionSlug: string, currentProductId: stri
     });
 
     // Filter out the current product and limit to 12
-    return result.data.search.items
+    return (result.data?.search?.items || [])
         .filter(item => {
             const product = readFragment(ProductCardFragment, item);
             return product.productId !== currentProductId;
