@@ -1,2 +1,0 @@
-compatibility_date = "2024-01-11"
-vars = { VENDURE_API_URL="https://readonlydemo.vendure.io/shop-api" }

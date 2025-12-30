@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.next/
+*.env
+.DS_Store
+*.log
+.vercel/
+vendure-backend/generated/
+vendure-backend/admin-ui/
+vendure-backend/static/assets/
+vendure-backend/static/email/test-emails/
