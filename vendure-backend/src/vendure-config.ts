@@ -59,7 +59,13 @@ export const config: VendureConfig = {
             },
             shopApiDebug: true,
         } : {}),
-        cors: true,
+        cors: {
+            origin: [
+                'http://localhost:3001',
+                ...(process.env.STOREFRONT_URL ? [process.env.STOREFRONT_URL] : [])
+            ],
+            credentials: true,
+        },
     },
     authOptions: {
         tokenMethod: ['bearer', 'cookie'],
@@ -69,6 +75,11 @@ export const config: VendureConfig = {
         },
         cookieOptions: {
             secret: process.env.COOKIE_SECRET,
+            // Cross-site cookie support for Vercel/Railway
+            ...(isDev ? {} : {
+                sameSite: 'none',
+                secure: true,
+            }),
         },
     },
     dbConnectionOptions: {
