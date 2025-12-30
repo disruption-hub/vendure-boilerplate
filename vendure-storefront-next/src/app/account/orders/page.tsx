@@ -1,11 +1,11 @@
-import type {Metadata} from 'next';
-import {query} from '@/lib/vendure/api';
+import type { Metadata } from 'next';
+import { query } from '@/lib/vendure/api';
 
 export const metadata: Metadata = {
     title: 'My Orders',
 };
-import {GetCustomerOrdersQuery} from '@/lib/vendure/queries';
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/components/ui/table';
+import { GetCustomerOrdersQuery } from '@/lib/vendure/queries';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from '@/components/ui/table';
 import {
     Pagination,
     PaginationContent,
@@ -15,13 +15,13 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
-import {ArrowRightIcon} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Price} from '@/components/commerce/price';
-import {OrderStatusBadge} from '@/components/commerce/order-status-badge';
-import {formatDate} from '@/lib/format';
+import { ArrowRightIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Price } from '@/components/commerce/price';
+import { OrderStatusBadge } from '@/components/commerce/order-status-badge';
+import { formatDate } from '@/lib/format';
 import Link from "next/link";
-import {redirect} from "next/navigation";
+import { redirect } from "next/navigation";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -31,7 +31,7 @@ export default async function OrdersPage(props: PageProps<'/account/orders'>) {
     const currentPage = parseInt(Array.isArray(pageParam) ? pageParam[0] : pageParam || '1', 10);
     const skip = (currentPage - 1) * ITEMS_PER_PAGE;
 
-    const {data} = await query(
+    const { data } = await query(
         GetCustomerOrdersQuery,
         {
             options: {
@@ -44,15 +44,15 @@ export default async function OrdersPage(props: PageProps<'/account/orders'>) {
                 },
             },
         },
-        {useAuthToken: true}
+        { useAuthToken: true }
     );
 
-    if (!data.activeCustomer) {
+    if (!data?.activeCustomer && process.env.NODE_ENV === 'production' && !process.env.NEXT_PHASE) {
         return redirect('/sign-in');
     }
 
-    const orders = data.activeCustomer.orders.items;
-    const totalItems = data.activeCustomer.orders.totalItems;
+    const orders = data?.activeCustomer?.orders?.items || [];
+    const totalItems = data?.activeCustomer?.orders?.totalItems || 0;
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
     return (
@@ -84,7 +84,7 @@ export default async function OrdersPage(props: PageProps<'/account/orders'>) {
                                                 <Link
                                                     href={`/account/orders/${order.code}`}
                                                 >
-                                                    {order.code} <ArrowRightIcon/>
+                                                    {order.code} <ArrowRightIcon />
                                                 </Link>
                                             </Button>
                                         </TableCell>
@@ -92,14 +92,14 @@ export default async function OrdersPage(props: PageProps<'/account/orders'>) {
                                             {formatDate(order.createdAt)}
                                         </TableCell>
                                         <TableCell>
-                                            <OrderStatusBadge state={order.state}/>
+                                            <OrderStatusBadge state={order.state} />
                                         </TableCell>
                                         <TableCell>
                                             {order.lines.length}{' '}
                                             {order.lines.length === 1 ? 'item' : 'items'}
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            <Price value={order.totalWithTax} currencyCode={order.currencyCode}/>
+                                            <Price value={order.totalWithTax} currencyCode={order.currencyCode} />
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -126,7 +126,7 @@ export default async function OrdersPage(props: PageProps<'/account/orders'>) {
                                         />
                                     </PaginationItem>
 
-                                    {Array.from({length: totalPages}, (_, i) => i + 1).map(
+                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                                         (page) => {
                                             if (
                                                 page === 1 ||
@@ -137,7 +137,7 @@ export default async function OrdersPage(props: PageProps<'/account/orders'>) {
                                                 return (
                                                     <PaginationItem key={page}>
                                                         <PaginationLink
-                                                            href={`/src/app/%5Blocale%5D/account/orders?page=${page}`}
+                                                            href={`/account/orders?page=${page}`}
                                                             isActive={page === currentPage}
                                                         >
                                                             {page}
@@ -150,7 +150,7 @@ export default async function OrdersPage(props: PageProps<'/account/orders'>) {
                                             ) {
                                                 return (
                                                     <PaginationItem key={page}>
-                                                        <PaginationEllipsis/>
+                                                        <PaginationEllipsis />
                                                     </PaginationItem>
                                                 );
                                             }
