@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getLogtoContext } from '@logto/next/edge';
+import LogtoClient from '@logto/next/edge';
 import { logtoConfig } from './lib/auth-config';
 
+const client = new LogtoClient(logtoConfig);
+
 export async function middleware(request: NextRequest) {
-    const { isAuthenticated } = await getLogtoContext(logtoConfig);
+    const { isAuthenticated } = await client.getLogtoContext(request);
 
     const protectedPaths = ['/account', '/checkout', '/orders'];
     const path = request.nextUrl.pathname;
