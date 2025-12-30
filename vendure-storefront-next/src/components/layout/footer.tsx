@@ -1,4 +1,4 @@
-import {cacheLife} from 'next/cache';
+import {unstable_cacheLife} from 'next/cache';
 import {getTopCollections} from '@/lib/vendure/cached';
 import Image from "next/image";
 import Link from "next/link";
@@ -6,7 +6,7 @@ import Link from "next/link";
 
 async function Copyright() {
     'use cache'
-    cacheLife('days');
+    unstable_cacheLife('days');
 
     return (
         <div>
@@ -17,7 +17,7 @@ async function Copyright() {
 
 export async function Footer() {
     'use cache'
-    cacheLife('days');
+    unstable_cacheLife('days');
 
     const collections = await getTopCollections();
 

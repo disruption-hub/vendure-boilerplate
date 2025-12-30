@@ -1,13 +1,13 @@
 'use client';
 
-import {useState, useTransition} from 'react';
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
+import { useState, useTransition } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import {loginAction} from './actions';
-import {Button} from '@/components/ui/button';
-import {Input} from '@/components/ui/input';
-import {Card, CardContent, CardFooter} from '@/components/ui/card';
+import { loginAction } from './actions';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import {
     Form,
     FormControl,
@@ -19,7 +19,7 @@ import {
 import Link from 'next/link';
 
 const loginSchema = z.object({
-    username: z.email('Please enter a valid email address'),
+    email: z.string().email('Please enter a valid email address'),
     password: z.string().min(1, 'Password is required'),
 });
 
@@ -29,14 +29,14 @@ interface LoginFormProps {
     redirectTo?: string;
 }
 
-export function LoginForm({redirectTo}: LoginFormProps) {
+export function LoginForm({ redirectTo }: LoginFormProps) {
     const [isPending, startTransition] = useTransition();
     const [serverError, setServerError] = useState<string | null>(null);
 
     const form = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
-            username: '',
+            email: '',
             password: '',
         },
     });
@@ -46,7 +46,7 @@ export function LoginForm({redirectTo}: LoginFormProps) {
 
         startTransition(async () => {
             const formData = new FormData();
-            formData.append('username', data.username);
+            formData.append('username', data.email);
             formData.append('password', data.password);
             if (redirectTo) {
                 formData.append('redirectTo', redirectTo);
@@ -70,8 +70,8 @@ export function LoginForm({redirectTo}: LoginFormProps) {
                     <CardContent className="space-y-4">
                         <FormField
                             control={form.control}
-                            name="username"
-                            render={({field}) => (
+                            name="email"
+                            render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Email</FormLabel>
                                     <FormControl>
@@ -82,7 +82,7 @@ export function LoginForm({redirectTo}: LoginFormProps) {
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage/>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -90,7 +90,7 @@ export function LoginForm({redirectTo}: LoginFormProps) {
                         <FormField
                             control={form.control}
                             name="password"
-                            render={({field}) => (
+                            render={({ field }) => (
                                 <FormItem>
                                     <div className="flex items-center justify-between">
                                         <FormLabel>Password</FormLabel>
@@ -110,7 +110,7 @@ export function LoginForm({redirectTo}: LoginFormProps) {
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage/>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />

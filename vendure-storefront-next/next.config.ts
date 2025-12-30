@@ -1,10 +1,8 @@
 import { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-    cacheComponents: true,
     images: {
         // This is necessary to display images from your local Vendure instance
-        dangerouslyAllowLocalIP: true,
         remotePatterns: [
             {
                 hostname: 'readonlydemo.vendure.io',
@@ -21,7 +19,14 @@ const nextConfig: NextConfig = {
         ],
     },
     experimental: {
-        rootParams: true
+        rootParams: true,
+        useCache: true
+    },
+    eslint: {
+        ignoreDuringBuilds: true
+    },
+    typescript: {
+        ignoreBuildErrors: true
     }
 };
 

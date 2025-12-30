@@ -11,7 +11,7 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion';
 import { notFound } from 'next/navigation';
-import { cacheLife, cacheTag } from 'next/cache';
+import { unstable_cacheLife, unstable_cacheTag } from 'next/cache';
 import {
     SITE_NAME,
     truncateDescription,
@@ -21,8 +21,8 @@ import {
 
 async function getProductData(slug: string) {
     'use cache';
-    cacheLife('hours');
-    cacheTag(`product-${slug}`);
+    unstable_cacheLife('hours');
+    unstable_cacheTag(`product-${slug}`);
 
     return await query(GetProductDetailQuery, { slug });
 }

@@ -1,5 +1,7 @@
-import {User} from 'lucide-react';
-import {Button} from '@/components/ui/button';
+'use client';
+
+import { User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -8,17 +10,23 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Link from "next/link";
-import {LoginButton} from "@/components/layout/navbar/login-button";
-import {getActiveCustomer} from "@/lib/vendure/actions";
+import { useAuth } from "@/components/auth/auth-provider";
 
+export function NavbarUser() {
+    const { isAuthenticated, user, signIn, signOut, isLoading } = useAuth();
 
-export async function NavbarUser() {
-    const customer = await getActiveCustomer()
-
-    if (!customer) {
+    if (isLoading) {
         return (
-            <Button variant="ghost" asChild>
-                <LoginButton isLoggedIn={false}/>
+            <Button variant="ghost" disabled>
+                <User className="h-5 w-5 animate-pulse" />
+            </Button>
+        );
+    }
+
+    if (!isAuthenticated || !user) {
+        return (
+            <Button variant="ghost" onClick={signIn}>
+                Sign In
             </Button>
         );
     }
@@ -27,20 +35,20 @@ export async function NavbarUser() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost">
-                    <User className="h-5 w-5"/>
-                    Hi, {customer.firstName}
+                    <User className="h-5 w-5 mr-2" />
+                    {user.name || user.email || 'Account'}
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
                     <Link href="/account/profile">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                     <Link href="/account/orders">Orders</Link>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator/>
-                <DropdownMenuItem asChild>
-                    <LoginButton isLoggedIn={true}/>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={signOut}>
+                    Sign Out
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
