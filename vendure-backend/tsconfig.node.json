@@ -10,7 +10,7 @@
         "types": [
             "node"
         ],
-        "noEmit": true
+        "declaration": true
     },
     "include": [
         "vite.config.mts",
