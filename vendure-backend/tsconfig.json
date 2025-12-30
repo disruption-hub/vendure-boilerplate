@@ -23,7 +23,8 @@
     "migration.ts",
     "src/plugins/**/ui/*",
     "admin-ui",
-    "src/plugins/**/dashboard/*"
+    "src/plugins/**/dashboard/*",
+    "src/gql"
   ],
   "ts-node": {
     "files": true
