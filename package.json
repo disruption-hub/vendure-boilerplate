@@ -1,0 +1,13 @@
+{
+    "name": "vendure-boilerplate-monorepo",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "concurrently \"npm run dev:backend\" \"npm run dev:storefront\" --kill-others --names \"BACKEND,FRONTEND\" --prefix-colors \"blue,magenta\"",
+        "dev:backend": "cd vendure-backend && npm run dev:server",
+        "dev:storefront": "cd vendure-storefront-next && npm run dev"
+    },
+    "devDependencies": {
+        "concurrently": "9.2.1"
+    }
+}

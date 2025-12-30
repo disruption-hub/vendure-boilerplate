@@ -1,0 +1,1283 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model address {
+  createdAt              DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt              DateTime  @default(now()) @db.Timestamp(6)
+  fullName               String    @default("") @db.VarChar
+  company                String    @default("") @db.VarChar
+  streetLine1            String    @db.VarChar
+  streetLine2            String    @default("") @db.VarChar
+  city                   String    @default("") @db.VarChar
+  province               String    @default("") @db.VarChar
+  postalCode             String    @default("") @db.VarChar
+  phoneNumber            String    @default("") @db.VarChar
+  defaultShippingAddress Boolean   @default(false)
+  defaultBillingAddress  Boolean   @default(false)
+  id                     Int       @id(map: "PK_d92de1f82754668b5f5f5dd4fd5") @default(autoincrement())
+  customerId             Int?
+  countryId              Int?
+  region                 region?   @relation(fields: [countryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_d87215343c3a3a67e6a0b7f3ea9")
+  customer               customer? @relation(fields: [customerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_dc34d382b493ade1f70e834c4d3")
+
+  @@index([countryId], map: "IDX_d87215343c3a3a67e6a0b7f3ea")
+  @@index([customerId], map: "IDX_dc34d382b493ade1f70e834c4d")
+}
+
+model administrator {
+  createdAt     DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime        @default(now()) @db.Timestamp(6)
+  deletedAt     DateTime?       @db.Timestamp(6)
+  firstName     String          @db.VarChar
+  lastName      String          @db.VarChar
+  emailAddress  String          @unique(map: "UQ_154f5c538b1576ccc277b1ed631") @db.VarChar
+  id            Int             @id(map: "PK_ee58e71b3b4008b20ddc7b3092b") @default(autoincrement())
+  userId        Int?            @unique(map: "REL_1966e18ce6a39a82b19204704d")
+  user          user?           @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_1966e18ce6a39a82b19204704d7")
+  history_entry history_entry[]
+}
+
+model asset {
+  createdAt              DateTime                 @default(now()) @db.Timestamp(6)
+  updatedAt              DateTime                 @default(now()) @db.Timestamp(6)
+  name                   String                   @db.VarChar
+  type                   String                   @db.VarChar
+  mimeType               String                   @db.VarChar
+  width                  Int                      @default(0)
+  height                 Int                      @default(0)
+  fileSize               Int
+  source                 String                   @db.VarChar
+  preview                String                   @db.VarChar
+  focalPoint             String?
+  id                     Int                      @id(map: "PK_1209d107fe21482beaea51b745e") @default(autoincrement())
+  asset_channels_channel asset_channels_channel[]
+  asset_tags_tag         asset_tags_tag[]
+  collection             collection[]
+  collection_asset       collection_asset[]
+  order_line             order_line[]
+  product                product[]
+  product_asset          product_asset[]
+  product_variant        product_variant[]
+  product_variant_asset  product_variant_asset[]
+}
+
+model asset_channels_channel {
+  assetId   Int
+  channelId Int
+  channel   channel @relation(fields: [channelId], references: [id], onDelete: Cascade, map: "FK_16ca9151a5153f1169da5b7b7e3")
+  asset     asset   @relation(fields: [assetId], references: [id], onDelete: Cascade, map: "FK_dc4e7435f9f5e9e6436bebd33bb")
+
+  @@id([assetId, channelId], map: "PK_d943908a39e32952e8425d2f1ba")
+  @@index([channelId], map: "IDX_16ca9151a5153f1169da5b7b7e")
+  @@index([assetId], map: "IDX_dc4e7435f9f5e9e6436bebd33b")
+}
+
+model asset_tags_tag {
+  assetId Int
+  tagId   Int
+  asset   asset @relation(fields: [assetId], references: [id], onDelete: Cascade, map: "FK_9e412b00d4c6cee1a4b3d920716")
+  tag     tag   @relation(fields: [tagId], references: [id], onDelete: Cascade, map: "FK_fb5e800171ffbe9823f2cc727fd")
+
+  @@id([assetId, tagId], map: "PK_c4113b84381e953901fa5553654")
+  @@index([assetId], map: "IDX_9e412b00d4c6cee1a4b3d92071")
+  @@index([tagId], map: "IDX_fb5e800171ffbe9823f2cc727f")
+}
+
+model authentication_method {
+  createdAt             DateTime @default(now()) @db.Timestamp(6)
+  updatedAt             DateTime @default(now()) @db.Timestamp(6)
+  identifier            String?  @db.VarChar
+  passwordHash          String?  @db.VarChar
+  verificationToken     String?  @db.VarChar
+  passwordResetToken    String?  @db.VarChar
+  identifierChangeToken String?  @db.VarChar
+  pendingIdentifier     String?  @db.VarChar
+  strategy              String?  @db.VarChar
+  externalIdentifier    String?  @db.VarChar
+  metadata              String?
+  id                    Int      @id(map: "PK_e204686018c3c60f6164e385081") @default(autoincrement())
+  type                  String   @db.VarChar
+  userId                Int?
+  user                  user?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_00cbe87bc0d4e36758d61bd31d6")
+
+  @@index([userId], map: "IDX_00cbe87bc0d4e36758d61bd31d")
+  @@index([type], map: "IDX_a23445b2c942d8dfcae15b8de2")
+}
+
+model channel {
+  createdAt                                DateTime                           @default(now()) @db.Timestamp(6)
+  updatedAt                                DateTime                           @default(now()) @db.Timestamp(6)
+  code                                     String                             @unique(map: "UQ_06127ac6c6d913f4320759971db") @db.VarChar
+  token                                    String                             @unique(map: "UQ_842699fce4f3470a7d06d89de88") @db.VarChar
+  description                              String?                            @default("") @db.VarChar
+  defaultLanguageCode                      String                             @db.VarChar
+  availableLanguageCodes                   String?
+  defaultCurrencyCode                      String                             @db.VarChar
+  availableCurrencyCodes                   String?
+  trackInventory                           Boolean                            @default(true)
+  outOfStockThreshold                      Int                                @default(0)
+  pricesIncludeTax                         Boolean
+  id                                       Int                                @id(map: "PK_590f33ee6ee7d76437acf362e39") @default(autoincrement())
+  sellerId                                 Int?
+  defaultTaxZoneId                         Int?
+  defaultShippingZoneId                    Int?
+  asset_channels_channel                   asset_channels_channel[]
+  seller                                   seller?                            @relation(fields: [sellerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_af2116c7e176b6b88dceceeb74b")
+  zone_channel_defaultTaxZoneIdTozone      zone?                              @relation("channel_defaultTaxZoneIdTozone", fields: [defaultTaxZoneId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_afe9f917a1c82b9e9e69f7c6129")
+  zone_channel_defaultShippingZoneIdTozone zone?                              @relation("channel_defaultShippingZoneIdTozone", fields: [defaultShippingZoneId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_c9ca2f58d4517460435cbd8b4c9")
+  collection_channels_channel              collection_channels_channel[]
+  customer_channels_channel                customer_channels_channel[]
+  facet_channels_channel                   facet_channels_channel[]
+  facet_value_channels_channel             facet_value_channels_channel[]
+  order_channels_channel                   order_channels_channel[]
+  order_line                               order_line[]
+  payment_method_channels_channel          payment_method_channels_channel[]
+  product_channels_channel                 product_channels_channel[]
+  product_variant_channels_channel         product_variant_channels_channel[]
+  promotion_channels_channel               promotion_channels_channel[]
+  role_channels_channel                    role_channels_channel[]
+  session                                  session[]
+  shipping_method_channels_channel         shipping_method_channels_channel[]
+  stock_location_channels_channel          stock_location_channels_channel[]
+
+  @@index([sellerId], map: "IDX_af2116c7e176b6b88dceceeb74")
+  @@index([defaultTaxZoneId], map: "IDX_afe9f917a1c82b9e9e69f7c612")
+  @@index([defaultShippingZoneId], map: "IDX_c9ca2f58d4517460435cbd8b4c")
+}
+
+model collection {
+  createdAt                                                       DateTime                                      @default(now()) @db.Timestamp(6)
+  updatedAt                                                       DateTime                                      @default(now()) @db.Timestamp(6)
+  isRoot                                                          Boolean                                       @default(false)
+  position                                                        Int
+  isPrivate                                                       Boolean                                       @default(false)
+  filters                                                         String
+  inheritFilters                                                  Boolean                                       @default(true)
+  id                                                              Int                                           @id(map: "PK_ad3f485bbc99d875491f44d7c85") @default(autoincrement())
+  parentId                                                        Int?
+  featuredAssetId                                                 Int?
+  collection                                                      collection?                                   @relation("collectionTocollection", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_4257b61275144db89fa0f5dc059")
+  other_collection                                                collection[]                                  @relation("collectionTocollection")
+  asset                                                           asset?                                        @relation(fields: [featuredAssetId], references: [id], onUpdate: NoAction, map: "FK_7256fef1bb42f1b38156b7449f5")
+  collection_asset                                                collection_asset[]
+  collection_channels_channel                                     collection_channels_channel[]
+  collection_closure_collection_closure_id_descendantTocollection collection_closure[]                          @relation("collection_closure_id_descendantTocollection")
+  collection_closure_collection_closure_id_ancestorTocollection   collection_closure[]                          @relation("collection_closure_id_ancestorTocollection")
+  collection_product_variants_product_variant                     collection_product_variants_product_variant[]
+  collection_translation                                          collection_translation[]
+
+  @@index([featuredAssetId], map: "IDX_7256fef1bb42f1b38156b7449f")
+}
+
+model collection_asset {
+  createdAt    DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime   @default(now()) @db.Timestamp(6)
+  assetId      Int
+  position     Int
+  collectionId Int
+  id           Int        @id(map: "PK_a2adab6fd086adfb7858f1f110c") @default(autoincrement())
+  collection   collection @relation(fields: [collectionId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_1ed9e48dfbf74b5fcbb35d3d686")
+  asset        asset      @relation(fields: [assetId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_51da53b26522dc0525762d2de8e")
+
+  @@index([collectionId], map: "IDX_1ed9e48dfbf74b5fcbb35d3d68")
+  @@index([assetId], map: "IDX_51da53b26522dc0525762d2de8")
+}
+
+model collection_channels_channel {
+  collectionId Int
+  channelId    Int
+  channel      channel    @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_7216ab24077cf5cbece7857dbbd")
+  collection   collection @relation(fields: [collectionId], references: [id], onDelete: Cascade, map: "FK_cdbf33ffb5d4519161251520083")
+
+  @@id([collectionId, channelId], map: "PK_0e292d80228c9b4a114d2b09476")
+  @@index([channelId], map: "IDX_7216ab24077cf5cbece7857dbb")
+  @@index([collectionId], map: "IDX_cdbf33ffb5d451916125152008")
+}
+
+model collection_closure {
+  id_ancestor                                             Int
+  id_descendant                                           Int
+  collection_collection_closure_id_descendantTocollection collection @relation("collection_closure_id_descendantTocollection", fields: [id_descendant], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_457784c710f8ac9396010441f6c")
+  collection_collection_closure_id_ancestorTocollection   collection @relation("collection_closure_id_ancestorTocollection", fields: [id_ancestor], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_c309f8cd152bbeaea08491e0c66")
+
+  @@id([id_ancestor, id_descendant], map: "PK_9dda38e2273a7744b8f655782a5")
+  @@index([id_descendant], map: "IDX_457784c710f8ac9396010441f6")
+  @@index([id_ancestor], map: "IDX_c309f8cd152bbeaea08491e0c6")
+}
+
+model collection_product_variants_product_variant {
+  collectionId     Int
+  productVariantId Int
+  collection       collection      @relation(fields: [collectionId], references: [id], onDelete: Cascade, map: "FK_6faa7b72422d9c4679e2f186ad1")
+  product_variant  product_variant @relation(fields: [productVariantId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_fb05887e2867365f236d7dd95ee")
+
+  @@id([collectionId, productVariantId], map: "PK_50c5ed0504ded53967be811f633")
+  @@index([collectionId], map: "IDX_6faa7b72422d9c4679e2f186ad")
+  @@index([productVariantId], map: "IDX_fb05887e2867365f236d7dd95e")
+}
+
+model collection_translation {
+  createdAt    DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime    @default(now()) @db.Timestamp(6)
+  languageCode String      @db.VarChar
+  name         String      @db.VarChar
+  slug         String      @db.VarChar
+  description  String
+  id           Int         @id(map: "PK_bb49cfcde50401eb5f463a84dac") @default(autoincrement())
+  baseId       Int?
+  collection   collection? @relation(fields: [baseId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_e329f9036210d75caa1d8f2154a")
+
+  @@index([slug], map: "IDX_9f9da7d94b0278ea0f7831e1fc")
+  @@index([baseId], map: "IDX_e329f9036210d75caa1d8f2154")
+}
+
+model customer {
+  createdAt                      DateTime                         @default(now()) @db.Timestamp(6)
+  updatedAt                      DateTime                         @default(now()) @db.Timestamp(6)
+  deletedAt                      DateTime?                        @db.Timestamp(6)
+  title                          String?                          @db.VarChar
+  firstName                      String                           @db.VarChar
+  lastName                       String                           @db.VarChar
+  phoneNumber                    String?                          @db.VarChar
+  emailAddress                   String                           @db.VarChar
+  id                             Int                              @id(map: "PK_a7a13f4cacb744524e44dfdad32") @default(autoincrement())
+  userId                         Int?                             @unique(map: "REL_3f62b42ed23958b120c235f74d")
+  customFieldsStripecustomerid   String?                          @db.VarChar(255)
+  address                        address[]
+  user                           user?                            @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_3f62b42ed23958b120c235f74df")
+  customer_channels_channel      customer_channels_channel[]
+  customer_groups_customer_group customer_groups_customer_group[]
+  history_entry                  history_entry[]
+  order                          order[]
+}
+
+model customer_channels_channel {
+  customerId Int
+  channelId  Int
+  customer   customer @relation(fields: [customerId], references: [id], onDelete: Cascade, map: "FK_a842c9fe8cd4c8ff31402d172d7")
+  channel    channel  @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_dc9f69207a8867f83b0fd257e30")
+
+  @@id([customerId, channelId], map: "PK_27e2fa538c020889d32a0a784e8")
+  @@index([customerId], map: "IDX_a842c9fe8cd4c8ff31402d172d")
+  @@index([channelId], map: "IDX_dc9f69207a8867f83b0fd257e3")
+}
+
+model customer_group {
+  createdAt                      DateTime                         @default(now()) @db.Timestamp(6)
+  updatedAt                      DateTime                         @default(now()) @db.Timestamp(6)
+  name                           String                           @db.VarChar
+  id                             Int                              @id(map: "PK_88e7da3ff7262d9e0a35aa3664e") @default(autoincrement())
+  customer_groups_customer_group customer_groups_customer_group[]
+  tax_rate                       tax_rate[]
+}
+
+model customer_groups_customer_group {
+  customerId      Int
+  customerGroupId Int
+  customer_group  customer_group @relation(fields: [customerGroupId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_85feea3f0e5e82133605f78db02")
+  customer        customer       @relation(fields: [customerId], references: [id], onDelete: Cascade, map: "FK_b823a3c8bf3b78d3ed68736485c")
+
+  @@id([customerId, customerGroupId], map: "PK_0f902789cba691ce7ebbc9fcaa6")
+  @@index([customerGroupId], map: "IDX_85feea3f0e5e82133605f78db0")
+  @@index([customerId], map: "IDX_b823a3c8bf3b78d3ed68736485")
+}
+
+model facet {
+  createdAt              DateTime                 @default(now()) @db.Timestamp(6)
+  updatedAt              DateTime                 @default(now()) @db.Timestamp(6)
+  isPrivate              Boolean                  @default(false)
+  code                   String                   @unique(map: "UQ_0c9a5d053fdf4ebb5f0490b40fd") @db.VarChar
+  id                     Int                      @id(map: "PK_a0ebfe3c68076820c6886aa9ff3") @default(autoincrement())
+  facet_channels_channel facet_channels_channel[]
+  facet_translation      facet_translation[]
+  facet_value            facet_value[]
+}
+
+model facet_channels_channel {
+  facetId   Int
+  channelId Int
+  channel   channel @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_2a8ea404d05bf682516184db7d3")
+  facet     facet   @relation(fields: [facetId], references: [id], onDelete: Cascade, map: "FK_ca796020c6d097e251e5d6d2b02")
+
+  @@id([facetId, channelId], map: "PK_df0579886093b2f830c159adfde")
+  @@index([channelId], map: "IDX_2a8ea404d05bf682516184db7d")
+  @@index([facetId], map: "IDX_ca796020c6d097e251e5d6d2b0")
+}
+
+model facet_translation {
+  createdAt    DateTime @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime @default(now()) @db.Timestamp(6)
+  languageCode String   @db.VarChar
+  name         String   @db.VarChar
+  id           Int      @id(map: "PK_a6902cc1dcbb5e52a980f0189ad") @default(autoincrement())
+  baseId       Int?
+  facet        facet?   @relation(fields: [baseId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_eaea53f44bf9e97790d38a3d68f")
+
+  @@index([baseId], map: "IDX_eaea53f44bf9e97790d38a3d68")
+}
+
+model facet_value {
+  createdAt                                DateTime                                   @default(now()) @db.Timestamp(6)
+  updatedAt                                DateTime                                   @default(now()) @db.Timestamp(6)
+  code                                     String                                     @db.VarChar
+  id                                       Int                                        @id(map: "PK_d231e8eecc7e1a6059e1da7d325") @default(autoincrement())
+  facetId                                  Int
+  facet                                    facet                                      @relation(fields: [facetId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_d101dc2265a7341be3d94968c5b")
+  facet_value_channels_channel             facet_value_channels_channel[]
+  facet_value_translation                  facet_value_translation[]
+  product_facet_values_facet_value         product_facet_values_facet_value[]
+  product_variant_facet_values_facet_value product_variant_facet_values_facet_value[]
+
+  @@index([facetId], map: "IDX_d101dc2265a7341be3d94968c5")
+}
+
+model facet_value_channels_channel {
+  facetValueId Int
+  channelId    Int
+  facet_value  facet_value @relation(fields: [facetValueId], references: [id], onDelete: Cascade, map: "FK_ad690c1b05596d7f52e52ffeedd")
+  channel      channel     @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_e1d54c0b9db3e2eb17faaf5919c")
+
+  @@id([facetValueId, channelId], map: "PK_653fb72a256f100f52c573e419f")
+  @@index([facetValueId], map: "IDX_ad690c1b05596d7f52e52ffeed")
+  @@index([channelId], map: "IDX_e1d54c0b9db3e2eb17faaf5919")
+}
+
+model facet_value_translation {
+  createdAt    DateTime     @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime     @default(now()) @db.Timestamp(6)
+  languageCode String       @db.VarChar
+  name         String       @db.VarChar
+  id           Int          @id(map: "PK_a09fdeb788deff7a9ed827a6160") @default(autoincrement())
+  baseId       Int?
+  facet_value  facet_value? @relation(fields: [baseId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_3d6e45823b65de808a66cb1423b")
+
+  @@index([baseId], map: "IDX_3d6e45823b65de808a66cb1423")
+}
+
+model fulfillment {
+  createdAt                      DateTime                         @default(now()) @db.Timestamp(6)
+  updatedAt                      DateTime                         @default(now()) @db.Timestamp(6)
+  state                          String                           @db.VarChar
+  trackingCode                   String                           @default("") @db.VarChar
+  method                         String                           @db.VarChar
+  handlerCode                    String                           @db.VarChar
+  id                             Int                              @id(map: "PK_50c102da132afffae660585981f") @default(autoincrement())
+  order_fulfillments_fulfillment order_fulfillments_fulfillment[]
+  order_line_reference           order_line_reference[]
+}
+
+model global_settings {
+  createdAt           DateTime @default(now()) @db.Timestamp(6)
+  updatedAt           DateTime @default(now()) @db.Timestamp(6)
+  availableLanguages  String
+  trackInventory      Boolean  @default(true)
+  outOfStockThreshold Int      @default(0)
+  id                  Int      @id(map: "PK_fec5e2c0bf238e30b25d4a82976") @default(autoincrement())
+}
+
+model history_entry {
+  createdAt       DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime       @default(now()) @db.Timestamp(6)
+  type            String         @db.VarChar
+  isPublic        Boolean
+  data            String
+  id              Int            @id(map: "PK_b65bd95b0d2929668589d57b97a") @default(autoincrement())
+  discriminator   String         @db.VarChar
+  administratorId Int?
+  customerId      Int?
+  orderId         Int?
+  order           order?         @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_3a05127e67435b4d2332ded7c9e")
+  customer        customer?      @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_43ac602f839847fdb91101f30ec")
+  administrator   administrator? @relation(fields: [administratorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_92f8c334ef06275f9586fd01832")
+
+  @@index([orderId], map: "IDX_3a05127e67435b4d2332ded7c9")
+  @@index([customerId], map: "IDX_43ac602f839847fdb91101f30e")
+  @@index([administratorId], map: "IDX_92f8c334ef06275f9586fd0183")
+}
+
+model job_record {
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @db.Timestamp(6)
+  queueName String    @db.VarChar
+  data      String?
+  state     String    @db.VarChar
+  progress  Int
+  result    String?
+  error     String?   @db.VarChar
+  startedAt DateTime? @db.Timestamp(6)
+  settledAt DateTime? @db.Timestamp(6)
+  isSettled Boolean
+  retries   Int
+  attempts  Int
+  id        Int       @id(map: "PK_88ce3ea0c9dca8b571450b457a7") @default(autoincrement())
+
+  @@index([createdAt], map: "IDX_86bc376c56af8cefd41a847a95")
+}
+
+model job_record_buffer {
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @db.Timestamp(6)
+  bufferId  String   @db.VarChar
+  job       String
+  id        Int      @id(map: "PK_9a1cfa02511065b32053efceeff") @default(autoincrement())
+}
+
+model migrations {
+  id        Int    @id(map: "PK_8c82d7f526340ab734260ea46be") @default(autoincrement())
+  timestamp BigInt
+  name      String @db.VarChar
+}
+
+model order {
+  createdAt                      DateTime                         @default(now()) @db.Timestamp(6)
+  updatedAt                      DateTime                         @default(now()) @db.Timestamp(6)
+  type                           String                           @default("Regular") @db.VarChar
+  code                           String                           @unique(map: "IDX_729b3eea7ce540930dbb706949") @db.VarChar
+  state                          String                           @db.VarChar
+  active                         Boolean                          @default(true)
+  orderPlacedAt                  DateTime?                        @db.Timestamp(6)
+  couponCodes                    String
+  shippingAddress                String
+  billingAddress                 String
+  currencyCode                   String                           @db.VarChar
+  id                             Int                              @id(map: "PK_1031171c13130102495201e3e20") @default(autoincrement())
+  aggregateOrderId               Int?
+  customerId                     Int?
+  taxZoneId                      Int?
+  subTotal                       Int
+  subTotalWithTax                Int
+  shipping                       Int                              @default(0)
+  shippingWithTax                Int                              @default(0)
+  history_entry                  history_entry[]
+  customer                       customer?                        @relation(fields: [customerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_124456e637cca7a415897dce659")
+  order                          order?                           @relation("orderToorder", fields: [aggregateOrderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_73a78d7df09541ac5eba620d181")
+  other_order                    order[]                          @relation("orderToorder")
+  order_channels_channel         order_channels_channel[]
+  order_fulfillments_fulfillment order_fulfillments_fulfillment[]
+  order_line                     order_line[]
+  order_modification             order_modification[]
+  order_promotions_promotion     order_promotions_promotion[]
+  payment                        payment[]
+  session                        session[]
+  shipping_line                  shipping_line[]
+  surcharge                      surcharge[]
+
+  @@index([customerId], map: "IDX_124456e637cca7a415897dce65")
+  @@index([aggregateOrderId], map: "IDX_73a78d7df09541ac5eba620d18")
+  @@index([orderPlacedAt], map: "IDX_af13739f4962eab899bdff34be")
+}
+
+model order_channels_channel {
+  orderId   Int
+  channelId Int
+  order     order   @relation(fields: [orderId], references: [id], onDelete: Cascade, map: "FK_0d8e5c204480204a60e151e4853")
+  channel   channel @relation(fields: [channelId], references: [id], onDelete: Cascade, map: "FK_d0d16db872499e83b15999f8c7a")
+
+  @@id([orderId, channelId], map: "PK_39853134b20afe9dfb25de18292")
+  @@index([orderId], map: "IDX_0d8e5c204480204a60e151e485")
+  @@index([channelId], map: "IDX_d0d16db872499e83b15999f8c7")
+}
+
+model order_fulfillments_fulfillment {
+  orderId       Int
+  fulfillmentId Int
+  fulfillment   fulfillment @relation(fields: [fulfillmentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_4add5a5796e1582dec2877b2898")
+  order         order       @relation(fields: [orderId], references: [id], onDelete: Cascade, map: "FK_f80d84d525af2ffe974e7e8ca29")
+
+  @@id([orderId, fulfillmentId], map: "PK_414600087d71aee1583bc517590")
+  @@index([fulfillmentId], map: "IDX_4add5a5796e1582dec2877b289")
+  @@index([orderId], map: "IDX_f80d84d525af2ffe974e7e8ca2")
+}
+
+model order_line {
+  createdAt            DateTime               @default(now()) @db.Timestamp(6)
+  updatedAt            DateTime               @default(now()) @db.Timestamp(6)
+  quantity             Int
+  orderPlacedQuantity  Int                    @default(0)
+  listPriceIncludesTax Boolean
+  adjustments          String
+  taxLines             String
+  id                   Int                    @id(map: "PK_01a7c973d9f30479647e44f9892") @default(autoincrement())
+  sellerChannelId      Int?
+  shippingLineId       Int?
+  productVariantId     Int
+  taxCategoryId        Int?
+  initialListPrice     Int?
+  listPrice            Int
+  featuredAssetId      Int?
+  orderId              Int?
+  order                order?                 @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_239cfca2a55b98b90b6bef2e44f")
+  channel              channel?               @relation(fields: [sellerChannelId], references: [id], onUpdate: NoAction, map: "FK_6901d8715f5ebadd764466f7bde")
+  tax_category         tax_category?          @relation(fields: [taxCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_77be94ce9ec6504466179462275")
+  asset                asset?                 @relation(fields: [featuredAssetId], references: [id], onUpdate: NoAction, map: "FK_9f065453910ea77d4be8e92618f")
+  product_variant      product_variant        @relation(fields: [productVariantId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_cbcd22193eda94668e84d33f185")
+  shipping_line        shipping_line?         @relation(fields: [shippingLineId], references: [id], onUpdate: NoAction, map: "FK_dc9ac68b47da7b62249886affba")
+  order_line_reference order_line_reference[]
+  stock_movement       stock_movement[]
+
+  @@index([orderId], map: "IDX_239cfca2a55b98b90b6bef2e44")
+  @@index([sellerChannelId], map: "IDX_6901d8715f5ebadd764466f7bd")
+  @@index([taxCategoryId], map: "IDX_77be94ce9ec650446617946227")
+  @@index([featuredAssetId], map: "IDX_9f065453910ea77d4be8e92618")
+  @@index([productVariantId], map: "IDX_cbcd22193eda94668e84d33f18")
+  @@index([shippingLineId], map: "IDX_dc9ac68b47da7b62249886affb")
+}
+
+model order_line_reference {
+  createdAt          DateTime            @default(now()) @db.Timestamp(6)
+  updatedAt          DateTime            @default(now()) @db.Timestamp(6)
+  quantity           Int
+  id                 Int                 @id(map: "PK_21891d07accb8fa87e11165bca2") @default(autoincrement())
+  fulfillmentId      Int?
+  modificationId     Int?
+  orderLineId        Int
+  refundId           Int?
+  discriminator      String              @db.VarChar
+  fulfillment        fulfillment?        @relation(fields: [fulfillmentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_06b02fb482b188823e419d37bd4")
+  order_modification order_modification? @relation(fields: [modificationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_22b818af8722746fb9f206068c2")
+  refund             refund?             @relation(fields: [refundId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_30019aa65b17fe9ee9628931991")
+  order_line         order_line          @relation(fields: [orderLineId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_7d57857922dfc7303604697dbe9")
+
+  @@index([fulfillmentId], map: "IDX_06b02fb482b188823e419d37bd")
+  @@index([modificationId], map: "IDX_22b818af8722746fb9f206068c")
+  @@index([refundId], map: "IDX_30019aa65b17fe9ee962893199")
+  @@index([discriminator], map: "IDX_49a8632be8cef48b076446b8b9")
+  @@index([orderLineId], map: "IDX_7d57857922dfc7303604697dbe")
+}
+
+model order_modification {
+  createdAt             DateTime               @default(now()) @db.Timestamp(6)
+  updatedAt             DateTime               @default(now()) @db.Timestamp(6)
+  note                  String                 @db.VarChar
+  shippingAddressChange String?
+  billingAddressChange  String?
+  id                    Int                    @id(map: "PK_cccf2e1612694eeb1e5b6760ffa") @default(autoincrement())
+  priceChange           Int
+  orderId               Int?
+  paymentId             Int?
+  refundId              Int?
+  order_line_reference  order_line_reference[]
+  order                 order?                 @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_1df5bc14a47ef24d2e681f45598")
+  payment               payment?               @relation(fields: [paymentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_ad2991fa2933ed8b7f86a716338")
+  refund                refund?                @relation(fields: [refundId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cb66b63b6e97613013795eadbd5")
+  surcharge             surcharge[]
+
+  @@index([orderId], map: "IDX_1df5bc14a47ef24d2e681f4559")
+}
+
+model order_promotions_promotion {
+  orderId     Int
+  promotionId Int
+  promotion   promotion @relation(fields: [promotionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_2c26b988769c0e3b0120bdef31b")
+  order       order     @relation(fields: [orderId], references: [id], onDelete: Cascade, map: "FK_67be0e40122ab30a62a9817efe0")
+
+  @@id([orderId, promotionId], map: "PK_001dfe7435f3946fbc2d66a4e92")
+  @@index([promotionId], map: "IDX_2c26b988769c0e3b0120bdef31")
+  @@index([orderId], map: "IDX_67be0e40122ab30a62a9817efe")
+}
+
+model payment {
+  createdAt          DateTime             @default(now()) @db.Timestamp(6)
+  updatedAt          DateTime             @default(now()) @db.Timestamp(6)
+  method             String               @db.VarChar
+  state              String               @db.VarChar
+  errorMessage       String?              @db.VarChar
+  transactionId      String?              @db.VarChar
+  metadata           String
+  id                 Int                  @id(map: "PK_fcaec7df5adf9cac408c686b2ab") @default(autoincrement())
+  amount             Int
+  orderId            Int?
+  order_modification order_modification[]
+  order              order?               @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_d09d285fe1645cd2f0db811e293")
+  refund             refund[]
+
+  @@index([orderId], map: "IDX_d09d285fe1645cd2f0db811e29")
+}
+
+model payment_method {
+  createdAt                       DateTime                          @default(now()) @db.Timestamp(6)
+  updatedAt                       DateTime                          @default(now()) @db.Timestamp(6)
+  code                            String                            @default("") @db.VarChar
+  enabled                         Boolean
+  checker                         String?
+  handler                         String
+  id                              Int                               @id(map: "PK_7744c2b2dd932c9cf42f2b9bc3a") @default(autoincrement())
+  payment_method_channels_channel payment_method_channels_channel[]
+  payment_method_translation      payment_method_translation[]
+}
+
+model payment_method_channels_channel {
+  paymentMethodId Int
+  channelId       Int
+  payment_method  payment_method @relation(fields: [paymentMethodId], references: [id], onDelete: Cascade, map: "FK_5bcb569635ce5407eb3f264487d")
+  channel         channel        @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_c00e36f667d35031087b382e61b")
+
+  @@id([paymentMethodId, channelId], map: "PK_c83e4a201c0402ce5cdb170a9a2")
+  @@index([paymentMethodId], map: "IDX_5bcb569635ce5407eb3f264487")
+  @@index([channelId], map: "IDX_c00e36f667d35031087b382e61")
+}
+
+model payment_method_translation {
+  createdAt      DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime        @default(now()) @db.Timestamp(6)
+  languageCode   String          @db.VarChar
+  name           String          @db.VarChar
+  description    String
+  id             Int             @id(map: "PK_ae5ae0af71ae8d15da9eb75768b") @default(autoincrement())
+  baseId         Int?
+  payment_method payment_method? @relation(fields: [baseId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_66187f782a3e71b9e0f5b50b68b")
+
+  @@index([baseId], map: "IDX_66187f782a3e71b9e0f5b50b68")
+}
+
+model product {
+  createdAt                        DateTime                           @default(now()) @db.Timestamp(6)
+  updatedAt                        DateTime                           @default(now()) @db.Timestamp(6)
+  deletedAt                        DateTime?                          @db.Timestamp(6)
+  enabled                          Boolean                            @default(true)
+  id                               Int                                @id(map: "PK_bebc9158e480b949565b4dc7a82") @default(autoincrement())
+  featuredAssetId                  Int?
+  asset                            asset?                             @relation(fields: [featuredAssetId], references: [id], onUpdate: NoAction, map: "FK_91a19e6613534949a4ce6e76ff8")
+  product_asset                    product_asset[]
+  product_channels_channel         product_channels_channel[]
+  product_facet_values_facet_value product_facet_values_facet_value[]
+  product_option_group             product_option_group[]
+  product_translation              product_translation[]
+  product_variant                  product_variant[]
+
+  @@index([featuredAssetId], map: "IDX_91a19e6613534949a4ce6e76ff")
+}
+
+model product_asset {
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @db.Timestamp(6)
+  assetId   Int
+  position  Int
+  productId Int
+  id        Int      @id(map: "PK_c56a83efd14ec4175532e1867fc") @default(autoincrement())
+  product   product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_0d1294f5c22a56da7845ebab72c")
+  asset     asset    @relation(fields: [assetId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_5888ac17b317b93378494a10620")
+
+  @@index([productId], map: "IDX_0d1294f5c22a56da7845ebab72")
+  @@index([assetId], map: "IDX_5888ac17b317b93378494a1062")
+}
+
+model product_channels_channel {
+  productId Int
+  channelId Int
+  product   product @relation(fields: [productId], references: [id], onDelete: Cascade, map: "FK_26d12be3b5fec6c4adb1d792844")
+  channel   channel @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_a51dfbd87c330c075c39832b6e7")
+
+  @@id([productId, channelId], map: "PK_722acbcc06403e693b518d2c345")
+  @@index([productId], map: "IDX_26d12be3b5fec6c4adb1d79284")
+  @@index([channelId], map: "IDX_a51dfbd87c330c075c39832b6e")
+}
+
+model product_facet_values_facet_value {
+  productId    Int
+  facetValueId Int
+  facet_value  facet_value @relation(fields: [facetValueId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_06e7d73673ee630e8ec50d0b29f")
+  product      product     @relation(fields: [productId], references: [id], onDelete: Cascade, map: "FK_6a0558e650d75ae639ff38e413a")
+
+  @@id([productId, facetValueId], map: "PK_d57f06b38805181019d75662aa6")
+  @@index([facetValueId], map: "IDX_06e7d73673ee630e8ec50d0b29")
+  @@index([productId], map: "IDX_6a0558e650d75ae639ff38e413")
+}
+
+model product_option {
+  createdAt                              DateTime                                 @default(now()) @db.Timestamp(6)
+  updatedAt                              DateTime                                 @default(now()) @db.Timestamp(6)
+  deletedAt                              DateTime?                                @db.Timestamp(6)
+  code                                   String                                   @db.VarChar
+  id                                     Int                                      @id(map: "PK_4cf3c467e9bc764bdd32c4cd938") @default(autoincrement())
+  groupId                                Int
+  product_option_group                   product_option_group                     @relation(fields: [groupId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a6debf9198e2fbfa006aa10d710")
+  product_option_translation             product_option_translation[]
+  product_variant_options_product_option product_variant_options_product_option[]
+
+  @@index([groupId], map: "IDX_a6debf9198e2fbfa006aa10d71")
+}
+
+model product_option_group {
+  createdAt                        DateTime                           @default(now()) @db.Timestamp(6)
+  updatedAt                        DateTime                           @default(now()) @db.Timestamp(6)
+  deletedAt                        DateTime?                          @db.Timestamp(6)
+  code                             String                             @db.VarChar
+  id                               Int                                @id(map: "PK_d76e92fdbbb5a2e6752ffd4a2c1") @default(autoincrement())
+  productId                        Int?
+  product_option                   product_option[]
+  product                          product?                           @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a6e91739227bf4d442f23c52c75")
+  product_option_group_translation product_option_group_translation[]
+
+  @@index([productId], map: "IDX_a6e91739227bf4d442f23c52c7")
+}
+
+model product_option_group_translation {
+  createdAt            DateTime              @default(now()) @db.Timestamp(6)
+  updatedAt            DateTime              @default(now()) @db.Timestamp(6)
+  languageCode         String                @db.VarChar
+  name                 String                @db.VarChar
+  id                   Int                   @id(map: "PK_44ab19f118175288dff147c4a00") @default(autoincrement())
+  baseId               Int?
+  product_option_group product_option_group? @relation(fields: [baseId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_93751abc1451972c02e033b766c")
+
+  @@index([baseId], map: "IDX_93751abc1451972c02e033b766")
+}
+
+model product_option_translation {
+  createdAt      DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime        @default(now()) @db.Timestamp(6)
+  languageCode   String          @db.VarChar
+  name           String          @db.VarChar
+  id             Int             @id(map: "PK_69c79a84baabcad3c7328576ac0") @default(autoincrement())
+  baseId         Int?
+  product_option product_option? @relation(fields: [baseId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_a79a443c1f7841f3851767faa6d")
+
+  @@index([baseId], map: "IDX_a79a443c1f7841f3851767faa6")
+}
+
+model product_translation {
+  createdAt    DateTime @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime @default(now()) @db.Timestamp(6)
+  languageCode String   @db.VarChar
+  name         String   @db.VarChar
+  slug         String   @db.VarChar
+  description  String
+  id           Int      @id(map: "PK_62d00fbc92e7a495701d6fee9d5") @default(autoincrement())
+  baseId       Int?
+  product      product? @relation(fields: [baseId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_7dbc75cb4e8b002620c4dbfdac5")
+
+  @@index([baseId], map: "IDX_7dbc75cb4e8b002620c4dbfdac")
+  @@index([slug], map: "IDX_f4a2ec16ba86d277b6faa0b67b")
+}
+
+model product_variant {
+  createdAt                                   DateTime                                      @default(now()) @db.Timestamp(6)
+  updatedAt                                   DateTime                                      @default(now()) @db.Timestamp(6)
+  deletedAt                                   DateTime?                                     @db.Timestamp(6)
+  enabled                                     Boolean                                       @default(true)
+  sku                                         String                                        @db.VarChar
+  outOfStockThreshold                         Int                                           @default(0)
+  useGlobalOutOfStockThreshold                Boolean                                       @default(true)
+  trackInventory                              String                                        @default("INHERIT") @db.VarChar
+  id                                          Int                                           @id(map: "PK_1ab69c9935c61f7c70791ae0a9f") @default(autoincrement())
+  featuredAssetId                             Int?
+  taxCategoryId                               Int?
+  productId                                   Int?
+  collection_product_variants_product_variant collection_product_variants_product_variant[]
+  order_line                                  order_line[]
+  asset                                       asset?                                        @relation(fields: [featuredAssetId], references: [id], onUpdate: NoAction, map: "FK_0e6f516053cf982b537836e21cf")
+  product                                     product?                                      @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_6e420052844edf3a5506d863ce6")
+  tax_category                                tax_category?                                 @relation(fields: [taxCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_e38dca0d82fd64c7cf8aac8b8ef")
+  product_variant_asset                       product_variant_asset[]
+  product_variant_channels_channel            product_variant_channels_channel[]
+  product_variant_facet_values_facet_value    product_variant_facet_values_facet_value[]
+  product_variant_options_product_option      product_variant_options_product_option[]
+  product_variant_price                       product_variant_price[]
+  product_variant_translation                 product_variant_translation[]
+  stock_level                                 stock_level[]
+  stock_movement                              stock_movement[]
+
+  @@index([featuredAssetId], map: "IDX_0e6f516053cf982b537836e21c")
+  @@index([productId], map: "IDX_6e420052844edf3a5506d863ce")
+  @@index([taxCategoryId], map: "IDX_e38dca0d82fd64c7cf8aac8b8e")
+}
+
+model product_variant_asset {
+  createdAt        DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime        @default(now()) @db.Timestamp(6)
+  assetId          Int
+  position         Int
+  productVariantId Int
+  id               Int             @id(map: "PK_cb1e33ae13779da176f8b03a5d3") @default(autoincrement())
+  asset            asset           @relation(fields: [assetId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_10b5a2e3dee0e30b1e26c32f5c7")
+  product_variant  product_variant @relation(fields: [productVariantId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_fa21412afac15a2304f3eb35feb")
+
+  @@index([assetId], map: "IDX_10b5a2e3dee0e30b1e26c32f5c")
+  @@index([productVariantId], map: "IDX_fa21412afac15a2304f3eb35fe")
+}
+
+model product_variant_channels_channel {
+  productVariantId Int
+  channelId        Int
+  product_variant  product_variant @relation(fields: [productVariantId], references: [id], onDelete: Cascade, map: "FK_beeb2b3cd800e589f2213ae99d6")
+  channel          channel         @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_d194bff171b62357688a5d0f559")
+
+  @@id([productVariantId, channelId], map: "PK_1a10ca648c3d73c0f2b455ae191")
+  @@index([productVariantId], map: "IDX_beeb2b3cd800e589f2213ae99d")
+  @@index([channelId], map: "IDX_d194bff171b62357688a5d0f55")
+}
+
+model product_variant_facet_values_facet_value {
+  productVariantId Int
+  facetValueId     Int
+  facet_value      facet_value     @relation(fields: [facetValueId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_0d641b761ed1dce4ef3cd33d559")
+  product_variant  product_variant @relation(fields: [productVariantId], references: [id], onDelete: Cascade, map: "FK_69567bc225b6bbbd732d6c5455b")
+
+  @@id([productVariantId, facetValueId], map: "PK_a28474836b2feeffcef98c806e1")
+  @@index([facetValueId], map: "IDX_0d641b761ed1dce4ef3cd33d55")
+  @@index([productVariantId], map: "IDX_69567bc225b6bbbd732d6c5455")
+}
+
+model product_variant_options_product_option {
+  productVariantId Int
+  productOptionId  Int
+  product_variant  product_variant @relation(fields: [productVariantId], references: [id], onDelete: Cascade, map: "FK_526f0131260eec308a3bd2b61b6")
+  product_option   product_option  @relation(fields: [productOptionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_e96a71affe63c97f7fa2f076dac")
+
+  @@id([productVariantId, productOptionId], map: "PK_c57de5cb6bb74504180604a00c0")
+  @@index([productVariantId], map: "IDX_526f0131260eec308a3bd2b61b")
+  @@index([productOptionId], map: "IDX_e96a71affe63c97f7fa2f076da")
+}
+
+model product_variant_price {
+  createdAt       DateTime         @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime         @default(now()) @db.Timestamp(6)
+  currencyCode    String           @db.VarChar
+  id              Int              @id(map: "PK_ba659ff2940702124e799c5c854") @default(autoincrement())
+  channelId       Int?
+  price           Int
+  variantId       Int?
+  product_variant product_variant? @relation(fields: [variantId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_e6126cd268aea6e9b31d89af9ab")
+
+  @@index([variantId], map: "IDX_e6126cd268aea6e9b31d89af9a")
+}
+
+model product_variant_translation {
+  createdAt       DateTime         @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime         @default(now()) @db.Timestamp(6)
+  languageCode    String           @db.VarChar
+  name            String           @db.VarChar
+  id              Int              @id(map: "PK_4b7f882e2b669800bed7ed065f0") @default(autoincrement())
+  baseId          Int?
+  product_variant product_variant? @relation(fields: [baseId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_420f4d6fb75d38b9dca79bc43b4")
+
+  @@index([baseId], map: "IDX_420f4d6fb75d38b9dca79bc43b")
+}
+
+model promotion {
+  createdAt                  DateTime                     @default(now()) @db.Timestamp(6)
+  updatedAt                  DateTime                     @default(now()) @db.Timestamp(6)
+  deletedAt                  DateTime?                    @db.Timestamp(6)
+  startsAt                   DateTime?                    @db.Timestamp(6)
+  endsAt                     DateTime?                    @db.Timestamp(6)
+  couponCode                 String?                      @db.VarChar
+  perCustomerUsageLimit      Int?
+  usageLimit                 Int?
+  enabled                    Boolean
+  conditions                 String
+  actions                    String
+  priorityScore              Int
+  id                         Int                          @id(map: "PK_fab3630e0789a2002f1cadb7d38") @default(autoincrement())
+  order_promotions_promotion order_promotions_promotion[]
+  promotion_channels_channel promotion_channels_channel[]
+  promotion_translation      promotion_translation[]
+}
+
+model promotion_channels_channel {
+  promotionId Int
+  channelId   Int
+  channel     channel   @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_0eaaf0f4b6c69afde1e88ffb52d")
+  promotion   promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade, map: "FK_6d9e2c39ab12391aaa374bcdaa4")
+
+  @@id([promotionId, channelId], map: "PK_4b34f9b7bf95a8d3dc7f7f6dd23")
+  @@index([channelId], map: "IDX_0eaaf0f4b6c69afde1e88ffb52")
+  @@index([promotionId], map: "IDX_6d9e2c39ab12391aaa374bcdaa")
+}
+
+model promotion_translation {
+  createdAt    DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime   @default(now()) @db.Timestamp(6)
+  languageCode String     @db.VarChar
+  name         String     @db.VarChar
+  description  String
+  id           Int        @id(map: "PK_0b4fd34d2fc7abc06189494a178") @default(autoincrement())
+  baseId       Int?
+  promotion    promotion? @relation(fields: [baseId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_1cc009e9ab2263a35544064561b")
+
+  @@index([baseId], map: "IDX_1cc009e9ab2263a35544064561")
+}
+
+model refund {
+  createdAt            DateTime               @default(now()) @db.Timestamp(6)
+  updatedAt            DateTime               @default(now()) @db.Timestamp(6)
+  method               String                 @db.VarChar
+  reason               String?                @db.VarChar
+  state                String                 @db.VarChar
+  transactionId        String?                @db.VarChar
+  metadata             String
+  id                   Int                    @id(map: "PK_f1cefa2e60d99b206c46c1116e5") @default(autoincrement())
+  paymentId            Int
+  items                Int
+  shipping             Int
+  adjustment           Int
+  total                Int
+  order_line_reference order_line_reference[]
+  order_modification   order_modification[]
+  payment              payment                @relation(fields: [paymentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_1c6932a756108788a361e7d4404")
+
+  @@index([paymentId], map: "IDX_1c6932a756108788a361e7d440")
+}
+
+model region {
+  createdAt           DateTime              @default(now()) @db.Timestamp(6)
+  updatedAt           DateTime              @default(now()) @db.Timestamp(6)
+  code                String                @db.VarChar
+  type                String                @db.VarChar
+  enabled             Boolean
+  id                  Int                   @id(map: "PK_5f48ffc3af96bc486f5f3f3a6da") @default(autoincrement())
+  parentId            Int?
+  discriminator       String                @db.VarChar
+  address             address[]
+  region              region?               @relation("regionToregion", fields: [parentId], references: [id], onUpdate: NoAction, map: "FK_ed0c8098ce6809925a437f42aec")
+  other_region        region[]              @relation("regionToregion")
+  region_translation  region_translation[]
+  zone_members_region zone_members_region[]
+
+  @@index([parentId], map: "IDX_ed0c8098ce6809925a437f42ae")
+}
+
+model region_translation {
+  createdAt    DateTime @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime @default(now()) @db.Timestamp(6)
+  languageCode String   @db.VarChar
+  name         String   @db.VarChar
+  id           Int      @id(map: "PK_3e0c9619cafbe579eeecfd88abc") @default(autoincrement())
+  baseId       Int?
+  region       region?  @relation(fields: [baseId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_1afd722b943c81310705fc3e612")
+
+  @@index([baseId], map: "IDX_1afd722b943c81310705fc3e61")
+}
+
+model role {
+  createdAt             DateTime                @default(now()) @db.Timestamp(6)
+  updatedAt             DateTime                @default(now()) @db.Timestamp(6)
+  code                  String                  @db.VarChar
+  description           String                  @db.VarChar
+  permissions           String
+  id                    Int                     @id(map: "PK_b36bcfe02fc8de3c57a8b2391c2") @default(autoincrement())
+  role_channels_channel role_channels_channel[]
+  user_roles_role       user_roles_role[]
+}
+
+model role_channels_channel {
+  roleId    Int
+  channelId Int
+  role      role    @relation(fields: [roleId], references: [id], onDelete: Cascade, map: "FK_bfd2a03e9988eda6a9d11760119")
+  channel   channel @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_e09dfee62b158307404202b43a5")
+
+  @@id([roleId, channelId], map: "PK_6fb9277e9f11bb8a63445c36242")
+  @@index([roleId], map: "IDX_bfd2a03e9988eda6a9d1176011")
+  @@index([channelId], map: "IDX_e09dfee62b158307404202b43a")
+}
+
+model scheduled_task_record {
+  createdAt           DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt           DateTime  @default(now()) @db.Timestamp(6)
+  taskId              String    @unique(map: "UQ_661876d97056cad9fd37eaa8774") @db.VarChar
+  enabled             Boolean   @default(true)
+  lockedAt            DateTime?
+  lastExecutedAt      DateTime?
+  manuallyTriggeredAt DateTime?
+  lastResult          Json?     @db.Json
+  id                  Int       @id(map: "PK_efd4b61a3b227f3eba94de32e4c") @default(autoincrement())
+}
+
+model search_index_item {
+  languageCode                    String  @db.VarChar
+  enabled                         Boolean
+  productName                     String  @db.VarChar
+  productVariantName              String  @db.VarChar
+  description                     String
+  slug                            String  @db.VarChar
+  sku                             String  @db.VarChar
+  facetIds                        String
+  facetValueIds                   String
+  collectionIds                   String
+  collectionSlugs                 String
+  channelIds                      String
+  productPreview                  String  @db.VarChar
+  productPreviewFocalPoint        String?
+  productVariantPreview           String  @db.VarChar
+  productVariantPreviewFocalPoint String?
+  inStock                         Boolean @default(true)
+  productInStock                  Boolean @default(true)
+  productVariantId                Int
+  channelId                       Int
+  productId                       Int
+  productAssetId                  Int?
+  productVariantAssetId           Int?
+  price                           Int
+  priceWithTax                    Int
+
+  @@id([languageCode, productVariantId, channelId], map: "PK_6470dd173311562c89e5f80b30e")
+  @@index([productName], map: "IDX_6fb55742e13e8082954d0436dc")
+  @@index([description], map: "IDX_9a5a6a556f75c4ac7bfdd03410")
+  @@index([productVariantName], map: "IDX_d8791f444a8bf23fe4c1bc020c")
+}
+
+model seller {
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @db.Timestamp(6)
+  deletedAt DateTime? @db.Timestamp(6)
+  name      String    @db.VarChar
+  id        Int       @id(map: "PK_36445a9c6e794945a4a4a8d3c9d") @default(autoincrement())
+  channel   channel[]
+}
+
+model session {
+  createdAt              DateTime @default(now()) @db.Timestamp(6)
+  updatedAt              DateTime @default(now()) @db.Timestamp(6)
+  token                  String   @unique(map: "IDX_232f8e85d7633bd6ddfad42169") @db.VarChar
+  expires                DateTime @db.Timestamp(6)
+  invalidated            Boolean
+  authenticationStrategy String?  @db.VarChar
+  id                     Int      @id(map: "PK_f55da76ac1c3ac420f444d2ff11") @default(autoincrement())
+  activeOrderId          Int?
+  activeChannelId        Int?
+  type                   String   @db.VarChar
+  userId                 Int?
+  user                   user?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_3d2f174ef04fb312fdebd0ddc53")
+  order                  order?   @relation(fields: [activeOrderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_7a75399a4f4ffa48ee02e98c059")
+  channel                channel? @relation(fields: [activeChannelId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_eb87ef1e234444728138302263b")
+
+  @@index([userId], map: "IDX_3d2f174ef04fb312fdebd0ddc5")
+  @@index([activeOrderId], map: "IDX_7a75399a4f4ffa48ee02e98c05")
+  @@index([activeChannelId], map: "IDX_eb87ef1e234444728138302263")
+}
+
+model settings_store_entry {
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @db.Timestamp(6)
+  key       String   @db.VarChar
+  value     Json?    @db.Json
+  scope     String?  @db.VarChar
+  id        Int      @id(map: "PK_3a905b358c0b454f6fc6637d6db") @default(autoincrement())
+
+  @@unique([key, scope], map: "settings_store_key_scope_unique")
+  @@index([scope], map: "IDX_8d8ddb95a0fbd11ffb5606ef0c")
+  @@index([key], map: "IDX_ab560f7983976aec91b91c26a4")
+}
+
+model shipping_line {
+  createdAt            DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt            DateTime        @default(now()) @db.Timestamp(6)
+  listPriceIncludesTax Boolean
+  adjustments          String
+  taxLines             String
+  id                   Int             @id(map: "PK_890522bfc44a4b6eb7cb1e52609") @default(autoincrement())
+  shippingMethodId     Int
+  listPrice            Int
+  orderId              Int?
+  order_line           order_line[]
+  order                order?          @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_c9f34a440d490d1b66f6829b86c")
+  shipping_method      shipping_method @relation(fields: [shippingMethodId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_e2e7642e1e88167c1dfc827fdf3")
+
+  @@index([orderId], map: "IDX_c9f34a440d490d1b66f6829b86")
+  @@index([shippingMethodId], map: "IDX_e2e7642e1e88167c1dfc827fdf")
+}
+
+model shipping_method {
+  createdAt                        DateTime                           @default(now()) @db.Timestamp(6)
+  updatedAt                        DateTime                           @default(now()) @db.Timestamp(6)
+  deletedAt                        DateTime?                          @db.Timestamp(6)
+  code                             String                             @db.VarChar
+  checker                          String
+  calculator                       String
+  fulfillmentHandlerCode           String                             @db.VarChar
+  id                               Int                                @id(map: "PK_b9b0adfad3c6b99229c1e7d4865") @default(autoincrement())
+  shipping_line                    shipping_line[]
+  shipping_method_channels_channel shipping_method_channels_channel[]
+  shipping_method_translation      shipping_method_translation[]
+}
+
+model shipping_method_channels_channel {
+  shippingMethodId Int
+  channelId        Int
+  shipping_method  shipping_method @relation(fields: [shippingMethodId], references: [id], onDelete: Cascade, map: "FK_f0a17b94aa5a162f0d422920eb2")
+  channel          channel         @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_f2b98dfb56685147bed509acc3d")
+
+  @@id([shippingMethodId, channelId], map: "PK_c92b2b226a6ee87888d8dcd8bd6")
+  @@index([shippingMethodId], map: "IDX_f0a17b94aa5a162f0d422920eb")
+  @@index([channelId], map: "IDX_f2b98dfb56685147bed509acc3")
+}
+
+model shipping_method_translation {
+  createdAt       DateTime         @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime         @default(now()) @db.Timestamp(6)
+  languageCode    String           @db.VarChar
+  name            String           @default("") @db.VarChar
+  description     String           @default("") @db.VarChar
+  id              Int              @id(map: "PK_b862a1fac1c6e1fd201eadadbcb") @default(autoincrement())
+  baseId          Int?
+  shipping_method shipping_method? @relation(fields: [baseId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_85ec26c71067ebc84adcd98d1a5")
+
+  @@index([baseId], map: "IDX_85ec26c71067ebc84adcd98d1a")
+}
+
+model stock_level {
+  createdAt        DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime        @default(now()) @db.Timestamp(6)
+  stockOnHand      Int
+  stockAllocated   Int
+  id               Int             @id(map: "PK_88ff7d9dfb57dc9d435e365eb69") @default(autoincrement())
+  productVariantId Int
+  stockLocationId  Int
+  stock_location   stock_location  @relation(fields: [stockLocationId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_984c48572468c69661a0b7b0494")
+  product_variant  product_variant @relation(fields: [productVariantId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_9950eae3180f39c71978748bd08")
+
+  @@unique([productVariantId, stockLocationId], map: "IDX_7fc20486b8cfd33dc84c96e168")
+  @@index([stockLocationId], map: "IDX_984c48572468c69661a0b7b049")
+  @@index([productVariantId], map: "IDX_9950eae3180f39c71978748bd0")
+}
+
+model stock_location {
+  createdAt                       DateTime                          @default(now()) @db.Timestamp(6)
+  updatedAt                       DateTime                          @default(now()) @db.Timestamp(6)
+  name                            String                            @db.VarChar
+  description                     String                            @db.VarChar
+  id                              Int                               @id(map: "PK_adf770067d0df1421f525fa25cc") @default(autoincrement())
+  stock_level                     stock_level[]
+  stock_location_channels_channel stock_location_channels_channel[]
+  stock_movement                  stock_movement[]
+}
+
+model stock_location_channels_channel {
+  stockLocationId Int
+  channelId       Int
+  stock_location  stock_location @relation(fields: [stockLocationId], references: [id], onDelete: Cascade, map: "FK_39513fd02a573c848d23bee587d")
+  channel         channel        @relation(fields: [channelId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ff8150fe54e56a900d5712671a0")
+
+  @@id([stockLocationId, channelId], map: "PK_e6f8b2d61ff58c51505c38da8a0")
+  @@index([stockLocationId], map: "IDX_39513fd02a573c848d23bee587")
+  @@index([channelId], map: "IDX_ff8150fe54e56a900d5712671a")
+}
+
+model stock_movement {
+  createdAt        DateTime         @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime         @default(now()) @db.Timestamp(6)
+  type             String           @db.VarChar
+  quantity         Int
+  id               Int              @id(map: "PK_9fe1232f916686ae8cf00294749") @default(autoincrement())
+  stockLocationId  Int
+  discriminator    String           @db.VarChar
+  productVariantId Int?
+  orderLineId      Int?
+  stock_location   stock_location   @relation(fields: [stockLocationId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_a2fe7172eeae9f1cca86f8f573a")
+  order_line       order_line?      @relation(fields: [orderLineId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_d2c8d5fca981cc820131f81aa83")
+  product_variant  product_variant? @relation(fields: [productVariantId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_e65ba3882557cab4febb54809bb")
+
+  @@index([stockLocationId], map: "IDX_a2fe7172eeae9f1cca86f8f573")
+  @@index([orderLineId], map: "IDX_d2c8d5fca981cc820131f81aa8")
+  @@index([productVariantId], map: "IDX_e65ba3882557cab4febb54809b")
+}
+
+model surcharge {
+  createdAt            DateTime            @default(now()) @db.Timestamp(6)
+  updatedAt            DateTime            @default(now()) @db.Timestamp(6)
+  description          String              @db.VarChar
+  listPriceIncludesTax Boolean
+  sku                  String              @db.VarChar
+  taxLines             String
+  id                   Int                 @id(map: "PK_a62b89257bcc802b5d77346f432") @default(autoincrement())
+  listPrice            Int
+  orderId              Int?
+  orderModificationId  Int?
+  order                order?              @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_154eb685f9b629033bd266df7fa")
+  order_modification   order_modification? @relation(fields: [orderModificationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a49c5271c39cc8174a0535c8088")
+
+  @@index([orderId], map: "IDX_154eb685f9b629033bd266df7f")
+  @@index([orderModificationId], map: "IDX_a49c5271c39cc8174a0535c808")
+}
+
+model tag {
+  createdAt      DateTime         @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime         @default(now()) @db.Timestamp(6)
+  value          String           @db.VarChar
+  id             Int              @id(map: "PK_8e4052373c579afc1471f526760") @default(autoincrement())
+  asset_tags_tag asset_tags_tag[]
+}
+
+model tax_category {
+  createdAt       DateTime          @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime          @default(now()) @db.Timestamp(6)
+  name            String            @db.VarChar
+  isDefault       Boolean           @default(false)
+  id              Int               @id(map: "PK_2432988f825c336d5584a96cded") @default(autoincrement())
+  order_line      order_line[]
+  product_variant product_variant[]
+  tax_rate        tax_rate[]
+}
+
+model tax_rate {
+  createdAt       DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime        @default(now()) @db.Timestamp(6)
+  name            String          @db.VarChar
+  enabled         Boolean
+  value           Decimal         @db.Decimal(5, 2)
+  id              Int             @id(map: "PK_23b71b53f650c0b39e99ccef4fd") @default(autoincrement())
+  categoryId      Int?
+  zoneId          Int?
+  customerGroupId Int?
+  tax_category    tax_category?   @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_7ee3306d7638aa85ca90d672198")
+  customer_group  customer_group? @relation(fields: [customerGroupId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_8b5ab52fc8887c1a769b9276caf")
+  zone            zone?           @relation(fields: [zoneId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_9872fc7de2f4e532fd3230d1915")
+
+  @@index([categoryId], map: "IDX_7ee3306d7638aa85ca90d67219")
+  @@index([customerGroupId], map: "IDX_8b5ab52fc8887c1a769b9276ca")
+  @@index([zoneId], map: "IDX_9872fc7de2f4e532fd3230d191")
+}
+
+model user {
+  createdAt             DateTime                @default(now()) @db.Timestamp(6)
+  updatedAt             DateTime                @default(now()) @db.Timestamp(6)
+  deletedAt             DateTime?               @db.Timestamp(6)
+  identifier            String                  @db.VarChar
+  verified              Boolean                 @default(false)
+  lastLogin             DateTime?               @db.Timestamp(6)
+  id                    Int                     @id(map: "PK_cace4a159ff9f2512dd42373760") @default(autoincrement())
+  administrator         administrator?
+  authentication_method authentication_method[]
+  customer              customer?
+  session               session[]
+  user_roles_role       user_roles_role[]
+}
+
+model user_roles_role {
+  userId Int
+  roleId Int
+  role   role @relation(fields: [roleId], references: [id], onDelete: Cascade, map: "FK_4be2f7adf862634f5f803d246b8")
+  user   user @relation(fields: [userId], references: [id], onDelete: Cascade, map: "FK_5f9286e6c25594c6b88c108db77")
+
+  @@id([userId, roleId], map: "PK_b47cd6c84ee205ac5a713718292")
+  @@index([roleId], map: "IDX_4be2f7adf862634f5f803d246b")
+  @@index([userId], map: "IDX_5f9286e6c25594c6b88c108db7")
+}
+
+model zone {
+  createdAt                                   DateTime              @default(now()) @db.Timestamp(6)
+  updatedAt                                   DateTime              @default(now()) @db.Timestamp(6)
+  name                                        String                @db.VarChar
+  id                                          Int                   @id(map: "PK_bd3989e5a3c3fb5ed546dfaf832") @default(autoincrement())
+  channel_channel_defaultTaxZoneIdTozone      channel[]             @relation("channel_defaultTaxZoneIdTozone")
+  channel_channel_defaultShippingZoneIdTozone channel[]             @relation("channel_defaultShippingZoneIdTozone")
+  tax_rate                                    tax_rate[]
+  zone_members_region                         zone_members_region[]
+}
+
+model zone_members_region {
+  zoneId   Int
+  regionId Int
+  zone     zone   @relation(fields: [zoneId], references: [id], onDelete: Cascade, map: "FK_433f45158e4e2b2a2f344714b22")
+  region   region @relation(fields: [regionId], references: [id], onDelete: Cascade, map: "FK_b45b65256486a15a104e17d495c")
+
+  @@id([zoneId, regionId], map: "PK_fc4eaa2236c4d4f61db0ae3826f")
+  @@index([zoneId], map: "IDX_433f45158e4e2b2a2f344714b2")
+  @@index([regionId], map: "IDX_b45b65256486a15a104e17d495")
+}

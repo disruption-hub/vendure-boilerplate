@@ -1,6 +1,5 @@
 import { vendureDashboardPlugin } from '@vendure/dashboard/vite';
 import { join, resolve } from 'path';
-import { pathToFileURL } from 'url';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -14,7 +13,7 @@ export default defineConfig({
             // to find any plugins which have dashboard extensions, as well as
             // to introspect the GraphQL schema based on any API extensions
             // and custom fields that are configured.
-            vendureConfigPath: pathToFileURL('./src/vendure-config.ts'),
+            vendureConfigPath: resolve(__dirname, './src/vendure-config.ts'),
             // Points to the location of your Vendure server.
             api: { host: 'http://localhost', port: 3000 },
             // When you start the Vite server, your Admin API schema will

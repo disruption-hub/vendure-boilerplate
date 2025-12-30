@@ -27,8 +27,11 @@
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
+    "@prisma/client": "^7.2.0",
     "@vendure/cli": "3.5.0",
+    "@vendure/dashboard": "^3.5.2",
     "concurrently": "9.2.1",
+    "prisma": "^7.2.0",
     "typescript": "5.8.2"
   }
 }
