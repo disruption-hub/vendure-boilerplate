@@ -39,14 +39,7 @@ export function CartTray() {
 
     useEffect(() => {
         if (isCartOpen) {
-            // Fetch cart data whenever tray opens
-            // Extract the query string from the codegen document
-            const queryString = (activeOrderQuery as any)?.loc?.source?.body
-                || (activeOrderQuery as any)?.toString?.()
-                || JSON.stringify(activeOrderQuery);
-
-            console.log('Cart Query String:', queryString);
-            shopClient.request<any>(queryString)
+            shopClient.request<any>(activeOrderQueryString)
                 .then((data: any) => setOrder(data.activeOrder))
                 .catch(err => console.error('Failed to fetch cart', err));
         }
