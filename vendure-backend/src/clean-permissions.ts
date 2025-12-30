@@ -1,7 +1,11 @@
 import { bootstrap, RoleService, Permission, RequestContextService } from '@vendure/core';
+import path from 'path';
 import { config } from './vendure-config';
 
 async function cleanPermissions() {
+    // Override asset volume path to a temporary local one to avoid ENOENT during bootstrap
+    process.env.ASSET_VOLUME_PATH = path.join(process.cwd(), 'static/assets');
+
     const app = await bootstrap(config);
     const roleService = app.get(RoleService);
     const requestContextService = app.get(RequestContextService);
