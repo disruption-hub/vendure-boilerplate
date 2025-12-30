@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/shop-api';
-const apiHost = new URL(apiUrl).hostname;
+let apiHost = 'localhost';
+
+try {
+  apiHost = new URL(apiUrl).hostname;
+} catch (e) {
+  console.warn('[Next Config] Invalid NEXT_PUBLIC_API_URL, falling back to localhost');
+}
 
 const nextConfig: NextConfig = {
   images: {

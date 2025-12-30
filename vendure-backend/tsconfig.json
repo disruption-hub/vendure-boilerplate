@@ -12,6 +12,7 @@
     "sourceMap": false,
     "skipLibCheck": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "baseUrl": "./"
   },
   "exclude": [
@@ -20,13 +21,14 @@
     "src/plugins/**/ui/*",
     "admin-ui",
     "src/plugins/**/dashboard/*",
-    "src/gql/*",
-    "vite.*.*ts"
+    "src/gql/*"
   ],
   "ts-node": {
     "files": true
   },
-  "references": [{
-    "path": "./tsconfig.dashboard.json"
-  }]
+  "references": [
+    {
+      "path": "./tsconfig.dashboard.json"
+    }
+  ]
 }
