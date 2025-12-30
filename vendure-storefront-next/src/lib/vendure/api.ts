@@ -80,8 +80,12 @@ export async function query<TResult, TVariables>(
         });
     } catch (e) {
         // Handle connection errors (like ECONNREFUSED) gracefully during build
-        if (process.env.NEXT_PHASE === 'phase-production-build' || process.env.NODE_ENV === 'production') {
-            console.warn(`[Vendure API] Fetch failed to ${VENDURE_API_URL}: ${(e as Error).message}. Returning empty data to allow build to continue.`);
+        const isBuild = process.env.NEXT_PHASE === 'phase-production-build' ||
+            process.env.NODE_ENV === 'production' ||
+            process.env.CI === 'true';
+
+        if (isBuild) {
+            console.warn(`[Vendure API Build-time Fallback] Fetch failed to ${VENDURE_API_URL}. Reason: ${(e as Error).message}`);
             return { data: {} as TResult };
         }
         throw e;

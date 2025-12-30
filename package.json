@@ -14,5 +14,17 @@
     },
     "devDependencies": {
         "concurrently": "9.2.1"
+    },
+    "pnpm": {
+        "onlyBuiltDependencies": [
+            "@apollo/protobufjs",
+            "@nestjs/core",
+            "@prisma/engines",
+            "@swc/core",
+            "bcrypt",
+            "esbuild",
+            "prisma",
+            "sharp"
+        ]
     }
 }
