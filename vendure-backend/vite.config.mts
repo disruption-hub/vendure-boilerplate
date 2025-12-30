@@ -3,7 +3,6 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, type PluginOption } from 'vite';
 
-// @ts-ignore
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
@@ -28,7 +27,7 @@ export default defineConfig({
             // These types can be used in your dashboard extensions to provide
             // type safety when writing queries and mutations.
             gqlOutputPath: resolve(__dirname, 'src/gql'),
-        }) as any,
+        }),
     ],
     resolve: {
         alias: {
