@@ -3,7 +3,7 @@ import { config } from './vendure-config';
 import fs from 'fs';
 import path from 'path';
 
-const assetDir = (config.plugins?.find(p => (p as any).options?.assetUploadDir) as any)?.options?.assetUploadDir;
+const assetDir = process.env.ASSET_VOLUME_PATH || path.resolve(process.cwd(), 'static/assets');
 if (assetDir) {
     if (!fs.existsSync(assetDir)) {
         console.log(`[Server] Creating asset directory: ${assetDir}`);
