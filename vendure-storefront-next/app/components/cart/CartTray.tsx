@@ -4,9 +4,10 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useCart } from '@/app/providers/cart-context';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { request } from 'graphql-request';
+import { shopClient } from '@/app/providers/cart-data.client';
 import { API_URL } from '@/app/constants';
 import { graphql } from '@/app/providers/gql';
+import { print } from 'graphql';
 
 const activeOrderQuery = graphql(`
   query ActiveOrderInTray {
@@ -41,7 +42,8 @@ export function CartTray() {
     useEffect(() => {
         if (isCartOpen) {
             // Fetch cart data whenever tray opens
-            request(API_URL, activeOrderQuery as any)
+            const query = typeof activeOrderQuery === 'string' ? activeOrderQuery : print(activeOrderQuery);
+            shopClient.request<any>(query)
                 .then((data: any) => setOrder(data.activeOrder))
                 .catch(err => console.error('Failed to fetch cart', err));
         }

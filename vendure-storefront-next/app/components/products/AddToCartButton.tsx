@@ -16,12 +16,21 @@ export function AddToCartButton({ productVariantId }: { productVariantId?: strin
         }
         setLoading(true);
         try {
-            const result = await addItemToOrder(productVariantId, 1);
+            const result: any = await addItemToOrder(productVariantId, 1);
             console.log('AddToCart Result:', result);
-            router.refresh();
-            setIsCartOpen(true);
+
+            if (result?.__typename === 'Order') {
+                router.refresh();
+                setIsCartOpen(true);
+            } else if (result?.message) {
+                console.error('Vendure Error:', result.message);
+                alert(`Error: ${result.message}`);
+            } else {
+                console.error('Unknown AddToCart Result:', result);
+            }
         } catch (error) {
-            console.error('Failed to add to cart', error);
+            console.error('Failed to add to cart (Network/System Error)', error);
+            alert('Failed to add to cart. Please check your connection or try again later.');
         } finally {
             setLoading(false);
         }

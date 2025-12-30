@@ -26,19 +26,21 @@ const addItemToOrderMutation = graphql(`
 `);
 
 // Client-side request helper with credentials
-const client = new GraphQLClient(API_URL, {
+export const shopClient = new GraphQLClient(API_URL, {
   fetch: (url, options) => fetch(url, { ...options, credentials: 'include' }),
 });
 
 export async function addItemToOrder(productVariantId: string, quantity: number) {
   const query = typeof addItemToOrderMutation === 'string' ? addItemToOrderMutation : print(addItemToOrderMutation);
-  const response = await client.rawRequest(query, { productVariantId, quantity });
+  const response = await shopClient.rawRequest<any>(query, { productVariantId, quantity });
 
   // Capture token if returned in headers (common when using 'bearer' or when cookie is set but we want to be sure)
   const token = response.headers.get('vendure-auth-token');
   if (token) {
-    document.cookie = `vendure-auth-token=${token}; path=/; SameSite=Lax`;
+    const isProd = !window.location.hostname.includes('localhost');
+    const cookieSuffix = isProd ? '; SameSite=None; Secure' : '; SameSite=Lax';
+    document.cookie = `vendure-auth-token=${token}; path=/${cookieSuffix}`;
   }
 
-  return response.data;
+  return response.data?.addItemToOrder;
 }
