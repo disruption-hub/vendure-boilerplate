@@ -1,8 +1,9 @@
+```typescript
 import { LogtoNextConfig, UserScope } from '@logto/next';
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL ||
+const baseUrl = (process.env.NEXT_PUBLIC_APP_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
-    'https://vendure-boilerplate-vendure-storefront-next.vercel.app';
+    'https://vendure-boilerplate-vendure-storefront-next.vercel.app').replace(/\/$/, '');
 
 const isBuild = process.env.NEXT_PHASE === 'phase-production-build' || process.env.PRISMA_GENERATING === 'true';
 

@@ -19,8 +19,6 @@ const nextConfig: NextConfig = {
         ],
     },
     experimental: {
-        rootParams: true,
-        useCache: true
     },
     eslint: {
         ignoreDuringBuilds: true
