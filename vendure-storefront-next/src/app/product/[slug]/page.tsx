@@ -32,7 +32,7 @@ export async function generateMetadata({
 }: PageProps<'/product/[slug]'>): Promise<Metadata> {
     const { slug } = await params;
     const result = await getProductData(slug);
-    const product = result.data.product;
+    const product = result.data?.product;
 
     if (!product) {
         return {
@@ -65,13 +65,13 @@ export async function generateMetadata({
     };
 }
 
-export default async function ProductDetailPage({params, searchParams}: PageProps<'/product/[slug]'>) {
+export default async function ProductDetailPage({ params, searchParams }: PageProps<'/product/[slug]'>) {
     const { slug } = await params;
     const searchParamsResolved = await searchParams;
 
     const result = await getProductData(slug);
 
-    const product = result.data.product;
+    const product = result.data?.product;
 
     if (!product) {
         notFound();

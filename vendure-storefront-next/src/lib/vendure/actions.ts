@@ -1,10 +1,10 @@
-import {query} from './api';
-import {GetActiveCustomerQuery} from './queries';
-import {getActiveChannelCached} from './cached';
-import {cache} from "react";
-import {readFragment} from "@/graphql";
-import {ActiveCustomerFragment} from "@/lib/vendure/fragments";
-import {getAuthToken} from "@/lib/auth";
+import { query } from './api';
+import { GetActiveCustomerQuery } from './queries';
+import { getActiveChannelCached } from './cached';
+import { cache } from "react";
+import { readFragment } from "@/graphql";
+import { ActiveCustomerFragment } from "@/lib/vendure/fragments";
+import { getAuthToken } from "@/lib/auth";
 
 
 export const getActiveCustomer = cache(async () => {
@@ -12,7 +12,7 @@ export const getActiveCustomer = cache(async () => {
     const result = await query(GetActiveCustomerQuery, undefined, {
         token
     });
-    return readFragment(ActiveCustomerFragment, result.data.activeCustomer);
+    return result.data?.activeCustomer ? readFragment(ActiveCustomerFragment, result.data.activeCustomer) : null;
 })
 
 export const getActiveChannel = getActiveChannelCached;

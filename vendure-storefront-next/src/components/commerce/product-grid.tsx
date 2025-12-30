@@ -1,9 +1,9 @@
-import {ResultOf} from '@/graphql';
-import {ProductCard} from './product-card';
-import {Pagination} from '@/components/shared/pagination';
-import {SortDropdown} from './sort-dropdown';
-import {SearchProductsQuery} from "@/lib/vendure/queries";
-import {getActiveChannel} from '@/lib/vendure/actions';
+import { ResultOf } from '@/graphql';
+import { ProductCard } from './product-card';
+import { Pagination } from '@/components/shared/pagination';
+import { SortDropdown } from './sort-dropdown';
+import { SearchProductsQuery } from "@/lib/vendure/queries";
+import { getActiveChannel } from '@/lib/vendure/actions';
 
 interface ProductGridProps {
     productDataPromise: Promise<{
@@ -14,16 +14,16 @@ interface ProductGridProps {
     take: number;
 }
 
-export async function ProductGrid({productDataPromise, currentPage, take}: ProductGridProps) {
+export async function ProductGrid({ productDataPromise, currentPage, take }: ProductGridProps) {
     const [result, channel] = await Promise.all([
         productDataPromise,
         getActiveChannel(),
     ]);
 
-    const searchResult = result.data.search;
-    const totalPages = Math.ceil(searchResult.totalItems / take);
+    const searchResult = result.data?.search;
+    const totalPages = searchResult ? Math.ceil(searchResult.totalItems / take) : 0;
 
-    if (!searchResult.items.length) {
+    if (!searchResult || !searchResult.items.length) {
         return (
             <div className="text-center py-12">
                 <p className="text-muted-foreground">No products found</p>
@@ -35,19 +35,19 @@ export async function ProductGrid({productDataPromise, currentPage, take}: Produ
         <div className="space-y-8">
             <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
-                    {searchResult.totalItems} {searchResult.totalItems === 1 ? 'product' : 'products'}
+                    {searchResult?.totalItems || 0} {(searchResult?.totalItems || 0) === 1 ? 'product' : 'products'}
                 </p>
-                <SortDropdown/>
+                <SortDropdown />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {searchResult.items.map((product, i) => (
-                    <ProductCard key={'product-grid-item' + i} product={product}/>
+                    <ProductCard key={'product-grid-item' + i} product={product} />
                 ))}
             </div>
 
             {totalPages > 1 && (
-                <Pagination currentPage={currentPage} totalPages={totalPages}/>
+                <Pagination currentPage={currentPage} totalPages={totalPages} />
             )}
         </div>
     );

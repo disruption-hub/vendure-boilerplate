@@ -6,7 +6,7 @@ import { ResultOf } from '@/graphql';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import {SearchProductsQuery} from "@/lib/vendure/queries";
+import { SearchProductsQuery } from "@/lib/vendure/queries";
 
 interface FacetFiltersProps {
     productDataPromise: Promise<{
@@ -15,9 +15,9 @@ interface FacetFiltersProps {
     }>;
 }
 
-export  function FacetFilters({ productDataPromise }: FacetFiltersProps) {
+export function FacetFilters({ productDataPromise }: FacetFiltersProps) {
     const result = use(productDataPromise);
-    const searchResult = result.data.search;
+    const searchResult = result.data?.search;
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -29,7 +29,7 @@ export  function FacetFilters({ productDataPromise }: FacetFiltersProps) {
         values: Array<{ id: string; name: string; count: number }>;
     }
 
-    const facetGroups = searchResult.facetValues.reduce((acc: Record<string, FacetGroup>, item) => {
+    const facetGroups = searchResult?.facetValues?.reduce((acc: Record<string, FacetGroup>, item) => {
         const facetName = item.facetValue.facet.name;
         if (!acc[facetName]) {
             acc[facetName] = {
@@ -44,7 +44,7 @@ export  function FacetFilters({ productDataPromise }: FacetFiltersProps) {
             count: item.count
         });
         return acc;
-    }, {});
+    }, {}) || {};
 
     const selectedFacets = searchParams.getAll('facets');
 
