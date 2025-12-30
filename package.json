@@ -9,6 +9,9 @@
         "start": "npm run start:backend",
         "start:backend": "cd vendure-backend && npm start"
     },
+    "engines": {
+        "node": ">=20.0.0"
+    },
     "devDependencies": {
         "concurrently": "9.2.1"
     }
