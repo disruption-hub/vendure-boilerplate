@@ -66,18 +66,32 @@ export async function query<TResult, TVariables>(
     // Set the channel token header (use provided channelToken or default)
     headers[VENDURE_CHANNEL_TOKEN_HEADER] = channelToken || VENDURE_CHANNEL_TOKEN;
 
-    const response = await fetch(VENDURE_API_URL!, {
-        ...fetchOptions,
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-            query: print(document),
-            variables: variables || {},
-        }),
-        ...(tags && { next: { tags } }),
-    });
+    let response: Response;
+    try {
+        response = await fetch(VENDURE_API_URL!, {
+            ...fetchOptions,
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+                query: print(document),
+                variables: variables || {},
+            }),
+            ...(tags && { next: { tags } }),
+        });
+    } catch (e) {
+        // Handle connection errors (like ECONNREFUSED) gracefully during build
+        if (process.env.NEXT_PHASE === 'phase-production-build' || process.env.NODE_ENV === 'production') {
+            console.warn(`[Vendure API] Fetch failed to ${VENDURE_API_URL}: ${(e as Error).message}. Returning empty data to allow build to continue.`);
+            return { data: {} as TResult };
+        }
+        throw e;
+    }
 
     if (!response.ok) {
+        if (process.env.NEXT_PHASE === 'phase-production-build') {
+            console.warn(`[Vendure API] HTTP ${response.status} from ${VENDURE_API_URL} during build. Returning empty data.`);
+            return { data: {} as TResult };
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
