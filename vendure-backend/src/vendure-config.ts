@@ -41,6 +41,13 @@ const emailPluginOptions = isDev || !process.env.SENDGRID_API_KEY ? {
 };
 
 export const config: VendureConfig = {
+    adminUi: {
+        branding: {
+            smallLogoPath: '/static/dishub-logo.png',
+            largeLogoPath: '/static/dishub-logo.png',
+            brandName: 'DISHUB COMMERCE',
+        },
+    },
     apiOptions: {
         // hostname: process.env.PUBLIC_DOMAIN,
         port: +(process.env.PORT || 3000),
