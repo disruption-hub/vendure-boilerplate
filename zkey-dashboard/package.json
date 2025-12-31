@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --port 3003",
     "build": "next build",
-    "postinstall": "prisma generate",
+    "postinstall": "DATABASE_URL=${DATABASE_URL:-postgresql://user:pass@localhost:5432/db} prisma generate",
     "start": "next start",
     "lint": "eslint"
   },
