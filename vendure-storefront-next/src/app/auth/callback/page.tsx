@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { OIDCClient } from '@/lib/oidc-client';
@@ -7,7 +8,7 @@ import { useAuth } from '@/components/auth/auth-provider';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function AuthCallbackPage() {
+function CallbackContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { handleOIDCCallback } = useAuth();
@@ -86,5 +87,20 @@ export default function AuthCallbackPage() {
                 <p className="text-brand-slate text-sm">Please wait while we authenticate you...</p>
             </div>
         </div>
+    );
+}
+
+export default function AuthCallbackPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex flex-col items-center justify-center bg-brand-blue py-12 px-4">
+                <div className="glass rounded-3xl p-8 border border-white/10 max-w-md w-full text-center">
+                    <Loader2 className="w-12 h-12 animate-spin text-brand-gold mx-auto mb-4" />
+                    <h1 className="text-2xl font-bold text-white mb-2">Loading...</h1>
+                </div>
+            </div>
+        }>
+            <CallbackContent />
+        </Suspense>
     );
 }
