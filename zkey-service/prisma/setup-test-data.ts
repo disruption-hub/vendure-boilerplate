@@ -24,14 +24,29 @@ async function main() {
 
         // Create Vendure Storefront Application
         const app = await prisma.application.upsert({
-            where: { clientId: 'vendure-storefront' },
-            update: {},
+            where: { clientId: 'default-client-id' },
+            update: {
+                redirectUris: [
+                    'http://localhost:3001/auth/callback',
+                    'https://vendure-storefront-next.vercel.app/auth/callback'
+                ],
+                corsOrigins: [
+                    'http://localhost:3001',
+                    'https://vendure-storefront-next.vercel.app'
+                ],
+            },
             create: {
-                name: 'Vendure Storefront',
-                clientId: 'vendure-storefront',
+                name: 'Default Storefront',
+                clientId: 'default-client-id',
                 tenantId: tenant.id,
-                redirectUris: ['http://localhost:3001/auth/callback'],
-                corsOrigins: ['http://localhost:3001'],
+                redirectUris: [
+                    'http://localhost:3001/auth/callback',
+                    'https://vendure-storefront-next.vercel.app/auth/callback'
+                ],
+                corsOrigins: [
+                    'http://localhost:3001',
+                    'https://vendure-storefront-next.vercel.app'
+                ],
                 authMethods: { password: true, otp: true, wallet: true },
             },
         });
