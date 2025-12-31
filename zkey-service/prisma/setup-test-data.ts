@@ -32,7 +32,9 @@ async function main() {
                 ],
                 corsOrigins: [
                     'http://localhost:3001',
-                    'https://vendure-storefront-next.vercel.app'
+                    'https://vendure-storefront-next.vercel.app',
+                    'https://zkey-dashboard.vercel.app',
+                    'https://zkey-dashboard-kjhldoy4j-matmaxworlds-projects.vercel.app'
                 ],
             },
             create: {
