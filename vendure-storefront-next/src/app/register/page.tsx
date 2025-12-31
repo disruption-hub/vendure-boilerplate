@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useAuth } from '@/components/auth/auth-provider';
 import { useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 
-export default function RegisterPage() {
+function RegisterContent() {
     const { initiateOIDCLogin } = useAuth();
     const searchParams = useSearchParams();
     const redirectPath = searchParams.get('redirect');
@@ -27,5 +27,17 @@ export default function RegisterPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex flex-col items-center justify-center bg-brand-blue py-12 px-4 sm:px-6 lg:px-8">
+                <Loader2 className="w-12 h-12 animate-spin text-brand-gold" />
+            </div>
+        }>
+            <RegisterContent />
+        </Suspense>
     );
 }

@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useAuth } from '@/components/auth/auth-provider';
 import { useSearchParams } from 'next/navigation';
 import { Loader2, UserPlus, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SignUpForm } from './sign-up-form';
 
-export default function SignUpPage() {
+function SignUpContent() {
     const { initiateOIDCLogin } = useAuth();
     const searchParams = useSearchParams();
     const redirectPath = searchParams.get('redirect');
@@ -82,5 +82,17 @@ export default function SignUpPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function SignUpPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex flex-col items-center justify-center bg-brand-blue py-12 px-4 sm:px-6 lg:px-8">
+                <Loader2 className="w-12 h-12 animate-spin text-brand-gold" />
+            </div>
+        }>
+            <SignUpContent />
+        </Suspense>
     );
 }
