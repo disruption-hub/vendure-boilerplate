@@ -126,7 +126,7 @@ export default function CreateApplicationForm({ tenants }: { tenants: any[] }) {
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-slate-700">Mobile Labs API Key</label>
                         <input
-                            name="mobileLabsApiKey"
+                            name="labsmobileApiKey"
                             type="password"
                             placeholder="Leave empty to use tenant default"
                             className="w-full px-4 py-2 bg-white border rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
@@ -135,7 +135,7 @@ export default function CreateApplicationForm({ tenants }: { tenants: any[] }) {
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-slate-700">Sender ID</label>
                         <input
-                            name="mobileLabsSenderId"
+                            name="labsmobileSenderId"
                             placeholder="APP_SMS"
                             className="w-full px-4 py-2 bg-white border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                         />

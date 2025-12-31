@@ -36,6 +36,8 @@ export async function createApplication(formData: FormData) {
                 brevoApiKey: formData.get("brevoApiKey") as string || null,
                 brevoSenderEmail: formData.get("brevoSenderEmail") as string || null,
                 brevoSenderName: formData.get("brevoSenderName") as string || null,
+                labsmobileApiKey: formData.get("labsmobileApiKey") as string || null,
+                labsmobileSenderId: formData.get("labsmobileSenderId") as string || null,
             },
         });
     } catch (error: any) {

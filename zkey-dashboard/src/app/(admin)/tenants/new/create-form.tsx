@@ -97,16 +97,16 @@ export default function CreateTenantForm() {
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-slate-700">Mobile Labs API Key</label>
                         <input
-                            name="mobileLabsApiKey"
+                            name="labsmobileApiKey"
                             type="password"
-                            placeholder="Your API Key"
+                            placeholder="Your LabsMobile API Key"
                             className="w-full px-4 py-2 bg-white border rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                         />
                     </div>
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-slate-700">Sender ID</label>
                         <input
-                            name="mobileLabsSenderId"
+                            name="labsmobileSenderId"
                             placeholder="ZKEY"
                             className="w-full px-4 py-2 bg-white border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                         />
