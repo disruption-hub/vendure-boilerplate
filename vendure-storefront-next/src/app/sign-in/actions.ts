@@ -1,10 +1,11 @@
 'use server';
 
-import {mutate} from '@/lib/vendure/api';
-import {LoginMutation, LogoutMutation} from '@/lib/vendure/mutations';
-import {removeAuthToken, setAuthToken} from '@/lib/auth';
-import {redirect} from "next/navigation";
-import {revalidatePath} from "next/cache";
+import { mutate } from '@/lib/vendure/api';
+import { LoginMutation, LogoutMutation } from '@/lib/vendure/mutations';
+import { removeAuthToken, setAuthToken, setZKeyAuthToken } from '@/lib/auth';
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import * as zkey from '@/lib/zkey';
 
 export async function loginAction(prevState: { error?: string } | undefined, formData: FormData) {
     const username = formData.get('username') as string;
@@ -46,4 +47,32 @@ export async function logoutAction() {
     await removeAuthToken();
 
     redirect('/')
+}
+
+export async function requestOtpAction(identifier: string, type: 'email' | 'phone') {
+    return zkey.requestOtp(identifier, type);
+}
+
+export async function verifyOtpAction(identifier: string, code: string) {
+    const res = await zkey.verifyOtp(identifier, code);
+    if (res.accessToken) {
+        await setZKeyAuthToken(res.accessToken);
+        revalidatePath('/', 'layout');
+        return { success: true };
+    }
+    return { success: false, error: res.message || 'Verification failed' };
+}
+
+export async function getWalletNonceAction(address: string) {
+    return zkey.getWalletNonce(address);
+}
+
+export async function loginWithWalletAction(address: string, signature: string) {
+    const res = await zkey.loginWithWallet(address, signature);
+    if (res.accessToken) {
+        await setZKeyAuthToken(res.accessToken);
+        revalidatePath('/', 'layout');
+        return { success: true };
+    }
+    return { success: false, error: res.message || 'Login failed' };
 }

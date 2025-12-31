@@ -385,6 +385,7 @@ export const UpdateCustomerMutation = graphql(`
             firstName
             lastName
             emailAddress
+            phoneNumber
         }
     }
 `);

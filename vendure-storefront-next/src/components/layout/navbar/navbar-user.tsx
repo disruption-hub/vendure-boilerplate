@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,9 +14,14 @@ import Link from "next/link";
 import { useAuth } from "@/components/auth/auth-provider";
 
 export function NavbarUser() {
-    const { isAuthenticated, user, signIn, signOut, isLoading } = useAuth();
+    const { isAuthenticated, user, signOut, isLoading, initiateOIDCLogin } = useAuth();
+    const [mounted, setMounted] = useState(false);
 
-    if (isLoading) {
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted || isLoading) {
         return (
             <Button variant="ghost" disabled>
                 <User className="h-5 w-5 animate-pulse" />
@@ -25,7 +31,7 @@ export function NavbarUser() {
 
     if (!isAuthenticated || !user) {
         return (
-            <Button variant="ghost" onClick={signIn}>
+            <Button variant="ghost" onClick={() => initiateOIDCLogin()}>
                 Sign In
             </Button>
         );
@@ -36,7 +42,7 @@ export function NavbarUser() {
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost">
                     <User className="h-5 w-5 mr-2" />
-                    {user.name || user.email || 'Account'}
+                    {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.primaryEmail || 'Account'}
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">

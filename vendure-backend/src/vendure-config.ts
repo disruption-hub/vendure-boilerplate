@@ -12,6 +12,7 @@ import { StripePlugin } from '@vendure/payments-plugin/package/stripe';
 import 'dotenv/config';
 import path from 'path';
 import { LogtoAuthenticationStrategy } from './plugins/logto/logto-auth-strategy';
+import { ZKeyAuthenticationStrategy } from './plugins/zkey/zkey-auth-strategy';
 
 const isDev: Boolean = process.env.APP_ENV === 'dev';
 
@@ -72,9 +73,10 @@ export const config: VendureConfig = {
     },
     authOptions: {
         tokenMethod: ['bearer', 'cookie'],
-        ...(process.env.LOGTO_ENDPOINT ? {
-            shopAuthenticationStrategy: [new LogtoAuthenticationStrategy()],
-        } : {}),
+        shopAuthenticationStrategy: [
+            new ZKeyAuthenticationStrategy(),
+            ...(process.env.LOGTO_ENDPOINT ? [new LogtoAuthenticationStrategy()] : []),
+        ],
         superadminCredentials: {
             identifier: process.env.SUPERADMIN_USERNAME,
             password: process.env.SUPERADMIN_PASSWORD,

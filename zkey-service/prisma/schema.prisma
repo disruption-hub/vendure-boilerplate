@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Tenant {
+  id           String        @id @default(cuid())
+  name         String
+  slug         String        @unique
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  brevoApiKey       String?
+  brevoSenderEmail  String?
+  brevoSenderName   String?
+  labsmobileApiKey   String?
+  labsmobileUser     String?
+  labsmobileUrl      String?
+  labsmobileSenderId String?
+  applications Application[]
+  users        User[]
+
+  @@map("tenants")
+}
+
+model Application {
+  id           String   @id @default(cuid())
+  name         String
+  clientId     String   @unique @default(uuid())
+  clientSecret String?
+  tenantId     String
+  redirectUris String[]
+  postLogoutRedirectUris String[]
+  corsOrigins  String[]
+  authMethods  Json?    @default("{\"password\": true, \"otp\": false, \"wallet\": false}")
+  brevoApiKey       String?
+  brevoSenderEmail  String?
+  brevoSenderName   String?
+  labsmobileApiKey   String?
+  labsmobileUser     String?
+  labsmobileUrl      String?
+  labsmobileSenderId String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  tenant       Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@map("applications")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  firstName     String?
+  lastName      String?
+  primaryEmail  String?        @unique
+  emailVerified Boolean        @default(false)
+  phoneNumber   String?        @unique
+  phoneVerified Boolean        @default(false)
+  passwordHash  String?
+  avatar        String?
+  customData    Json?
+  tenantId      String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  refreshTokens RefreshToken[]
+  identities    UserIdentity[]
+  tenant        Tenant?        @relation(fields: [tenantId], references: [id])
+
+  @@map("users")
+}
+
+model UserIdentity {
+  id            String   @id @default(cuid())
+  userId        String
+  provider      String
+  providerId    String
+  profileResult Json?
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerId])
+  @@map("user_identities")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  resource  String?
+  scopes    String[]
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("refresh_tokens")
+}
+
+model Interaction {
+  id        String   @id @default(cuid())
+  details   Json
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("interactions")
+}

@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import LogtoClient from '@logto/next/edge';
-import { logtoConfig } from './lib/auth-config';
-
-const client = new LogtoClient(logtoConfig);
 
 export async function middleware(request: NextRequest) {
-    const { isAuthenticated } = await client.getLogtoContext(request);
+    const token = request.cookies.get('zkey_token')?.value;
 
     const protectedPaths = ['/account', '/checkout', '/orders'];
     const path = request.nextUrl.pathname;
@@ -14,13 +10,13 @@ export async function middleware(request: NextRequest) {
         request.headers.get('purpose') === 'prefetch';
     const isRSC = request.headers.get('rsc') === '1';
 
-    if (protectedPaths.some((p) => path.startsWith(p)) && !isAuthenticated) {
+    if (protectedPaths.some((p) => path.startsWith(p)) && !token) {
         if (isPrefetch || isRSC) {
             // For prefetch/RSC requests, don't redirect (causes CORS issues).
             // Return a 401 and let the actual navigation trigger the redirect.
             return new NextResponse(null, { status: 401 });
         }
-        const signInUrl = new URL('/api/auth/sign-in', request.url);
+        const signInUrl = new URL('/sign-in', request.url);
         signInUrl.searchParams.set('redirectUrl', path); // preserve intended destination
         return NextResponse.redirect(signInUrl);
     }

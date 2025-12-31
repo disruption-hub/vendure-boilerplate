@@ -23,12 +23,15 @@ export default async function CheckoutPage(_props: PageProps<'/checkout'>) {
     // Check if user is authenticated
     const customer = await getActiveCustomer();
     if (!customer) {
-        redirect('/sign-in?redirectTo=/checkout');
+        redirect('/sign-in');
     }
 
     const [orderRes, addressesRes, countries, shippingMethodsRes, paymentMethodsRes] =
         await Promise.all([
-            query(GetActiveOrderForCheckoutQuery, {}, { useAuthToken: true }),
+            query(GetActiveOrderForCheckoutQuery, {}, {
+                useAuthToken: true,
+                tags: ['cart', 'active-order']
+            }),
             query(GetCustomerAddressesQuery, {}, { useAuthToken: true }),
             getAvailableCountriesCached(),
             query(GetEligibleShippingMethodsQuery, {}, { useAuthToken: true }),

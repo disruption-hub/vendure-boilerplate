@@ -44,7 +44,10 @@ export default async function OrdersPage(props: PageProps<'/account/orders'>) {
                 },
             },
         },
-        { useAuthToken: true }
+        {
+            useAuthToken: true,
+            tags: ['orders', 'customer']
+        }
     );
 
     if (!data.activeCustomer) {

@@ -1,9 +1,13 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Minus, Plus, X } from 'lucide-react';
+import { Minus, Plus, X, Loader2 } from 'lucide-react';
 import { Price } from '@/components/commerce/price';
 import { removeFromCart, adjustQuantity } from './actions';
+import { useTransition } from 'react';
+import { cn, getVendureImageUrl } from '@/lib/utils';
 
 type ActiveOrder = {
     id: string;
@@ -28,7 +32,9 @@ type ActiveOrder = {
     }>;
 };
 
-export async function CartItems({ activeOrder }: { activeOrder: ActiveOrder | null }) {
+export function CartItems({ activeOrder }: { activeOrder: ActiveOrder | null }) {
+    const [isPending, startTransition] = useTransition();
+
     if (!activeOrder || activeOrder.lines.length === 0) {
         return (
             <div className="container mx-auto px-4 py-16">
@@ -45,12 +51,24 @@ export async function CartItems({ activeOrder }: { activeOrder: ActiveOrder | nu
         );
     }
 
+    const handleAdjustQuantity = (lineId: string, quantity: number) => {
+        startTransition(async () => {
+            await adjustQuantity(lineId, quantity);
+        });
+    };
+
+    const handleRemoveFromCart = (lineId: string) => {
+        startTransition(async () => {
+            await removeFromCart(lineId);
+        });
+    };
+
     return (
-        <div className="lg:col-span-2 space-y-4">
+        <div className={cn("lg:col-span-2 space-y-4 transition-opacity", isPending && "opacity-60 pointer-events-none")}>
             {activeOrder.lines.map((line) => (
                 <div
                     key={line.id}
-                    className="flex flex-col sm:flex-row gap-4 p-4 border rounded-lg bg-card"
+                    className="flex flex-col sm:flex-row gap-4 p-4 border rounded-lg bg-card relative"
                 >
                     {line.productVariant.product.featuredAsset && (
                         <Link
@@ -58,7 +76,7 @@ export async function CartItems({ activeOrder }: { activeOrder: ActiveOrder | nu
                             className="flex-shrink-0"
                         >
                             <Image
-                                src={line.productVariant.product.featuredAsset.preview}
+                                src={getVendureImageUrl(line.productVariant.product.featuredAsset.preview)}
                                 alt={line.productVariant.name}
                                 width={120}
                                 height={120}
@@ -87,58 +105,45 @@ export async function CartItems({ activeOrder }: { activeOrder: ActiveOrder | nu
                         </p>
 
                         <div className="flex items-center gap-3 mt-4">
-                            <div className="flex items-center gap-2 border rounded-md">
-                                <form
-                                    action={async () => {
-                                        'use server';
-                                        await adjustQuantity(line.id, Math.max(1, line.quantity - 1));
-                                    }}
-                                >
-                                    <Button
-                                        type="submit"
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-9 w-9 rounded-none"
-                                        disabled={line.quantity <= 1}
-                                    >
-                                        <Minus className="h-4 w-4" />
-                                    </Button>
-                                </form>
-
-                                <span className="w-12 text-center font-medium">{line.quantity}</span>
-
-                                <form
-                                    action={async () => {
-                                        'use server';
-                                        await adjustQuantity(line.id, line.quantity + 1);
-                                    }}
-                                >
-                                    <Button
-                                        type="submit"
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-9 w-9 rounded-none"
-                                    >
-                                        <Plus className="h-4 w-4" />
-                                    </Button>
-                                </form>
-                            </div>
-
-                            <form
-                                action={async () => {
-                                    'use server';
-                                    await removeFromCart(line.id);
-                                }}
-                            >
+                            <div className="flex items-center gap-2 border rounded-md px-1">
                                 <Button
-                                    type="submit"
                                     variant="ghost"
                                     size="icon"
-                                    className="h-9 w-9 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                    className="h-8 w-8"
+                                    disabled={line.quantity <= 1 || isPending}
+                                    onClick={() => handleAdjustQuantity(line.id, line.quantity - 1)}
                                 >
-                                    <X className="h-5 w-5" />
+                                    <Minus className="h-4 w-4" />
                                 </Button>
-                            </form>
+
+                                <span className="w-8 text-center font-medium text-sm">
+                                    {line.quantity}
+                                </span>
+
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8"
+                                    disabled={isPending}
+                                    onClick={() => handleAdjustQuantity(line.id, line.quantity + 1)}
+                                >
+                                    <Plus className="h-4 w-4" />
+                                </Button>
+                            </div>
+
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                disabled={isPending}
+                                onClick={() => handleRemoveFromCart(line.id)}
+                            >
+                                <X className="h-5 w-5" />
+                            </Button>
+
+                            {isPending && (
+                                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                            )}
 
                             <div className="sm:hidden ml-auto">
                                 <p className="font-semibold text-lg">

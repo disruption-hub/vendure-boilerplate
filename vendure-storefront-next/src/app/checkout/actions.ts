@@ -1,6 +1,6 @@
 'use server';
 
-import {mutate} from '@/lib/vendure/api';
+import { mutate } from '@/lib/vendure/api';
 import {
     SetOrderShippingAddressMutation,
     SetOrderBillingAddressMutation,
@@ -9,8 +9,8 @@ import {
     CreateCustomerAddressMutation,
     TransitionOrderToStateMutation,
 } from '@/lib/vendure/mutations';
-import {revalidatePath, updateTag} from 'next/cache';
-import {redirect} from "next/navigation";
+import { revalidatePath, revalidateTag } from 'next/cache';
+import { redirect } from "next/navigation";
 
 interface AddressInput {
     fullName: string;
@@ -30,8 +30,8 @@ export async function setShippingAddress(
 ) {
     const shippingResult = await mutate(
         SetOrderShippingAddressMutation,
-        {input: shippingAddress},
-        {useAuthToken: true}
+        { input: shippingAddress },
+        { useAuthToken: true }
     );
 
     if (shippingResult.data.setOrderShippingAddress.__typename !== 'Order') {
@@ -41,8 +41,8 @@ export async function setShippingAddress(
     if (useSameForBilling) {
         await mutate(
             SetOrderBillingAddressMutation,
-            {input: shippingAddress},
-            {useAuthToken: true}
+            { input: shippingAddress },
+            { useAuthToken: true }
         );
     }
 
@@ -52,8 +52,8 @@ export async function setShippingAddress(
 export async function setShippingMethod(shippingMethodId: string) {
     const result = await mutate(
         SetOrderShippingMethodMutation,
-        {shippingMethodId: [shippingMethodId]},
-        {useAuthToken: true}
+        { shippingMethodId: [shippingMethodId] },
+        { useAuthToken: true }
     );
 
     if (result.data.setOrderShippingMethod.__typename !== 'Order') {
@@ -66,8 +66,8 @@ export async function setShippingMethod(shippingMethodId: string) {
 export async function createCustomerAddress(address: AddressInput) {
     const result = await mutate(
         CreateCustomerAddressMutation,
-        {input: address},
-        {useAuthToken: true}
+        { input: address },
+        { useAuthToken: true }
     );
 
     if (!result.data.createCustomerAddress) {
@@ -81,8 +81,8 @@ export async function createCustomerAddress(address: AddressInput) {
 export async function transitionToArrangingPayment() {
     const result = await mutate(
         TransitionOrderToStateMutation,
-        {state: 'ArrangingPayment'},
-        {useAuthToken: true}
+        { state: 'ArrangingPayment' },
+        { useAuthToken: true }
     );
 
     if (result.data.transitionOrderToState?.__typename === 'OrderStateTransitionError') {
@@ -118,7 +118,7 @@ export async function placeOrder(paymentMethodCode: string) {
                 metadata,
             },
         },
-        {useAuthToken: true}
+        { useAuthToken: true }
     );
 
     if (result.data.addPaymentToOrder.__typename !== 'Order') {
@@ -131,8 +131,9 @@ export async function placeOrder(paymentMethodCode: string) {
     const orderCode = result.data.addPaymentToOrder.code;
 
     // Update the cart tag to immediately invalidate cached cart data
-    updateTag('cart');
-    updateTag('active-order');
+    revalidateTag('cart');
+    revalidateTag('active-order');
+    revalidateTag('orders');
 
     redirect(`/order-confirmation/${orderCode}`);
 }

@@ -11,18 +11,19 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion';
 import { notFound } from 'next/navigation';
-import { unstable_cacheLife, unstable_cacheTag } from 'next/cache';
+import { cacheLife, cacheTag } from 'next/cache';
 import {
     SITE_NAME,
     truncateDescription,
     buildCanonicalUrl,
     buildOgImages,
 } from '@/lib/metadata';
+import { getVendureImageUrl } from "@/lib/utils";
 
 async function getProductData(slug: string) {
     'use cache';
-    unstable_cacheLife('hours');
-    unstable_cacheTag(`product-${slug}`);
+    cacheLife('hours');
+    cacheTag(`product-${slug}`);
 
     return await query(GetProductDetailQuery, { slug });
 }
@@ -41,7 +42,7 @@ export async function generateMetadata({
     }
 
     const description = truncateDescription(product.description);
-    const ogImage = product.assets?.[0]?.preview;
+    const ogImage = getVendureImageUrl(product.assets?.[0]?.preview);
 
     return {
         title: product.name,

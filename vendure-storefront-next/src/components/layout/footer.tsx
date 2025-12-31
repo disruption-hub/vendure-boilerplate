@@ -1,12 +1,12 @@
-import {unstable_cacheLife} from 'next/cache';
-import {getTopCollections} from '@/lib/vendure/cached';
+import { cacheLife } from 'next/cache';
+import { getTopCollections } from '@/lib/vendure/cached';
 import Image from "next/image";
 import Link from "next/link";
 
 
 async function Copyright() {
     'use cache'
-    unstable_cacheLife('days');
+    cacheLife('days');
 
     return (
         <div>
@@ -17,7 +17,7 @@ async function Copyright() {
 
 export async function Footer() {
     'use cache'
-    unstable_cacheLife('days');
+    cacheLife('days');
 
     const collections = await getTopCollections();
 
@@ -87,7 +87,7 @@ export async function Footer() {
                 {/* Bottom Section */}
                 <div
                     className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-                    <Copyright/>
+                    <Copyright />
                     <div className="flex items-center gap-2">
                         <span>Powered by</span>
                         <a

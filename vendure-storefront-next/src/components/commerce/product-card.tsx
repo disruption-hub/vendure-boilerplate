@@ -1,15 +1,16 @@
 import Image from 'next/image';
-import {FragmentOf, readFragment} from '@/graphql';
-import {ProductCardFragment} from '@/lib/vendure/fragments';
-import {Price} from '@/components/commerce/price';
-import {Suspense} from "react";
+import { FragmentOf, readFragment } from '@/graphql';
+import { ProductCardFragment } from '@/lib/vendure/fragments';
+import { Price } from '@/components/commerce/price';
+import { Suspense } from "react";
 import Link from "next/link";
+import { getVendureImageUrl } from "@/lib/utils";
 
 interface ProductCardProps {
     product: FragmentOf<typeof ProductCardFragment>;
 }
 
-export function ProductCard({product: productProp}: ProductCardProps) {
+export function ProductCard({ product: productProp }: ProductCardProps) {
     const product = readFragment(ProductCardFragment, productProp);
 
     return (
@@ -20,7 +21,7 @@ export function ProductCard({product: productProp}: ProductCardProps) {
             <div className="aspect-square relative bg-muted">
                 {product.productAsset ? (
                     <Image
-                        src={product.productAsset.preview}
+                        src={getVendureImageUrl(product.productAsset.preview)}
                         alt={product.productName}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -41,13 +42,13 @@ export function ProductCard({product: productProp}: ProductCardProps) {
                         {product.priceWithTax.__typename === 'PriceRange' ? (
                             product.priceWithTax.min !== product.priceWithTax.max ? (
                                 <>
-                                    from <Price value={product.priceWithTax.min}/>
+                                    from <Price value={product.priceWithTax.min} />
                                 </>
                             ) : (
-                                <Price value={product.priceWithTax.min}/>
+                                <Price value={product.priceWithTax.min} />
                             )
                         ) : product.priceWithTax.__typename === 'SinglePrice' ? (
-                            <Price value={product.priceWithTax.value}/>
+                            <Price value={product.priceWithTax.value} />
                         ) : null}
                     </p>
                 </Suspense>

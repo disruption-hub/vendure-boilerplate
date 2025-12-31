@@ -1,38 +1,53 @@
 'use server';
 
-import {mutate} from '@/lib/vendure/api';
+import { mutate } from '@/lib/vendure/api';
 import {
     RemoveFromCartMutation,
     AdjustCartItemMutation,
     ApplyPromotionCodeMutation,
     RemovePromotionCodeMutation
 } from '@/lib/vendure/mutations';
-import {updateTag} from 'next/cache';
+import { revalidateTag } from 'next/cache';
+import { setAuthToken } from '@/lib/auth';
 
 export async function removeFromCart(lineId: string) {
-    await mutate(RemoveFromCartMutation, {lineId}, {useAuthToken: true});
-    updateTag('cart');
+    const res = await mutate(RemoveFromCartMutation, { lineId }, { useAuthToken: true });
+    if (res.token) {
+        await setAuthToken(res.token);
+    }
+    revalidateTag('cart');
+    revalidateTag('active-order');
 }
 
 export async function adjustQuantity(lineId: string, quantity: number) {
-    await mutate(AdjustCartItemMutation, {lineId, quantity}, {useAuthToken: true});
-    updateTag('cart');
+    const res = await mutate(AdjustCartItemMutation, { lineId, quantity }, { useAuthToken: true });
+    if (res.token) {
+        await setAuthToken(res.token);
+    }
+    revalidateTag('cart');
+    revalidateTag('active-order');
 }
 
 export async function applyPromotionCode(formData: FormData) {
     const code = formData.get('code') as string;
     if (!code) return;
 
-    const res = await mutate(ApplyPromotionCodeMutation, {couponCode: code}, {useAuthToken: true});
-    console.log({res: res.data.applyCouponCode})
-    updateTag('cart');
+    const res = await mutate(ApplyPromotionCodeMutation, { couponCode: code }, { useAuthToken: true });
+    if (res.token) {
+        await setAuthToken(res.token);
+    }
+    revalidateTag('cart');
+    revalidateTag('active-order');
 }
 
 export async function removePromotionCode(formData: FormData) {
     const code = formData.get('code') as string;
     if (!code) return;
 
-    const res = await mutate(RemovePromotionCodeMutation, {couponCode: code}, {useAuthToken: true});
-    console.log({removeRes: res.data.removeCouponCode});
-    updateTag('cart');
+    const res = await mutate(RemovePromotionCodeMutation, { couponCode: code }, { useAuthToken: true });
+    if (res.token) {
+        await setAuthToken(res.token);
+    }
+    revalidateTag('cart');
+    revalidateTag('active-order');
 }

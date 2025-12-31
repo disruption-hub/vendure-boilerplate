@@ -1,4 +1,4 @@
-import { unstable_cacheLife, unstable_cacheTag } from 'next/cache';
+import { cacheLife, cacheTag } from 'next/cache';
 import { query } from './api';
 import { GetActiveChannelQuery, GetAvailableCountriesQuery, GetTopCollectionsQuery } from './queries';
 
@@ -8,7 +8,7 @@ import { GetActiveChannelQuery, GetAvailableCountriesQuery, GetTopCollectionsQue
  */
 export async function getActiveChannelCached() {
     'use cache';
-    unstable_cacheLife('hours');
+    cacheLife('hours');
 
     const result = await query(GetActiveChannelQuery);
     return result.data?.activeChannel;
@@ -20,8 +20,8 @@ export async function getActiveChannelCached() {
  */
 export async function getAvailableCountriesCached() {
     'use cache';
-    unstable_cacheLife('max');
-    unstable_cacheTag('countries');
+    cacheLife('max');
+    cacheTag('countries');
 
     const result = await query(GetAvailableCountriesQuery);
     return result.data?.availableCountries || [];
@@ -33,8 +33,8 @@ export async function getAvailableCountriesCached() {
  */
 export async function getTopCollections() {
     'use cache';
-    unstable_cacheLife('days');
-    unstable_cacheTag('collections');
+    cacheLife('days');
+    cacheTag('collections');
 
     const result = await query(GetTopCollectionsQuery);
     return result.data?.collections?.items || [];

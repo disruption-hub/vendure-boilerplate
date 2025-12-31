@@ -6,7 +6,7 @@ import { ProductGrid } from '@/components/commerce/product-grid';
 import { FacetFilters } from '@/components/commerce/facet-filters';
 import { ProductGridSkeleton } from '@/components/shared/product-grid-skeleton';
 import { buildSearchInput, getCurrentPage } from '@/lib/search-helpers';
-import { unstable_cacheLife, unstable_cacheTag } from 'next/cache';
+import { cacheLife, cacheTag } from 'next/cache';
 import {
     SITE_NAME,
     truncateDescription,
@@ -16,8 +16,8 @@ import {
 
 async function getCollectionProducts(slug: string, searchParams: { [key: string]: string | string[] | undefined }) {
     'use cache';
-    unstable_cacheLife('hours');
-    unstable_cacheTag(`collection-${slug}`);
+    cacheLife('hours');
+    cacheTag(`collection-${slug}`);
 
     return query(SearchProductsQuery, {
         input: buildSearchInput({
@@ -29,8 +29,8 @@ async function getCollectionProducts(slug: string, searchParams: { [key: string]
 
 async function getCollectionMetadata(slug: string) {
     'use cache';
-    unstable_cacheLife('hours');
-    unstable_cacheTag(`collection-meta-${slug}`);
+    cacheLife('hours');
+    cacheTag(`collection-meta-${slug}`);
 
     return query(GetCollectionProductsQuery, {
         slug,

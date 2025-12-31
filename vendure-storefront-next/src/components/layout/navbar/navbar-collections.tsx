@@ -1,15 +1,15 @@
-import {unstable_cacheLife} from 'next/cache';
-import {getTopCollections} from '@/lib/vendure/cached';
+import { cacheLife } from 'next/cache';
+import { getTopCollections } from '@/lib/vendure/cached';
 import {
     NavigationMenu,
     NavigationMenuList,
     NavigationMenuItem,
 } from '@/components/ui/navigation-menu';
-import {NavbarLink} from '@/components/layout/navbar/navbar-link';
+import { NavbarLink } from '@/components/layout/navbar/navbar-link';
 
 export async function NavbarCollections() {
     "use cache";
-    unstable_cacheLife('days');
+    cacheLife('days');
 
     const collections = await getTopCollections();
 

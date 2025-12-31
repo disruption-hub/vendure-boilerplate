@@ -1,3 +1,5 @@
 packages:
   - 'vendure-backend'
   - 'vendure-storefront-next'
+  - 'zkey-service'
+  - 'zkey-dashboard'

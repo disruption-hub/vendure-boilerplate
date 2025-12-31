@@ -1,18 +1,32 @@
+'use server';
+
 import { query } from './api';
 import { GetActiveCustomerQuery } from './queries';
 import { getActiveChannelCached } from './cached';
-import { cache } from "react";
 import { readFragment } from "@/graphql";
 import { ActiveCustomerFragment } from "@/lib/vendure/fragments";
 import { getAuthToken } from "@/lib/auth";
+import { revalidateTag } from 'next/cache';
+
+// ...
 
 
-export const getActiveCustomer = cache(async () => {
-    const token = await getAuthToken();
-    const result = await query(GetActiveCustomerQuery, undefined, {
-        token
+export async function getActiveCustomer() {
+    const { data } = await query(GetActiveCustomerQuery, {}, {
+        useAuthToken: true,
+        tags: ['customer']
     });
-    return result.data?.activeCustomer ? readFragment(ActiveCustomerFragment, result.data.activeCustomer) : null;
-})
+
+    if (!data.activeCustomer) {
+        return null;
+    }
+
+    return readFragment(ActiveCustomerFragment, data.activeCustomer);
+}
+
+export async function revalidateAuth() {
+    revalidateTag('customer');
+    revalidateTag('orders');
+}
 
 export const getActiveChannel = getActiveChannelCached;

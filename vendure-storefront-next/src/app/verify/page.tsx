@@ -1,38 +1,32 @@
-import type {Metadata} from 'next';
-import {Suspense} from 'react';
-import {Card, CardContent} from '@/components/ui/card';
-import {Loader2} from 'lucide-react';
-import {VerifyContent} from './verify-content';
-
-export const metadata: Metadata = {
-    title: 'Verify Email',
-    description: 'Verify your email address to complete registration.',
-};
+import { Suspense } from 'react';
+import { Loader2 } from 'lucide-react';
+import { VerifyContent } from './verify-content';
+import { motion } from 'framer-motion';
 
 function VerifyLoading() {
     return (
-        <Card>
-            <CardContent className="pt-6 space-y-4">
-                <div className="flex justify-center">
-                    <Loader2 className="h-16 w-16 text-primary animate-spin"/>
-                </div>
-                <div className="space-y-2 text-center">
-                    <h1 className="text-2xl font-bold">Verifying Your Account</h1>
-                    <p className="text-muted-foreground">
-                        Please wait while we verify your email address...
-                    </p>
-                </div>
-            </CardContent>
-        </Card>
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="glass rounded-3xl p-12 border border-white/10 text-center"
+        >
+            <div className="flex justify-center mb-6">
+                <Loader2 className="w-16 h-16 text-brand-gold animate-spin" />
+            </div>
+            <h1 className="text-2xl font-bold text-white mb-2">Verifying Your Account</h1>
+            <p className="text-brand-slate text-sm">
+                Please wait while we verify your email address...
+            </p>
+        </motion.div>
     );
 }
 
-export default function VerifyPage({searchParams}: PageProps<'/verify'>) {
+export default function VerifyPage({ searchParams }: any) {
     return (
-        <div className="flex min-h-screen items-center justify-center px-4">
-            <div className="w-full max-w-md space-y-6">
-                <Suspense fallback={<VerifyLoading/>}>
-                    <VerifyContent searchParams={searchParams}/>
+        <div className="min-h-screen flex flex-col items-center justify-center bg-brand-blue py-12 px-4 sm:px-6 lg:px-8">
+            <div className="w-full max-w-md">
+                <Suspense fallback={<VerifyLoading />}>
+                    <VerifyContent searchParams={searchParams} />
                 </Suspense>
             </div>
         </div>

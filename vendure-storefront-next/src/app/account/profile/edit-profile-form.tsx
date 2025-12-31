@@ -11,6 +11,7 @@ interface EditProfileFormProps {
     customer: {
         firstName: string;
         lastName: string;
+        phoneNumber?: string | null;
     } | null;
 }
 
@@ -55,6 +56,17 @@ export function EditProfileForm({ customer }: EditProfileFormProps) {
                             placeholder="Doe"
                             defaultValue={customer?.lastName || ''}
                             required
+                            disabled={isPending}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="phoneNumber">Phone Number</Label>
+                        <Input
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            type="tel"
+                            placeholder="+1234567890"
+                            defaultValue={customer?.phoneNumber || ''}
                             disabled={isPending}
                         />
                     </div>

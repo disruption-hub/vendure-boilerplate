@@ -1,14 +1,15 @@
-import {connection} from 'next/server';
-import {query} from '@/lib/vendure/api';
-import {graphql} from '@/graphql';
-import {Button} from '@/components/ui/button';
-import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
-import {CheckCircle2} from 'lucide-react';
+import { connection } from 'next/server';
+import { query } from '@/lib/vendure/api';
+import { graphql } from '@/graphql';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import {Separator} from '@/components/ui/separator';
-import {Price} from '@/components/commerce/price';
-import {notFound} from "next/navigation";
+import { Separator } from '@/components/ui/separator';
+import { Price } from '@/components/commerce/price';
+import { getVendureImageUrl } from '@/lib/utils';
+import { notFound } from "next/navigation";
 
 const GetOrderByCodeQuery = graphql(`
     query GetOrderByCode($code: String!) {
@@ -49,12 +50,12 @@ const GetOrderByCodeQuery = graphql(`
     }
 `);
 
-export async function OrderConfirmation({params}: PageProps<'/order-confirmation/[code]'>) {
-    const {code} = await params;
+export async function OrderConfirmation({ params }: PageProps<'/order-confirmation/[code]'>) {
+    const { code } = await params;
     let order;
 
     try {
-        const {data} = await query(GetOrderByCodeQuery, {code}, {useAuthToken: true});
+        const { data } = await query(GetOrderByCodeQuery, { code }, { useAuthToken: true });
         order = data.orderByCode;
     }
     catch (error) {
@@ -62,14 +63,14 @@ export async function OrderConfirmation({params}: PageProps<'/order-confirmation
     }
 
     if (!order) {
-       notFound();
+        notFound();
     }
 
     return (
         <div className="container mx-auto px-4 py-16">
             <div className="max-w-3xl mx-auto">
                 <div className="text-center mb-8">
-                    <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4"/>
+                    <CheckCircle2 className="h-16 w-16 text-green-500 mx-auto mb-4" />
                     <h1 className="text-3xl font-bold mb-2">Order Confirmed!</h1>
                     <p className="text-muted-foreground">
                         Thank you for your order. Your order number is
@@ -87,7 +88,7 @@ export async function OrderConfirmation({params}: PageProps<'/order-confirmation
                                 {line.productVariant.product.featuredAsset && (
                                     <div className="flex-shrink-0">
                                         <Image
-                                            src={line.productVariant.product.featuredAsset.preview}
+                                            src={getVendureImageUrl(line.productVariant.product.featuredAsset.preview)}
                                             alt={line.productVariant.name}
                                             width={80}
                                             height={80}
@@ -109,19 +110,19 @@ export async function OrderConfirmation({params}: PageProps<'/order-confirmation
                                 </div>
                                 <div className="text-right w-24">
                                     <p className="font-semibold">
-                                        <Price value={line.linePriceWithTax} currencyCode={order.currencyCode}/>
+                                        <Price value={line.linePriceWithTax} currencyCode={order.currencyCode} />
                                     </p>
                                 </div>
                             </div>
                         ))}
 
-                        <Separator/>
+                        <Separator />
 
                         <div className="flex justify-between font-bold text-lg">
                             <span>Total</span>
                             <span>
-                <Price value={order.totalWithTax} currencyCode={order.currencyCode}/>
-              </span>
+                                <Price value={order.totalWithTax} currencyCode={order.currencyCode} />
+                            </span>
                         </div>
                     </CardContent>
                 </Card>

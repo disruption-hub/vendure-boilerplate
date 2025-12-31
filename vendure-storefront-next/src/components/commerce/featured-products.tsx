@@ -1,11 +1,11 @@
 import { ProductCarousel } from "@/components/commerce/product-carousel";
-import { unstable_cacheLife } from "next/cache";
+import { cacheLife } from "next/cache";
 import { query } from "@/lib/vendure/api";
 import { GetCollectionProductsQuery } from "@/lib/vendure/queries";
 
 async function getFeaturedCollectionProducts() {
     'use cache'
-    unstable_cacheLife('days')
+    cacheLife('days')
 
     // Fetch featured products from a specific collection
     // Replace 'featured' with your actual collection slug

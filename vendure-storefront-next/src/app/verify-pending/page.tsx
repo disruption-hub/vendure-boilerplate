@@ -1,16 +1,10 @@
-import type {Metadata} from 'next';
-import {Suspense} from 'react';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { CheckCircle } from 'lucide-react';
+import { Mail, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-export const metadata: Metadata = {
-    title: 'Verification Pending',
-    description: 'Check your email to verify your account.',
-};
-
-async function VerifyPendingContent({searchParams}: {searchParams: Promise<Record<string, string | string[] | undefined>>}) {
+async function VerifyPendingContent({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
     const resolvedParams = await searchParams;
     const redirectTo = resolvedParams?.redirectTo as string | undefined;
 
@@ -19,40 +13,46 @@ async function VerifyPendingContent({searchParams}: {searchParams: Promise<Recor
         : '/sign-in';
 
     return (
-        <Card>
-            <CardContent className="pt-6 space-y-4">
-                <div className="flex justify-center">
-                    <CheckCircle className="h-16 w-16 text-green-600" />
-                </div>
-                <div className="space-y-2 text-center">
-                    <h1 className="text-2xl font-bold">Check Your Email</h1>
-                    <p className="text-muted-foreground">
-                        We&apos;ve sent a verification link to your email address.
-                        Please check your inbox and click the link to verify your account.
-                    </p>
-                </div>
-                <div className="bg-muted p-4 rounded-md">
-                    <p className="text-sm text-muted-foreground">
-                        Don&apos;t see the email? Check your spam folder or request a new verification link.
-                    </p>
-                </div>
-            </CardContent>
-            <CardFooter className="flex flex-col space-y-2">
-                <Link href={signInHref} className="w-full">
-                    <Button className="w-full">
-                        Go to Sign In
-                    </Button>
-                </Link>
-            </CardFooter>
-        </Card>
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="glass rounded-3xl p-8 border border-white/10 text-center"
+        >
+            <div className="w-16 h-16 bg-brand-gold/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Mail className="w-8 h-8 text-brand-gold" />
+            </div>
+
+            <h1 className="text-2xl font-bold text-white mb-2">Check Your Email</h1>
+            <p className="text-brand-slate text-sm mb-8">
+                We&apos;ve sent a verification link to your email address.
+                Please check your inbox to activate your account.
+            </p>
+
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-8 text-left">
+                <p className="text-xs text-brand-slate leading-relaxed">
+                    Don&apos;t see the email? Check your spam folder or wait a few minutes.
+                </p>
+            </div>
+
+            <Link href={signInHref}>
+                <Button className="w-full h-12 bg-brand-gold hover:bg-brand-gold/90 text-brand-blue font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 group">
+                    Go to Sign In
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+            </Link>
+        </motion.div>
     );
 }
 
-export default async function VerifyPendingPage({searchParams}: PageProps<'/verify-pending'>) {
+export default async function VerifyPendingPage({ searchParams }: any) {
     return (
-        <div className="flex min-h-screen items-center justify-center px-4">
-            <div className="w-full max-w-md space-y-6">
-                <Suspense fallback={<div>Loading...</div>}>
+        <div className="min-h-screen flex flex-col items-center justify-center bg-brand-blue py-12 px-4 sm:px-6 lg:px-8">
+            <div className="w-full max-w-md">
+                <Suspense fallback={
+                    <div className="flex justify-center p-12">
+                        <Loader2 className="w-10 h-10 text-brand-gold animate-spin" />
+                    </div>
+                }>
                     <VerifyPendingContent searchParams={searchParams} />
                 </Suspense>
             </div>

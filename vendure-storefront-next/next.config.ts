@@ -3,6 +3,8 @@ import { NextConfig } from 'next';
 const nextConfig: NextConfig = {
     images: {
         // This is necessary to display images from your local Vendure instance
+        unoptimized: true,
+        domains: ['localhost'],
         remotePatterns: [
             {
                 hostname: 'readonlydemo.vendure.io',
@@ -11,7 +13,16 @@ const nextConfig: NextConfig = {
                 hostname: 'demo.vendure.io'
             },
             {
-                hostname: 'localhost'
+                protocol: 'http',
+                hostname: 'localhost',
+                port: '3000',
+                pathname: '/**',
+            },
+            {
+                protocol: 'http',
+                hostname: '127.0.0.1',
+                port: '3000',
+                pathname: '/**',
             },
             {
                 hostname: '*.up.railway.app'
@@ -20,9 +31,6 @@ const nextConfig: NextConfig = {
     },
     experimental: {
         useCache: true
-    },
-    eslint: {
-        ignoreDuringBuilds: true
     },
     typescript: {
         ignoreBuildErrors: true

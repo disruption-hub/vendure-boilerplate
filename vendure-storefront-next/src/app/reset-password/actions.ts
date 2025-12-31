@@ -1,21 +1,21 @@
 'use server';
 
-import {mutate} from '@/lib/vendure/api';
-import {ResetPasswordMutation} from '@/lib/vendure/mutations';
-import {setAuthToken} from '@/lib/auth';
-import {redirect} from 'next/navigation';
+import { mutate } from '@/lib/vendure/api';
+import { ResetPasswordMutation } from '@/lib/vendure/mutations';
+import { setAuthToken } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-export async function resetPasswordAction(prevState: { error?: string } | undefined, formData: FormData) {
+export async function resetPasswordAction(prevState: { error?: string, success?: boolean } | undefined, formData: FormData) {
     const token = formData.get('token') as string;
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
 
     if (!token || !password || !confirmPassword) {
-        return {error: 'All fields are required'};
+        return { error: 'All fields are required' };
     }
 
     if (password !== confirmPassword) {
-        return {error: 'Passwords do not match'};
+        return { error: 'Passwords do not match' };
     }
 
 
@@ -27,7 +27,7 @@ export async function resetPasswordAction(prevState: { error?: string } | undefi
     const resetResult = result.data.resetPassword;
 
     if (resetResult.__typename !== 'CurrentUser') {
-        return {error: resetResult.message};
+        return { error: resetResult.message };
     }
 
     // Store the token in a cookie if returned
@@ -35,5 +35,5 @@ export async function resetPasswordAction(prevState: { error?: string } | undefi
         await setAuthToken(result.token);
     }
 
-    redirect('/');
+    return { success: true };
 }
