@@ -36,8 +36,15 @@ export class ZKeyAuthenticationStrategy implements AuthenticationStrategy<ZKeyAu
         const { token } = data;
 
         try {
+            const isDev = process.env.APP_ENV === 'dev' || process.env.NODE_ENV !== 'production';
+            const baseUrl = (process.env.ZKEY_SERVICE_URL || (isDev ? 'http://localhost:3002' : '')).replace(/\/$/, '');
+            if (!baseUrl) {
+                Logger.error('Missing ZKEY_SERVICE_URL in production', 'ZKeyAuthenticationStrategy');
+                return 'ZKey service URL is not configured (missing ZKEY_SERVICE_URL)';
+            }
+
             // Fetch user profile from ZKey service
-            const response = await fetch('http://localhost:3002/auth/profile', {
+            const response = await fetch(`${baseUrl}/auth/profile`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -45,7 +52,7 @@ export class ZKeyAuthenticationStrategy implements AuthenticationStrategy<ZKeyAu
 
             if (!response.ok) {
                 Logger.error(`ZKey profile fetch failed: ${response.status} ${response.statusText}`, 'ZKeyAuthenticationStrategy');
-                return false;
+                return `ZKey profile fetch failed (${response.status})`;
             }
 
             const zkeyUser = await response.json();
@@ -57,7 +64,7 @@ export class ZKeyAuthenticationStrategy implements AuthenticationStrategy<ZKeyAu
             const email = zkeyUser.email || zkeyUser.primaryEmail;
             if (!email) {
                 Logger.error('ZKey user missing email', 'ZKeyAuthenticationStrategy');
-                return false;
+                return 'ZKey profile missing email';
             }
 
             Logger.info(`[ZKey] Authenticating user: ${email} (Name: ${zkeyUser.firstName} ${zkeyUser.lastName})`, 'ZKeyAuthenticationStrategy');
@@ -104,7 +111,7 @@ export class ZKeyAuthenticationStrategy implements AuthenticationStrategy<ZKeyAu
             return user;
         } catch (error: any) {
             Logger.error(`[ZKey Auth] Error authenticating user: ${error.message}`, 'ZKeyAuthenticationStrategy', error.stack);
-            return false;
+            return `ZKey auth error: ${error?.message || 'unknown error'}`;
         }
     }
 }

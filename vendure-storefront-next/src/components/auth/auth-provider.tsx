@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { zkeyClient, type ZKeyUser } from '@/lib/zkey-client';
 import { OIDCClient, type OIDCTokens } from '@/lib/oidc-client';
-import { authenticateWithZKey } from '@/lib/vendure/auth';
 import { getActiveCustomer, revalidateAuth } from '@/lib/vendure/actions';
 import Cookies from 'js-cookie';
 
@@ -107,8 +106,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 secure: process.env.NODE_ENV === 'production',
             });
 
-            // Authenticate with Vendure
-            await authenticateWithZKey(tokens.access_token);
+            // Establish a Vendure session on this domain (sets httpOnly vendure-auth-token cookie)
+            const vendureAuthRes = await fetch('/api/auth/vendure', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: tokens.access_token }),
+            });
+            if (!vendureAuthRes.ok) {
+                const text = await vendureAuthRes.text().catch(() => '');
+                throw new Error(`Vendure auth failed (${vendureAuthRes.status}): ${text || 'unknown error'}`);
+            }
 
             // Force revalidation of customer data
             await revalidateAuth();

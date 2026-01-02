@@ -5,6 +5,8 @@ const VENDURE_API_URL = process.env.VENDURE_SHOP_API_URL || process.env.NEXT_PUB
 // Must match your Vendure Channel token (it is not always the same as the channel code/name).
 const VENDURE_CHANNEL_TOKEN = process.env.VENDURE_CHANNEL_TOKEN || process.env.NEXT_PUBLIC_VENDURE_CHANNEL_TOKEN || '__default_channel__';
 const VENDURE_AUTH_TOKEN_HEADER = process.env.VENDURE_AUTH_TOKEN_HEADER || 'vendure-auth-token';
+const VENDURE_AUTH_TOKEN_COOKIE =
+    process.env.VENDURE_AUTH_TOKEN_COOKIE || process.env.NEXT_PUBLIC_VENDURE_AUTH_TOKEN_COOKIE || VENDURE_AUTH_TOKEN_HEADER;
 const VENDURE_CHANNEL_TOKEN_HEADER = process.env.VENDURE_CHANNEL_TOKEN_HEADER || 'vendure-token';
 
 // We don't throw here anymore to allow the build to pass even if env vars are missing.
@@ -26,14 +28,28 @@ interface VendureResponse<T> {
 function shouldAllowOfflineVendure() {
     // Default: allow offline in dev to avoid crashing the app shell (Navbar, etc.)
     // In production, you can opt-in via env var.
-    return process.env.VENDURE_API_ALLOW_OFFLINE === 'true' || process.env.NODE_ENV !== 'production';
+    const isNextBuild = process.env.NEXT_PHASE === 'phase-production-build';
+    return process.env.VENDURE_API_ALLOW_OFFLINE === 'true' || process.env.NODE_ENV !== 'production' || isNextBuild;
+}
+
+function escapeRegExp(value: string) {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /**
  * Extract the Vendure auth token from response headers
  */
 function extractAuthToken(headers: Headers): string | null {
-    return headers.get(VENDURE_AUTH_TOKEN_HEADER);
+    const headerToken = headers.get(VENDURE_AUTH_TOKEN_HEADER);
+    if (headerToken) return headerToken;
+
+    // Some Vendure setups may only set the cookie even when bearer tokens are enabled.
+    // In browsers, this header is not readable; in Node/server environments it is.
+    const setCookie = headers.get('set-cookie');
+    if (!setCookie) return null;
+
+    const match = setCookie.match(new RegExp(`${escapeRegExp(VENDURE_AUTH_TOKEN_COOKIE)}=([^;]+)`));
+    return match?.[1] ? decodeURIComponent(match[1]) : null;
 }
 
 

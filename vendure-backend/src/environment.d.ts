@@ -10,6 +10,7 @@ declare global {
             COOKIE_SECRET: string;
             SUPERADMIN_USERNAME: string;
             SUPERADMIN_PASSWORD: string;
+            ZKEY_SERVICE_URL?: string;
             DB_HOST: string;
             DB_PORT: number;
             DB_NAME: string;
