@@ -19,6 +19,8 @@ async function getVendureConfigForTenant(tenantId?: string | null): Promise<Vend
         if (vendure?.enabled) {
             return {
                 adminApiUrl: vendure.adminApiUrl || undefined,
+                adminApiUrlDev: vendure.adminApiUrlDev || undefined,
+                adminApiUrlProd: vendure.adminApiUrlProd || undefined,
                 authTokenHeader: vendure.authTokenHeader || undefined,
                 adminApiToken: vendure.adminApiToken || undefined,
                 superadminUsername: vendure.superadminUsername || undefined,
