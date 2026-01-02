@@ -14,7 +14,7 @@ export class OAuthService {
     private prisma: PrismaService,
     private authService: AuthService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async validateClient(clientId: string, redirectUri: string) {
     const app = await this.prisma.application.findUnique({
@@ -27,6 +27,9 @@ export class OAuthService {
     }
 
     if (!app.redirectUris.includes(redirectUri)) {
+      console.error(
+        `[OIDC] Redirect URI mismatch. Received: "${redirectUri}", Expected one of: ${JSON.stringify(app.redirectUris)}`,
+      );
       throw new BadRequestException('Invalid redirect_uri');
     }
 
@@ -69,8 +72,8 @@ export class OAuthService {
       env === 'production'
         ? dashboardUrls['production'] || this.DASHBOARD_URL
         : dashboardUrls[env] ||
-          dashboardUrls['development'] ||
-          this.DASHBOARD_URL;
+        dashboardUrls['development'] ||
+        this.DASHBOARD_URL;
 
     return `${dashboardUrl}/auth/login?interactionId=${interaction.id}`;
   }
