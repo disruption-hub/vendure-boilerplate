@@ -34,6 +34,8 @@ function getAdminApiUrl(config?: VendureAdminConfig) {
         rawUrl = config?.adminApiUrl || process.env.VENDURE_ADMIN_API_URL;
     }
 
+    console.log(`[Vendure Admin API] env=${env}, rawUrl=${rawUrl}, config=${JSON.stringify(config)}`);
+
     if (rawUrl) {
         return normalizeUrl(rawUrl);
     }
@@ -51,7 +53,9 @@ function isValidAdminApiUrl(url: string) {
     // Basic check for protocol and host
     try {
         const u = new URL(url);
-        if (process.env.NODE_ENV === 'production' && (u.hostname === 'localhost' || u.hostname === '127.0.0.1')) {
+        const env = process.env.NODE_ENV || 'development';
+        if (env === 'production' && (u.hostname === 'localhost' || u.hostname === '127.0.0.1')) {
+            console.warn(`[Vendure Admin API] Blocking localhost URL in production: ${url}`);
             return false;
         }
         return true;
