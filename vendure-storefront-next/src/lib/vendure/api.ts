@@ -66,6 +66,8 @@ export async function query<TResult, TVariables>(
         authToken = await getAuthToken();
     }
 
+    const isAuthedRequest = Boolean(authToken);
+
     if (authToken) {
         // Vendure bearer auth uses the vendure-auth-token header; some setups also accept Authorization.
         headers[VENDURE_AUTH_TOKEN_HEADER] = authToken;
@@ -82,11 +84,13 @@ export async function query<TResult, TVariables>(
             method: 'POST',
             headers,
             credentials: fetchOptions?.credentials ?? 'include',
+            // Never cache authenticated/customer-specific requests.
+            ...(isAuthedRequest ? { cache: 'no-store' } : {}),
             body: JSON.stringify({
                 query: print(document),
                 variables: variables || {},
             }),
-            ...(tags && { next: { tags } }),
+            ...(!isAuthedRequest && tags ? { next: { tags } } : {}),
         });
     } catch (e) {
         if (shouldAllowOfflineVendure()) {

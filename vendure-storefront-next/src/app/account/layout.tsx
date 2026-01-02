@@ -7,6 +7,9 @@ export const metadata: Metadata = {
     robots: noIndexRobots(),
 };
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const navItems = [
     {href: '/account/orders', label: 'Orders', icon: Package},
     {href: '/account/addresses', label: 'Addresses', icon: MapPin},
