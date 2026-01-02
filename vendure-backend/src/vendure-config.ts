@@ -11,6 +11,7 @@ import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
 import { StripePlugin } from '@vendure/payments-plugin/package/stripe';
 import 'dotenv/config';
 import path from 'path';
+import { ZKeyAuthenticationStrategy } from './plugins/zkey/zkey-auth-strategy';
 
 const isDev: Boolean = process.env.APP_ENV === 'dev';
 
@@ -69,6 +70,7 @@ export const config: VendureConfig = {
     },
     authOptions: {
         tokenMethod: ['bearer', 'cookie'],
+        shopAuthenticationStrategy: [new ZKeyAuthenticationStrategy()],
         superadminCredentials: {
             identifier: process.env.SUPERADMIN_USERNAME,
             password: process.env.SUPERADMIN_PASSWORD,
