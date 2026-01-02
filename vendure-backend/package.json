@@ -16,7 +16,8 @@
     "start": "node run-migration.js && concurrently npm:start:*"
   },
   "dependencies": {
-    "@nestjs/graphql": "^13.2.3",
+    "@nestjs/apollo": "13.1.0",
+    "@nestjs/graphql": "13.1.0",
     "@sendgrid/mail": "^8.1.4",
     "@vendure/admin-ui-plugin": "^3.5.0",
     "@vendure/asset-server-plugin": "3.5.0",
@@ -26,7 +27,7 @@
     "@vendure/payments-plugin": "^3.5.0",
     "axios": "^1.6.0",
     "dotenv": "17.2.3",
-    "graphql": "^16.12.0",
+    "graphql": "16.12.0",
     "graphql-tag": "^2.12.6",
     "jose": "^6.1.3",
     "pg": "8.16.3",
