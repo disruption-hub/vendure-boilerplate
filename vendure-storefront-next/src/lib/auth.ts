@@ -48,8 +48,9 @@ export async function getAuthToken(): Promise<string | undefined> {
         return vendureToken;
     }
 
-    // Fallback to ZKey token if needed, though typically not used for Shop API
-    return cookieStore.get(ZKEY_TOKEN_COOKIE)?.value;
+    // Never fall back to the ZKey token for Vendure Shop API calls.
+    // If there's no Vendure session cookie, treat the request as unauthenticated.
+    return undefined;
 }
 
 export async function getZKeyAuthToken(): Promise<string | undefined> {

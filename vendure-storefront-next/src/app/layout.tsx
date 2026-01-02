@@ -25,7 +25,7 @@ export const metadata: Metadata = {
         template: `%s | ${SITE_NAME}`,
     },
     description:
-        "Shop the best products at Vendure Store. Quality products, competitive prices, and fast delivery.",
+        "Shop the best yoga mats and accessories at MatMax Yoga. Premium quality, eco-friendly materials, and designed for your practice.",
     openGraph: {
         type: "website",
         siteName: SITE_NAME,

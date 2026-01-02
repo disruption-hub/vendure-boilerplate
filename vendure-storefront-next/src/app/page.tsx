@@ -5,17 +5,17 @@ import { SITE_NAME, SITE_URL, buildCanonicalUrl } from "@/lib/metadata";
 
 export const metadata: Metadata = {
     title: {
-        absolute: `${SITE_NAME} - Your One-Stop Shop`,
+        absolute: `${SITE_NAME} - Premium Yoga Mats & Accessories`,
     },
     description:
-        "Discover high-quality products at competitive prices. Shop now for the best deals on electronics, fashion, home goods, and more.",
+        "Discover our collection of premium yoga mats and accessories. Designed for comfort, stability, and sustainable practice.",
     alternates: {
         canonical: buildCanonicalUrl("/"),
     },
     openGraph: {
-        title: `${SITE_NAME} - Your One-Stop Shop`,
+        title: `${SITE_NAME} - Premium Yoga Mats & Accessories`,
         description:
-            "Discover high-quality products at competitive prices. Shop now for the best deals.",
+            "Discover our collection of premium yoga mats and accessories. Designed for comfort, stability, and sustainable practice.",
         type: "website",
         url: SITE_URL,
     },

@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import {NavbarCollections} from '@/components/layout/navbar/navbar-collections';
-import {NavbarCart} from '@/components/layout/navbar/navbar-cart';
-import {NavbarUser} from '@/components/layout/navbar/navbar-user';
-import {ThemeSwitcher} from '@/components/layout/navbar/theme-switcher';
-import {Suspense} from "react";
-import {SearchInput} from '@/components/layout/search-input';
-import {NavbarUserSkeleton} from '@/components/shared/skeletons/navbar-user-skeleton';
-import {SearchInputSkeleton} from '@/components/shared/skeletons/search-input-skeleton';
+import { NavbarCollections } from '@/components/layout/navbar/navbar-collections';
+import { NavbarCart } from '@/components/layout/navbar/navbar-cart';
+import { NavbarUser } from '@/components/layout/navbar/navbar-user';
+import { ThemeSwitcher } from '@/components/layout/navbar/theme-switcher';
+import { Suspense } from "react";
+import { SearchInput } from '@/components/layout/search-input';
+import { NavbarUserSkeleton } from '@/components/shared/skeletons/navbar-user-skeleton';
+import { SearchInputSkeleton } from '@/components/shared/skeletons/search-input-skeleton';
 
 export function Navbar() {
     return (
@@ -16,26 +16,26 @@ export function Navbar() {
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center gap-8">
                         <Link href="/" className="text-xl font-bold">
-                            <Image src="/vendure.svg" alt="Vendure" width={40} height={27} className="h-6 w-auto dark:invert" />
+                            <Image src="/logo.png" alt="MatMax Yoga" width={100} height={32} className="h-8 w-auto" priority />
                         </Link>
                         <nav className="hidden md:flex items-center gap-6">
                             <Suspense>
-                                <NavbarCollections/>
+                                <NavbarCollections />
                             </Suspense>
                         </nav>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="hidden lg:flex">
                             <Suspense fallback={<SearchInputSkeleton />}>
-                                <SearchInput/>
+                                <SearchInput />
                             </Suspense>
                         </div>
                         <ThemeSwitcher />
                         <Suspense>
-                            <NavbarCart/>
+                            <NavbarCart />
                         </Suspense>
                         <Suspense fallback={<NavbarUserSkeleton />}>
-                            <NavbarUser/>
+                            <NavbarUser />
                         </Suspense>
                     </div>
                 </div>

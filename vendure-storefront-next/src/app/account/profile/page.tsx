@@ -9,8 +9,28 @@ import { EditProfileForm } from './edit-profile-form';
 import { EditEmailForm } from './edit-email-form';
 import WalletAddressCard from './wallet-address-card';
 
+function getWalletAddressFromCustomFields(customFields: unknown): string | null {
+    if (!customFields) return null;
+
+    if (typeof customFields === 'string') {
+        try {
+            return getWalletAddressFromCustomFields(JSON.parse(customFields));
+        } catch {
+            return null;
+        }
+    }
+
+    if (typeof customFields === 'object') {
+        const walletAddress = (customFields as any)?.walletAddress;
+        return typeof walletAddress === 'string' && walletAddress.trim() ? walletAddress : null;
+    }
+
+    return null;
+}
+
 export default async function ProfilePage(_props: PageProps<'/account/profile'>) {
     const customer = await getActiveCustomer();
+    const walletAddress = getWalletAddressFromCustomFields((customer as any)?.customFields);
 
     return (
         <div className="space-y-6">
@@ -25,7 +45,7 @@ export default async function ProfilePage(_props: PageProps<'/account/profile'>)
 
             <EditEmailForm currentEmail={customer?.emailAddress || ''} />
 
-            <WalletAddressCard walletAddress={(customer as any)?.customFields?.walletAddress ?? null} />
+            <WalletAddressCard walletAddress={walletAddress} />
 
             <ChangePasswordForm />
         </div>

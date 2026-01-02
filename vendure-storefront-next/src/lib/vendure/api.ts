@@ -1,13 +1,18 @@
 import type { TadaDocumentNode } from 'gql.tada';
 import { print } from 'graphql';
 
-const VENDURE_API_URL = process.env.VENDURE_SHOP_API_URL || process.env.NEXT_PUBLIC_VENDURE_SHOP_API_URL || 'http://localhost:3000/shop-api';
+function env(name: string) {
+    const value = process.env[name];
+    const trimmed = typeof value === 'string' ? value.trim() : undefined;
+    return trimmed && trimmed.length ? trimmed : undefined;
+}
+
+const VENDURE_API_URL = env('VENDURE_SHOP_API_URL') || env('NEXT_PUBLIC_VENDURE_SHOP_API_URL') || 'http://localhost:3000/shop-api';
 // Must match your Vendure Channel token (it is not always the same as the channel code/name).
-const VENDURE_CHANNEL_TOKEN = process.env.VENDURE_CHANNEL_TOKEN || process.env.NEXT_PUBLIC_VENDURE_CHANNEL_TOKEN || '__default_channel__';
-const VENDURE_AUTH_TOKEN_HEADER = process.env.VENDURE_AUTH_TOKEN_HEADER || 'vendure-auth-token';
-const VENDURE_AUTH_TOKEN_COOKIE =
-    process.env.VENDURE_AUTH_TOKEN_COOKIE || process.env.NEXT_PUBLIC_VENDURE_AUTH_TOKEN_COOKIE || VENDURE_AUTH_TOKEN_HEADER;
-const VENDURE_CHANNEL_TOKEN_HEADER = process.env.VENDURE_CHANNEL_TOKEN_HEADER || 'vendure-token';
+const VENDURE_CHANNEL_TOKEN = env('VENDURE_CHANNEL_TOKEN') || env('NEXT_PUBLIC_VENDURE_CHANNEL_TOKEN') || '__default_channel__';
+const VENDURE_AUTH_TOKEN_HEADER = env('VENDURE_AUTH_TOKEN_HEADER') || 'vendure-auth-token';
+const VENDURE_AUTH_TOKEN_COOKIE = env('VENDURE_AUTH_TOKEN_COOKIE') || env('NEXT_PUBLIC_VENDURE_AUTH_TOKEN_COOKIE') || VENDURE_AUTH_TOKEN_HEADER;
+const VENDURE_CHANNEL_TOKEN_HEADER = env('VENDURE_CHANNEL_TOKEN_HEADER') || 'vendure-token';
 
 // We don't throw here anymore to allow the build to pass even if env vars are missing.
 // They will still be required at runtime for the app to function correctly.
@@ -122,7 +127,9 @@ export async function query<TResult, TVariables>(
             console.warn(`[Vendure API Offline Fallback] HTTP ${response.status} from ${VENDURE_API_URL}. Returning empty data.`);
             return { data: {} as TResult };
         }
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const bodyText = await response.text().catch(() => '');
+        const snippet = bodyText && bodyText.length > 800 ? `${bodyText.slice(0, 800)}…` : bodyText;
+        throw new Error(`HTTP error! status: ${response.status}${snippet ? `; body: ${snippet}` : ''}`);
     }
 
     const result: VendureResponse<TResult> = await response.json();

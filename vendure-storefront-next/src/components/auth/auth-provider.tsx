@@ -1,9 +1,7 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { zkeyClient, type ZKeyUser } from '@/lib/zkey-client';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { OIDCClient, type OIDCTokens } from '@/lib/oidc-client';
-import { getActiveCustomer, revalidateAuth } from '@/lib/vendure/actions';
 import Cookies from 'js-cookie';
 
 interface AuthContextType {
@@ -40,58 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState<any | null>(null);
 
-    useEffect(() => {
-        async function checkAuth() {
-            try {
-                const token = Cookies.get(TOKEN_COOKIE_NAME);
-                if (token) {
-                    // Try to fetch profile from Vendure first
-                    const customer = await getActiveCustomer();
-                    if (customer) {
-                        setUser({
-                            id: customer.id,
-                            firstName: customer.firstName,
-                            lastName: customer.lastName,
-                            primaryEmail: customer.emailAddress,
-                            phoneNumber: customer.phoneNumber,
-                        });
-                        setIsAuthenticated(true);
-                    } else {
-                        // Fallback to ZKey profile if not in Vendure yet
-                        const profile = await OIDCClient.getUserProfile(token);
-                        setUser(profile);
-                        setIsAuthenticated(true);
-                    }
-                }
-            } catch (error) {
-                console.error('Failed to fetch auth status', error);
-
-                // Try to refresh token
-                const refreshToken = Cookies.get(REFRESH_TOKEN_COOKIE_NAME);
-                if (refreshToken) {
-                    try {
-                        const tokens = await OIDCClient.refreshToken(refreshToken);
-                        await handleOIDCCallback(tokens);
-                    } catch (refreshError) {
-                        console.error('Token refresh failed', refreshError);
-                        Cookies.remove(TOKEN_COOKIE_NAME);
-                        Cookies.remove(REFRESH_TOKEN_COOKIE_NAME);
-                    }
-                } else {
-                    Cookies.remove(TOKEN_COOKIE_NAME);
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        }
-        checkAuth();
-    }, []);
-
-    const initiateOIDCLogin = (redirectPath?: string) => {
-        OIDCClient.initiateLogin(redirectPath);
-    };
-
-    const handleOIDCCallback = async (tokens: OIDCTokens) => {
+    const handleOIDCCallback = useCallback(async (tokens: OIDCTokens) => {
         try {
             // Store tokens in cookies
             Cookies.set(TOKEN_COOKIE_NAME, tokens.access_token, {
@@ -117,11 +64,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 throw new Error(`Vendure auth failed (${vendureAuthRes.status}): ${text || 'unknown error'}`);
             }
 
-            // Force revalidation of customer data
-            await revalidateAuth();
-
             // Fetch user profile from Vendure (master data)
-            const customer = await getActiveCustomer();
+            const customerRes = await fetch('/api/auth/customer', { cache: 'no-store' });
+            const customerJson = await customerRes.json().catch(() => null);
+            const customer = customerRes.ok ? customerJson?.customer : null;
             if (customer) {
                 setUser({
                     id: customer.id,
@@ -140,6 +86,64 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.error('OIDC callback handling failed:', error);
             throw error;
         }
+    }, []);
+
+    useEffect(() => {
+        async function checkAuth() {
+            try {
+                // Prefer Vendure session (httpOnly cookie) regardless of client-side ZKey cookie.
+                try {
+                    const customerRes = await fetch('/api/auth/customer', { cache: 'no-store' });
+                    const customerJson = await customerRes.json().catch(() => null);
+                    const customer = customerRes.ok ? customerJson?.customer : null;
+                    if (customer) {
+                        setUser({
+                            id: customer.id,
+                            firstName: customer.firstName,
+                            lastName: customer.lastName,
+                            primaryEmail: customer.emailAddress,
+                            phoneNumber: customer.phoneNumber,
+                        });
+                        setIsAuthenticated(true);
+                        return;
+                    }
+                } catch {
+                    // Ignore and fall back to ZKey token/profile.
+                }
+
+                const token = Cookies.get(TOKEN_COOKIE_NAME);
+                if (!token) return;
+
+                // Fallback to ZKey profile if no Vendure customer is available yet.
+                const profile = await OIDCClient.getUserProfile(token);
+                setUser(profile);
+                setIsAuthenticated(true);
+            } catch (error) {
+                console.error('Failed to fetch auth status', error);
+
+                // Try to refresh token
+                const refreshToken = Cookies.get(REFRESH_TOKEN_COOKIE_NAME);
+                if (refreshToken) {
+                    try {
+                        const tokens = await OIDCClient.refreshToken(refreshToken);
+                        await handleOIDCCallback(tokens);
+                    } catch (refreshError) {
+                        console.error('Token refresh failed', refreshError);
+                        Cookies.remove(TOKEN_COOKIE_NAME);
+                        Cookies.remove(REFRESH_TOKEN_COOKIE_NAME);
+                    }
+                } else {
+                    Cookies.remove(TOKEN_COOKIE_NAME);
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        }
+        checkAuth();
+    }, [handleOIDCCallback]);
+
+    const initiateOIDCLogin = (redirectPath?: string) => {
+        OIDCClient.initiateLogin(redirectPath);
     };
 
     // Legacy methods - kept for backward compatibility but now redirect to OIDC
@@ -165,6 +169,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const signOut = () => {
+        // Clear server-side session cookies (Vendure httpOnly auth cookie)
+        fetch('/api/auth/sign-out', { method: 'POST' }).catch(() => {
+            // ignore
+        });
+
         Cookies.remove(TOKEN_COOKIE_NAME);
         Cookies.remove(REFRESH_TOKEN_COOKIE_NAME);
         setUser(null);
