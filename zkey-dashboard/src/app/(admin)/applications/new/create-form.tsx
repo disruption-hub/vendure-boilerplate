@@ -467,9 +467,9 @@ export default function CreateApplicationForm({ tenants }: { tenants: any[] }) {
             <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
                 <div className="border-b bg-slate-50/50 px-6 py-4 flex items-center">
                     <Settings2 className="w-5 h-5 text-slate-500 mr-2" />
-                    <h3 className="font-semibold text-slate-900">Vendure Integration (Optional)</h3>
+                    <h3 className="font-semibold text-slate-900">Vendure Integration</h3>
                 </div>
-                <div className="p-6 space-y-6">
+                <div className="p-6 space-y-4">
                     <label className="flex items-start p-4 bg-slate-50 border rounded-xl cursor-pointer hover:border-blue-500 transition-colors">
                         <input
                             type="checkbox"
@@ -479,20 +479,32 @@ export default function CreateApplicationForm({ tenants }: { tenants: any[] }) {
                             className="w-4 h-4 mt-1 text-blue-600 rounded border-slate-300 mr-4"
                         />
                         <div>
-                            <span className="text-sm font-bold text-slate-700 block">Enable Vendure (Admin API)</span>
-                            <span className="text-xs text-slate-500 mt-1 block">Used for syncing/deleting users via Vendure Admin API.</span>
+                            <span className="text-sm font-bold text-slate-700 block">Enable Vendure customer sync</span>
+                            <span className="text-xs text-slate-500 mt-1 block">Required for dashboard Users create/edit/delete to sync into Vendure.</span>
                         </div>
                     </label>
 
                     {vendureEnabled && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2 md:col-span-2">
-                                <label className="text-sm font-medium text-slate-700">Vendure Admin API URL</label>
-                                <input
-                                    name="vendureAdminApiUrl"
-                                    placeholder="http://localhost:3000/admin-api"
-                                    className="w-full px-4 py-2 bg-white border rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                                />
+                            <div className="space-y-4 md:col-span-2">
+                                <div className="space-y-1">
+                                    <label className="text-sm font-medium text-slate-700">Development Admin API URL</label>
+                                    <input
+                                        name="vendureAdminApiUrlDev"
+                                        placeholder="http://localhost:3000/admin-api"
+                                        className="w-full px-4 py-2 bg-white border rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                    />
+                                    <span className="text-[10px] text-slate-400">Used when running ZKey locally or in development mode.</span>
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-sm font-medium text-slate-700">Production Admin API URL</label>
+                                    <input
+                                        name="vendureAdminApiUrlProd"
+                                        placeholder="https://your-vendure-prod.com/admin-api"
+                                        className="w-full px-4 py-2 bg-white border rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                    />
+                                    <span className="text-[10px] text-slate-400">Used when deployed to the production environment (Vercel).</span>
+                                </div>
                             </div>
                             <div className="space-y-2 md:col-span-2">
                                 <label className="text-sm font-medium text-slate-700">Vendure Auth Token Header (optional)</label>
@@ -532,98 +544,6 @@ export default function CreateApplicationForm({ tenants }: { tenants: any[] }) {
                             </div>
                         </div>
                     )}
-                </div>
-            </div>
-
-            <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-                <div className="border-b bg-slate-50/50 px-6 py-4 flex items-center">
-                    <MessageSquare className="w-5 h-5 text-blue-500 mr-2" />
-                    <h3 className="font-semibold text-slate-900">Override SMS Provider (Optional)</h3>
-                </div>
-                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">Mobile Labs API Key</label>
-                        <input
-                            name="labsmobileApiKey"
-                            type="password"
-                            placeholder="Leave empty to use tenant default"
-                            className="w-full px-4 py-2 bg-white border rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">Sender ID</label>
-                        <input
-                            name="labsmobileSenderId"
-                            placeholder="APP_SMS"
-                            className="w-full px-4 py-2 bg-white border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-                <div className="border-b bg-slate-50/50 px-6 py-4 flex items-center">
-                    <Settings2 className="w-5 h-5 text-slate-500 mr-2" />
-                    <h3 className="font-semibold text-slate-900">Vendure Integration</h3>
-                </div>
-                <div className="p-6 space-y-4">
-                    <label className="flex items-start p-4 bg-slate-50 border rounded-xl cursor-pointer hover:border-blue-500 transition-colors">
-                        <input
-                            type="checkbox"
-                            name="vendureEnabled"
-                            className="w-4 h-4 mt-1 text-blue-600 rounded border-slate-300 mr-4"
-                        />
-                        <div>
-                            <span className="text-sm font-bold text-slate-700 block">Enable Vendure customer sync</span>
-                            <span className="text-xs text-slate-500 mt-1 block">Required for dashboard Users create/edit/delete to sync into Vendure.</span>
-                        </div>
-                    </label>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2 md:col-span-2">
-                            <label className="text-sm font-medium text-slate-700">Vendure Admin API URL</label>
-                            <input
-                                name="vendureAdminApiUrl"
-                                placeholder="http://localhost:3000/admin-api"
-                                className="w-full px-4 py-2 bg-white border rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                            />
-                        </div>
-                        <div className="space-y-2 md:col-span-2">
-                            <label className="text-sm font-medium text-slate-700">Auth token header (optional)</label>
-                            <input
-                                name="vendureAuthTokenHeader"
-                                placeholder="vendure-auth-token"
-                                className="w-full px-4 py-2 bg-white border rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                            />
-                        </div>
-
-                        <div className="space-y-2 md:col-span-2">
-                            <label className="text-sm font-medium text-slate-700">Admin API Token (recommended)</label>
-                            <input
-                                name="vendureAdminApiToken"
-                                type="password"
-                                placeholder="Leave empty to use username/password"
-                                className="w-full px-4 py-2 bg-white border rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-700">Superadmin Username</label>
-                            <input
-                                name="vendureSuperadminUsername"
-                                placeholder="superadmin"
-                                className="w-full px-4 py-2 bg-white border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-700">Superadmin Password</label>
-                            <input
-                                name="vendureSuperadminPassword"
-                                type="password"
-                                placeholder="••••••••"
-                                className="w-full px-4 py-2 bg-white border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                            />
-                        </div>
-                    </div>
                 </div>
             </div>
 

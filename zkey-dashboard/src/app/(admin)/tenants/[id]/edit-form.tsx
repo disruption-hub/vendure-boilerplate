@@ -24,6 +24,10 @@ interface Tenant {
         ssoEnabled?: boolean;
         sessionTtl?: number;
     };
+    dashboardUrls?: {
+        development?: string;
+        production?: string;
+    };
 }
 
 export function EditTenantForm({ tenant }: { tenant: any }) {
@@ -139,6 +143,33 @@ export function EditTenantForm({ tenant }: { tenant: any }) {
                                 type="number"
                                 defaultValue={tenant.sessionSettings?.sessionTtl || 1440}
                                 className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-6">
+                    <h3 className="text-sm font-bold text-slate-800 border-b pb-2">Environment URLs</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700">Development Dashboard URL</label>
+                            <input
+                                name="dashboardUrlDev"
+                                type="url"
+                                defaultValue={tenant.dashboardUrls?.development || ""}
+                                className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="http://localhost:3003"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700">Production Dashboard URL</label>
+                            <input
+                                name="dashboardUrlProd"
+                                type="url"
+                                defaultValue={tenant.dashboardUrls?.production || ""}
+                                className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="https://dashboard.zkey.app"
                             />
                         </div>
                     </div>

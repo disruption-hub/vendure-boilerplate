@@ -50,7 +50,6 @@ export default function CreateTenantForm() {
                     </div>
                 </div>
             </div>
-
             <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
                 <div className="border-b bg-slate-50/50 px-6 py-4 flex items-center">
                     <Save className="w-5 h-5 text-indigo-500 mr-2" />
@@ -80,6 +79,33 @@ export default function CreateTenantForm() {
                                 className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                             />
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
+                <div className="border-b bg-slate-50/50 px-6 py-4 flex items-center">
+                    <Globe className="w-5 h-5 text-emerald-500 mr-2" />
+                    <h3 className="font-semibold text-slate-900">Environment Dashboard URLs</h3>
+                </div>
+                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700">Development URL</label>
+                        <input
+                            name="dashboardUrlDev"
+                            type="url"
+                            placeholder="http://localhost:3003"
+                            className="w-full px-4 py-2 bg-white border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700">Production URL</label>
+                        <input
+                            name="dashboardUrlProd"
+                            type="url"
+                            placeholder="https://dashboard.zkey.app"
+                            className="w-full px-4 py-2 bg-white border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        />
                     </div>
                 </div>
             </div>
@@ -166,6 +192,6 @@ export default function CreateTenantForm() {
                     )}
                 </button>
             </div>
-        </form>
+        </form >
     );
 }

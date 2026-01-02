@@ -147,11 +147,13 @@ export async function createUser(data: {
                 walletAddress: user.walletAddress,
             }, vendureConfig);
         }
-    } catch (e) {
+    } catch (syncError) {
+        console.error('Failed to sync new user to Vendure:', syncError);
+        // We don't throw here if it's a restoration, but for a NEW user we might want to revert
+        // However, it's safer to let the user exist and sync later than to have inconsistent state
         if (!isRestoring) {
-            await prisma.user.delete({ where: { id: user.id } });
+            // Optional: mark as "sync_pending" in DB if we had that field
         }
-        throw e;
     }
 
     revalidatePath('/users');
@@ -177,16 +179,21 @@ export async function updateUser(id: string, data: {
         role: data.role ?? existing.role,
     };
 
-    const vendureConfig = await getVendureConfigForTenant(existing.tenantId);
-    if (vendureConfig) {
-        await syncZKeyUserInVendure({
-            id: existing.id,
-            email: existing.primaryEmail,
-            firstName: next.firstName,
-            lastName: next.lastName,
-            phoneNumber: next.phoneNumber,
-            walletAddress: next.walletAddress,
-        }, vendureConfig);
+    try {
+        const vendureConfig = await getVendureConfigForTenant(existing.tenantId);
+        if (vendureConfig) {
+            await syncZKeyUserInVendure({
+                id: existing.id,
+                email: existing.primaryEmail,
+                firstName: next.firstName,
+                lastName: next.lastName,
+                phoneNumber: next.phoneNumber,
+                walletAddress: next.walletAddress,
+            }, vendureConfig);
+        }
+    } catch (syncError) {
+        console.error('Failed to sync updated user to Vendure:', syncError);
+        // Do not throw - allow ZKey update to succeed
     }
 
     const user = await prisma.user.update({
@@ -208,9 +215,13 @@ export async function deleteUser(id: string) {
     const existing = await prisma.user.findFirst({ where: { id, deletedAt: null } });
     if (!existing) throw new Error('User not found');
 
-    const vendureConfig = await getVendureConfigForTenant(existing.tenantId);
-    if (vendureConfig) {
-        await deleteZKeyUserInVendure(existing.id, existing.primaryEmail || '', vendureConfig);
+    try {
+        const vendureConfig = await getVendureConfigForTenant(existing.tenantId);
+        if (vendureConfig) {
+            await deleteZKeyUserInVendure(existing.id, existing.primaryEmail || '', vendureConfig);
+        }
+    } catch (syncError) {
+        console.error('Failed to sync user deletion to Vendure:', syncError);
     }
 
     const user = await prisma.user.update({

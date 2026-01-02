@@ -68,7 +68,8 @@ export async function updateApplication(id: string, formData: FormData) {
     const existingVendure = (existing?.integrations as any)?.vendure || {};
 
     const vendureEnabled = formData.get('vendureEnabled') === 'on';
-    const vendureAdminApiUrl = ((formData.get('vendureAdminApiUrl') as string | null) ?? '').trim();
+    const vendureAdminApiUrlDev = ((formData.get('vendureAdminApiUrlDev') as string | null) ?? '').trim();
+    const vendureAdminApiUrlProd = ((formData.get('vendureAdminApiUrlProd') as string | null) ?? '').trim();
     const vendureAuthTokenHeader = ((formData.get('vendureAuthTokenHeader') as string | null) ?? '').trim();
     const vendureAdminApiToken = ((formData.get('vendureAdminApiToken') as string | null) ?? '').trim();
     const vendureSuperadminUsername = ((formData.get('vendureSuperadminUsername') as string | null) ?? '').trim();
@@ -76,7 +77,10 @@ export async function updateApplication(id: string, formData: FormData) {
 
     const vendure: any = {
         enabled: vendureEnabled,
-        adminApiUrl: vendureAdminApiUrl || existingVendure.adminApiUrl || null,
+        adminApiUrlDev: vendureAdminApiUrlDev || existingVendure.adminApiUrlDev || null,
+        adminApiUrlProd: vendureAdminApiUrlProd || existingVendure.adminApiUrlProd || null,
+        // Keep the legacy field updated for now, preferred Prod if existing
+        adminApiUrl: (vendureAdminApiUrlProd || existingVendure.adminApiUrlProd) || (vendureAdminApiUrlDev || existingVendure.adminApiUrlDev) || existingVendure.adminApiUrl || null,
         authTokenHeader: vendureAuthTokenHeader || existingVendure.authTokenHeader || null,
         adminApiToken: vendureAdminApiToken || existingVendure.adminApiToken || null,
         superadminUsername: vendureSuperadminUsername || existingVendure.superadminUsername || null,
@@ -84,7 +88,9 @@ export async function updateApplication(id: string, formData: FormData) {
     };
 
     if (vendureEnabled) {
-        if (!vendure.adminApiUrl) throw new Error('Vendure is enabled: Vendure Admin API URL is required');
+        if (!vendure.adminApiUrlDev && !vendure.adminApiUrlProd && !vendure.adminApiUrl) {
+            throw new Error('Vendure is enabled: At least one Vendure Admin API URL (Dev or Prod) is required');
+        }
         const hasToken = !!vendure.adminApiToken;
         const hasUserPass = !!vendure.superadminUsername && !!vendure.superadminPassword;
         if (!hasToken && !hasUserPass) {

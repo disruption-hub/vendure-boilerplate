@@ -24,7 +24,8 @@ export async function createApplication(formData: FormData) {
     const postLogoutRedirectUris = processFormDataUrls(formData, 'postLogoutRedirectUris');
 
     const vendureEnabled = formData.get('vendureEnabled') === 'on';
-    const vendureAdminApiUrl = ((formData.get('vendureAdminApiUrl') as string | null) ?? '').trim();
+    const vendureAdminApiUrlDev = ((formData.get('vendureAdminApiUrlDev') as string | null) ?? '').trim();
+    const vendureAdminApiUrlProd = ((formData.get('vendureAdminApiUrlProd') as string | null) ?? '').trim();
     const vendureAuthTokenHeader = ((formData.get('vendureAuthTokenHeader') as string | null) ?? '').trim();
     const vendureAdminApiToken = ((formData.get('vendureAdminApiToken') as string | null) ?? '').trim();
     const vendureSuperadminUsername = ((formData.get('vendureSuperadminUsername') as string | null) ?? '').trim();
@@ -32,7 +33,9 @@ export async function createApplication(formData: FormData) {
 
     const vendure: any = {
         enabled: vendureEnabled,
-        adminApiUrl: vendureAdminApiUrl || null,
+        adminApiUrlDev: vendureAdminApiUrlDev || null,
+        adminApiUrlProd: vendureAdminApiUrlProd || null,
+        adminApiUrl: vendureAdminApiUrlProd || vendureAdminApiUrlDev || null,
         authTokenHeader: vendureAuthTokenHeader || null,
         adminApiToken: vendureAdminApiToken || null,
         superadminUsername: vendureSuperadminUsername || null,
@@ -40,7 +43,9 @@ export async function createApplication(formData: FormData) {
     };
 
     if (vendureEnabled) {
-        if (!vendure.adminApiUrl) throw new Error('Vendure is enabled: Vendure Admin API URL is required');
+        if (!vendure.adminApiUrlDev && !vendure.adminApiUrlProd) {
+            throw new Error('Vendure is enabled: At least one Vendure Admin API URL (Dev or Prod) is required');
+        }
         const hasToken = !!vendure.adminApiToken;
         const hasUserPass = !!vendure.superadminUsername && !!vendure.superadminPassword;
         if (!hasToken && !hasUserPass) {

@@ -29,6 +29,10 @@ export async function updateTenant(id: string, formData: FormData) {
                     ssoEnabled: formData.get("ssoEnabled") === "on",
                     sessionTtl: parseInt(formData.get("sessionTtl") as string) || 1440,
                 },
+                dashboardUrls: {
+                    development: formData.get("dashboardUrlDev") as string || null,
+                    production: formData.get("dashboardUrlProd") as string || null,
+                },
             },
         });
     } catch (error) {
@@ -61,6 +65,10 @@ export async function createTenant(formData: FormData) {
                 sessionSettings: {
                     ssoEnabled: formData.get("ssoEnabled") === "on",
                     sessionTtl: parseInt(formData.get("sessionTtl") as string) || 1440,
+                },
+                dashboardUrls: {
+                    development: formData.get("dashboardUrlDev") as string || null,
+                    production: formData.get("dashboardUrlProd") as string || null,
                 },
             },
         });

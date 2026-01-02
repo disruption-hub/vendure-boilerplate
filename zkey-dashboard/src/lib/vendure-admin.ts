@@ -1,5 +1,7 @@
 export type VendureAdminConfig = {
-    adminApiUrl?: string;
+    adminApiUrl?: string; // Legacy / Fallback
+    adminApiUrlDev?: string;
+    adminApiUrlProd?: string;
     authTokenHeader?: string;
     adminApiToken?: string;
     superadminUsername?: string;
@@ -22,7 +24,40 @@ function getAuthHeaderName(config?: VendureAdminConfig) {
 }
 
 function getAdminApiUrl(config?: VendureAdminConfig) {
-    return normalizeUrl(config?.adminApiUrl || process.env.VENDURE_ADMIN_API_URL || DEFAULT_ADMIN_API_URL);
+    const env = process.env.NODE_ENV || "development";
+
+    // 1. Check for environment-specific URL first
+    let rawUrl = env === "production" ? config?.adminApiUrlProd : config?.adminApiUrlDev;
+
+    // 2. Fallback to the generic adminApiUrl if specific one is missing
+    if (!rawUrl) {
+        rawUrl = config?.adminApiUrl || process.env.VENDURE_ADMIN_API_URL;
+    }
+
+    if (rawUrl) {
+        return normalizeUrl(rawUrl);
+    }
+
+    // 3. Last resort - environment-specific default or empty for production validation
+    if (env === "production") {
+        return "";
+    }
+
+    return normalizeUrl(DEFAULT_ADMIN_API_URL);
+}
+
+function isValidAdminApiUrl(url: string) {
+    if (!url) return false;
+    // Basic check for protocol and host
+    try {
+        const u = new URL(url);
+        if (process.env.NODE_ENV === 'production' && (u.hostname === 'localhost' || u.hostname === '127.0.0.1')) {
+            return false;
+        }
+        return true;
+    } catch {
+        return false;
+    }
 }
 
 function cacheKey(config?: VendureAdminConfig) {
@@ -37,8 +72,12 @@ async function vendureAdminRequest<T>(
     variables?: Record<string, unknown>,
     config?: VendureAdminConfig,
 ): Promise<{ data: T; token?: string }> {
-    const token = await getVendureAdminToken(config);
     const adminApiUrl = getAdminApiUrl(config);
+    if (!isValidAdminApiUrl(adminApiUrl)) {
+        throw new Error(`Skipping Vendure admin request: Invalid or localhost API URL in production: ${adminApiUrl}`);
+    }
+
+    const token = await getVendureAdminToken(config);
     const authHeader = getAuthHeaderName(config);
 
     const body = JSON.stringify({ query, variables: variables ?? {} });
@@ -113,6 +152,10 @@ async function getVendureAdminToken(config?: VendureAdminConfig): Promise<string
     `;
 
     const adminApiUrl = getAdminApiUrl(config);
+    if (!isValidAdminApiUrl(adminApiUrl)) {
+        throw new Error(`Skipping Vendure admin login: Invalid or localhost API URL in production: ${adminApiUrl}`);
+    }
+
     const authHeader = getAuthHeaderName(config);
 
     const response = await fetch(adminApiUrl, {
