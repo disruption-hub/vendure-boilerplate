@@ -7,6 +7,7 @@ export const metadata: Metadata = {
 import { ChangePasswordForm } from './change-password-form';
 import { EditProfileForm } from './edit-profile-form';
 import { EditEmailForm } from './edit-email-form';
+import WalletAddressCard from './wallet-address-card';
 
 export default async function ProfilePage(_props: PageProps<'/account/profile'>) {
     const customer = await getActiveCustomer();
@@ -23,6 +24,8 @@ export default async function ProfilePage(_props: PageProps<'/account/profile'>)
             <EditProfileForm customer={customer} />
 
             <EditEmailForm currentEmail={customer?.emailAddress || ''} />
+
+            <WalletAddressCard walletAddress={(customer as any)?.customFields?.walletAddress ?? null} />
 
             <ChangePasswordForm />
         </div>

@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "concurrently \"pnpm run dev:backend\" \"pnpm run dev:storefront\" --kill-others --names \"BACKEND,FRONTEND\" --prefix-colors \"blue,magenta\"",
+        "dev:all": "bash ./scripts/dev-all.sh",
         "dev:backend": "pnpm --filter vendure-boilerplate dev",
         "dev:storefront": "pnpm --filter nextjs-starter-vendure dev",
         "build": "pnpm --filter \"*\" build",

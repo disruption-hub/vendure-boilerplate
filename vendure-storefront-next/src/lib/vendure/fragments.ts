@@ -30,5 +30,9 @@ export const ActiveCustomerFragment = graphql(`
         lastName
         emailAddress
         phoneNumber
+        customFields {
+            logtoUserId
+            walletAddress
+        }
     }
 `);

@@ -10,7 +10,7 @@ import { LoginForm } from './login-form';
 function SignInContent() {
     const { initiateOIDCLogin } = useAuth();
     const searchParams = useSearchParams();
-    const redirectPath = searchParams.get('redirect');
+    const redirectPath = searchParams.get('redirect') || searchParams.get('redirectUrl') || searchParams.get('redirectTo');
     const [showLocal, setShowLocal] = useState(false);
 
     useEffect(() => {

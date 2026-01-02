@@ -7,6 +7,9 @@ import {
     RequestUpdateCustomerEmailAddressMutation,
 } from '@/lib/vendure/mutations';
 import { revalidatePath } from 'next/cache';
+import { getZKeyAuthToken } from '@/lib/auth';
+import * as zkey from '@/lib/zkey';
+import { revalidateAuth } from '@/lib/vendure/actions';
 
 export async function updatePasswordAction(prevState: { error?: string; success?: boolean } | undefined, formData: FormData) {
     const currentPassword = formData.get('currentPassword') as string;
@@ -103,5 +106,22 @@ export async function requestEmailUpdateAction(prevState: { error?: string; succ
         return { success: true };
     } catch (error: unknown) {
         return { error: 'An unexpected error occurred. Please try again.' };
+    }
+}
+
+export async function unlinkWalletAction() {
+    const token = await getZKeyAuthToken();
+    if (!token) {
+        return { success: false, error: 'Not authenticated with wallet' };
+    }
+
+    try {
+        await zkey.unlinkWallet(token);
+
+        await revalidateAuth();
+        revalidatePath('/account/profile');
+        return { success: true };
+    } catch (e) {
+        return { success: false, error: e instanceof Error ? e.message : 'Failed to unlink wallet' };
     }
 }

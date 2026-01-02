@@ -16,13 +16,19 @@ export async function updateTenant(id: string, formData: FormData) {
             data: {
                 name,
                 slug,
-                brevoApiKey: formData.get("brevoApiKey") as string || null,
-                brevoSenderEmail: formData.get("brevoSenderEmail") as string || null,
-                brevoSenderName: formData.get("brevoSenderName") as string || null,
-                labsmobileApiKey: formData.get("labsmobileApiKey") as string || null,
-                labsmobileUser: formData.get("labsmobileUser") as string || null,
-                labsmobileUrl: formData.get("labsmobileUrl") as string || null,
-                labsmobileSenderId: formData.get("labsmobileSenderId") as string || null,
+                integrations: {
+                    brevoApiKey: formData.get("brevoApiKey") as string || null,
+                    brevoSenderEmail: formData.get("brevoSenderEmail") as string || null,
+                    brevoSenderName: formData.get("brevoSenderName") as string || null,
+                    labsmobileApiKey: formData.get("labsmobileApiKey") as string || null,
+                    labsmobileUser: formData.get("labsmobileUser") as string || null,
+                    labsmobileUrl: formData.get("labsmobileUrl") as string || null,
+                    labsmobileSenderId: formData.get("labsmobileSenderId") as string || null,
+                },
+                sessionSettings: {
+                    ssoEnabled: formData.get("ssoEnabled") === "on",
+                    sessionTtl: parseInt(formData.get("sessionTtl") as string) || 1440,
+                },
             },
         });
     } catch (error) {
@@ -43,13 +49,19 @@ export async function createTenant(formData: FormData) {
             data: {
                 name,
                 slug,
-                brevoApiKey: formData.get("brevoApiKey") as string || null,
-                brevoSenderEmail: formData.get("brevoSenderEmail") as string || null,
-                brevoSenderName: formData.get("brevoSenderName") as string || null,
-                labsmobileApiKey: formData.get("labsmobileApiKey") as string || null,
-                labsmobileUser: formData.get("labsmobileUser") as string || null,
-                labsmobileUrl: formData.get("labsmobileUrl") as string || null,
-                labsmobileSenderId: formData.get("labsmobileSenderId") as string || null,
+                integrations: {
+                    brevoApiKey: formData.get("brevoApiKey") as string || null,
+                    brevoSenderEmail: formData.get("brevoSenderEmail") as string || null,
+                    brevoSenderName: formData.get("brevoSenderName") as string || null,
+                    labsmobileApiKey: formData.get("labsmobileApiKey") as string || null,
+                    labsmobileUser: formData.get("labsmobileUser") as string || null,
+                    labsmobileUrl: formData.get("labsmobileUrl") as string || null,
+                    labsmobileSenderId: formData.get("labsmobileSenderId") as string || null,
+                },
+                sessionSettings: {
+                    ssoEnabled: formData.get("ssoEnabled") === "on",
+                    sessionTtl: parseInt(formData.get("sessionTtl") as string) || 1440,
+                },
             },
         });
         return tenant;

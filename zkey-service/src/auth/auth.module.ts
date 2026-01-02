@@ -7,13 +7,16 @@ import { OAuthService } from './oauth.service';
 import { OAuthController } from './oauth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PrismaModule } from '../prisma/prisma.module';
-import { NotificationsModule } from '../notifications/notifications.module'; // Added because AuthService uses NotificationsService
+import { NotificationsModule } from '../notifications/notifications.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
     PrismaModule,
     PassportModule,
-    NotificationsModule, // Ensure this is imported for AuthService
+    PassportModule,
+    NotificationsModule,
+    UsersModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
       signOptions: { expiresIn: '1h' },

@@ -99,18 +99,16 @@ exports.Prisma.TenantScalarFieldEnum = {
   slug: 'slug',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  brevoApiKey: 'brevoApiKey',
-  brevoSenderEmail: 'brevoSenderEmail',
-  brevoSenderName: 'brevoSenderName',
-  labsmobileApiKey: 'labsmobileApiKey',
-  labsmobileUser: 'labsmobileUser',
-  labsmobileUrl: 'labsmobileUrl',
-  labsmobileSenderId: 'labsmobileSenderId'
+  integrations: 'integrations',
+  sessionSettings: 'sessionSettings',
+  branding: 'branding',
+  dashboardUrls: 'dashboardUrls'
 };
 
 exports.Prisma.ApplicationScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  description: 'description',
   clientId: 'clientId',
   clientSecret: 'clientSecret',
   tenantId: 'tenantId',
@@ -118,13 +116,16 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   postLogoutRedirectUris: 'postLogoutRedirectUris',
   corsOrigins: 'corsOrigins',
   authMethods: 'authMethods',
-  brevoApiKey: 'brevoApiKey',
-  brevoSenderEmail: 'brevoSenderEmail',
-  brevoSenderName: 'brevoSenderName',
-  labsmobileApiKey: 'labsmobileApiKey',
-  labsmobileUser: 'labsmobileUser',
-  labsmobileUrl: 'labsmobileUrl',
-  labsmobileSenderId: 'labsmobileSenderId',
+  logo: 'logo',
+  primaryColor: 'primaryColor',
+  alwaysIssueRefreshToken: 'alwaysIssueRefreshToken',
+  rotateRefreshToken: 'rotateRefreshToken',
+  refreshTokenTtl: 'refreshTokenTtl',
+  backchannelLogoutUri: 'backchannelLogoutUri',
+  isSessionRequired: 'isSessionRequired',
+  integrations: 'integrations',
+  customData: 'customData',
+  branding: 'branding',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -135,12 +136,16 @@ exports.Prisma.UserScalarFieldEnum = {
   lastName: 'lastName',
   primaryEmail: 'primaryEmail',
   emailVerified: 'emailVerified',
+  phone: 'phone',
   phoneNumber: 'phoneNumber',
   phoneVerified: 'phoneVerified',
+  walletAddress: 'walletAddress',
   passwordHash: 'passwordHash',
+  role: 'role',
   avatar: 'avatar',
   customData: 'customData',
   tenantId: 'tenantId',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -154,9 +159,23 @@ exports.Prisma.UserIdentityScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.UserSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tenantId: 'tenantId',
+  sid: 'sid',
+  userAgent: 'userAgent',
+  ipAddress: 'ipAddress',
+  lastActive: 'lastActive',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.RefreshTokenScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  clientId: 'clientId',
+  sessionId: 'sessionId',
   tokenHash: 'tokenHash',
   resource: 'resource',
   scopes: 'scopes',
@@ -166,6 +185,7 @@ exports.Prisma.RefreshTokenScalarFieldEnum = {
 
 exports.Prisma.InteractionScalarFieldEnum = {
   id: 'id',
+  type: 'type',
   details: 'details',
   expiresAt: 'expiresAt',
   createdAt: 'createdAt'
@@ -190,15 +210,15 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
-exports.Prisma.NullsOrder = {
-  first: 'first',
-  last: 'last'
-};
-
 exports.Prisma.JsonNullValueFilter = {
   DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
 };
 
 
@@ -207,6 +227,7 @@ exports.Prisma.ModelName = {
   Application: 'Application',
   User: 'User',
   UserIdentity: 'UserIdentity',
+  UserSession: 'UserSession',
   RefreshToken: 'RefreshToken',
   Interaction: 'Interaction'
 };
@@ -218,10 +239,10 @@ const config = {
   "clientVersion": "7.2.0",
   "engineVersion": "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3",
   "activeProvider": "postgresql",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\n// OIDC-inspired User Model\n// OIDC-inspired User Model\nmodel Tenant {\n  id                 String        @id @default(cuid())\n  name               String\n  slug               String        @unique\n  createdAt          DateTime      @default(now())\n  updatedAt          DateTime      @updatedAt\n  brevoApiKey        String?\n  brevoSenderEmail   String?\n  brevoSenderName    String?\n  labsmobileApiKey   String?\n  labsmobileUser     String?\n  labsmobileUrl      String?\n  labsmobileSenderId String?\n  users              User[]\n  applications       Application[]\n\n  @@map(\"tenants\")\n}\n\nmodel Application {\n  id                     String   @id @default(cuid())\n  name                   String\n  clientId               String   @unique @default(uuid())\n  clientSecret           String?\n  tenantId               String\n  tenant                 Tenant   @relation(fields: [tenantId], references: [id])\n  redirectUris           String[]\n  postLogoutRedirectUris String[]\n  corsOrigins            String[]\n  authMethods            Json?    @default(\"{\\\"password\\\": true, \\\"otp\\\": false, \\\"wallet\\\": false}\")\n  brevoApiKey            String?\n  brevoSenderEmail       String?\n  brevoSenderName        String?\n  labsmobileApiKey       String?\n  labsmobileUser         String?\n  labsmobileUrl          String?\n  labsmobileSenderId     String?\n  createdAt              DateTime @default(now())\n  updatedAt              DateTime @updatedAt\n\n  @@map(\"applications\")\n}\n\nmodel User {\n  id            String         @id @default(cuid())\n  firstName     String?\n  lastName      String?\n  primaryEmail  String?        @unique\n  emailVerified Boolean        @default(false)\n  phoneNumber   String?        @unique\n  phoneVerified Boolean        @default(false)\n  passwordHash  String?\n  avatar        String?\n  customData    Json?\n  tenantId      String?\n  tenant        Tenant?        @relation(fields: [tenantId], references: [id])\n  identities    UserIdentity[]\n  refreshTokens RefreshToken[]\n  createdAt     DateTime       @default(now())\n  updatedAt     DateTime       @updatedAt\n\n  @@map(\"users\")\n}\n\nmodel UserIdentity {\n  id            String   @id @default(cuid())\n  userId        String\n  user          User     @relation(fields: [userId], references: [id])\n  provider      String // e.g., \"google\", \"github\"\n  providerId    String // The ID from the provider\n  profileResult Json? // Raw profile data\n  createdAt     DateTime @default(now())\n\n  @@unique([provider, providerId])\n  @@map(\"user_identities\")\n}\n\nmodel RefreshToken {\n  id        String   @id @default(cuid())\n  userId    String\n  user      User     @relation(fields: [userId], references: [id])\n  tokenHash String   @unique\n  resource  String?\n  scopes    String[]\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  @@map(\"refresh_tokens\")\n}\n\n// For OIDC Interaction (Login Flow State)\nmodel Interaction {\n  id        String   @id @default(cuid())\n  details   Json\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  @@map(\"interactions\")\n}\n"
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Tenant {\n  id        String   @id @default(cuid())\n  name      String\n  slug      String   @unique\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Consolidated Integration Configurations\n  // Hierarchy: Application > Tenant > System Default\n  integrations Json? @default(\"{}\")\n\n  // SSO & Session Settings\n  sessionSettings Json? @default(\"{\\\"ssoEnabled\\\": true, \\\"sessionTtl\\\": 1440}\")\n\n  // Branding Settings\n  branding Json? @default(\"{}\")\n\n  // Dashboard Settings\n  // Stores environment-specific URLs: { \"development\": \"...\", \"production\": \"...\" }\n  dashboardUrls Json? @default(\"{}\")\n\n  applications Application[]\n  users        User[]\n  sessions     UserSession[]\n\n  @@map(\"tenants\")\n}\n\nmodel Application {\n  id                     String   @id @default(cuid())\n  name                   String\n  description            String?\n  clientId               String   @unique @default(uuid())\n  clientSecret           String?\n  tenantId               String\n  redirectUris           String[]\n  postLogoutRedirectUris String[]\n  corsOrigins            String[]\n  authMethods            Json?    @default(\"{\\\"password\\\": true, \\\"emailOtp\\\": false, \\\"smsOtp\\\": false, \\\"wallet\\\": false}\")\n\n  // Branding\n  logo         String?\n  primaryColor String?\n\n  // Refresh Token Settings\n  alwaysIssueRefreshToken Boolean @default(false)\n  rotateRefreshToken      Boolean @default(false)\n  refreshTokenTtl         Int     @default(14)\n\n  // Backchannel Logout\n  backchannelLogoutUri String?\n  isSessionRequired    Boolean @default(false)\n\n  // Custom Data & Integrations\n  // Overrides Tenant-level integrations if present\n  integrations Json? @default(\"{}\")\n  customData   Json? @default(\"{}\")\n  branding     Json? @default(\"{}\")\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  tenant    Tenant   @relation(fields: [tenantId], references: [id])\n\n  @@map(\"applications\")\n}\n\nmodel User {\n  id            String    @id @default(cuid())\n  firstName     String?\n  lastName      String?\n  primaryEmail  String?\n  emailVerified Boolean   @default(false)\n  phone         String?\n  phoneNumber   String?\n  phoneVerified Boolean   @default(false)\n  walletAddress String?   @unique\n  passwordHash  String?\n  role          String    @default(\"user\")\n  avatar        String?\n  customData    Json?\n  tenantId      String?\n  deletedAt     DateTime?\n  createdAt     DateTime  @default(now())\n  updatedAt     DateTime  @updatedAt\n\n  refreshTokens RefreshToken[]\n  identities    UserIdentity[]\n  sessions      UserSession[]\n  tenant        Tenant?        @relation(fields: [tenantId], references: [id])\n\n  // Tenant-aware uniqueness constraints - REMOVED for Unverified Phishing Protection\n  // @@unique([primaryEmail, tenantId])\n  // @@unique([phone, tenantId])\n  // @@unique([phoneNumber, tenantId])\n  @@map(\"users\")\n}\n\nmodel UserIdentity {\n  id            String   @id @default(cuid())\n  userId        String\n  provider      String // 'local', 'google', 'wallet', 'apple', etc.\n  providerId    String // The unique ID from the provider (email for local, address for wallet)\n  profileResult Json? // Any extra metadata from the social provider\n  createdAt     DateTime @default(now())\n  user          User     @relation(fields: [userId], references: [id])\n\n  @@unique([provider, providerId])\n  @@map(\"user_identities\")\n}\n\nmodel UserSession {\n  id         String   @id @default(cuid())\n  userId     String\n  tenantId   String\n  sid        String   @unique // Session ID as required by OIDC backchannel logout\n  userAgent  String?\n  ipAddress  String?\n  lastActive DateTime @default(now())\n  expiresAt  DateTime\n  createdAt  DateTime @default(now())\n\n  user          User           @relation(fields: [userId], references: [id])\n  tenant        Tenant         @relation(fields: [tenantId], references: [id])\n  refreshTokens RefreshToken[]\n\n  @@map(\"user_sessions\")\n}\n\nmodel RefreshToken {\n  id        String   @id @default(cuid())\n  userId    String\n  clientId  String?\n  sessionId String? // Linked to UserSession for unified logout\n  tokenHash String   @unique\n  resource  String?\n  scopes    String[]\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  user    User         @relation(fields: [userId], references: [id])\n  session UserSession? @relation(fields: [sessionId], references: [id])\n\n  @@map(\"refresh_tokens\")\n}\n\nmodel Interaction {\n  id        String   @id @default(cuid())\n  type      String   @default(\"login\") // 'login', 'consent', 'registration'\n  details   Json\n  expiresAt DateTime\n  createdAt DateTime @default(now())\n\n  @@map(\"interactions\")\n}\n"
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Tenant\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"brevoApiKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"brevoSenderEmail\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"brevoSenderName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"labsmobileApiKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"labsmobileUser\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"labsmobileUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"labsmobileSenderId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"users\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"TenantToUser\"},{\"name\":\"applications\",\"kind\":\"object\",\"type\":\"Application\",\"relationName\":\"ApplicationToTenant\"}],\"dbName\":\"tenants\"},\"Application\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"clientId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"clientSecret\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenant\",\"kind\":\"object\",\"type\":\"Tenant\",\"relationName\":\"ApplicationToTenant\"},{\"name\":\"redirectUris\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postLogoutRedirectUris\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"corsOrigins\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"authMethods\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"brevoApiKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"brevoSenderEmail\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"brevoSenderName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"labsmobileApiKey\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"labsmobileUser\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"labsmobileUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"labsmobileSenderId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"applications\"},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"primaryEmail\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emailVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"phoneNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phoneVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"passwordHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"avatar\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"customData\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenant\",\"kind\":\"object\",\"type\":\"Tenant\",\"relationName\":\"TenantToUser\"},{\"name\":\"identities\",\"kind\":\"object\",\"type\":\"UserIdentity\",\"relationName\":\"UserToUserIdentity\"},{\"name\":\"refreshTokens\",\"kind\":\"object\",\"type\":\"RefreshToken\",\"relationName\":\"RefreshTokenToUser\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"users\"},\"UserIdentity\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserIdentity\"},{\"name\":\"provider\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"providerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"profileResult\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"user_identities\"},\"RefreshToken\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"RefreshTokenToUser\"},{\"name\":\"tokenHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resource\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"scopes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"refresh_tokens\"},\"Interaction\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"details\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"interactions\"}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Tenant\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"slug\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"integrations\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"sessionSettings\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"branding\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"dashboardUrls\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"applications\",\"kind\":\"object\",\"type\":\"Application\",\"relationName\":\"ApplicationToTenant\"},{\"name\":\"users\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"TenantToUser\"},{\"name\":\"sessions\",\"kind\":\"object\",\"type\":\"UserSession\",\"relationName\":\"TenantToUserSession\"}],\"dbName\":\"tenants\"},\"Application\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"clientId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"clientSecret\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"redirectUris\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"postLogoutRedirectUris\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"corsOrigins\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"authMethods\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"logo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"primaryColor\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"alwaysIssueRefreshToken\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"rotateRefreshToken\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"refreshTokenTtl\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"backchannelLogoutUri\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isSessionRequired\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"integrations\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"customData\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"branding\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"tenant\",\"kind\":\"object\",\"type\":\"Tenant\",\"relationName\":\"ApplicationToTenant\"}],\"dbName\":\"applications\"},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"primaryEmail\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"emailVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phoneNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phoneVerified\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"walletAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"passwordHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"avatar\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"customData\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"deletedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"refreshTokens\",\"kind\":\"object\",\"type\":\"RefreshToken\",\"relationName\":\"RefreshTokenToUser\"},{\"name\":\"identities\",\"kind\":\"object\",\"type\":\"UserIdentity\",\"relationName\":\"UserToUserIdentity\"},{\"name\":\"sessions\",\"kind\":\"object\",\"type\":\"UserSession\",\"relationName\":\"UserToUserSession\"},{\"name\":\"tenant\",\"kind\":\"object\",\"type\":\"Tenant\",\"relationName\":\"TenantToUser\"}],\"dbName\":\"users\"},\"UserIdentity\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"provider\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"providerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"profileResult\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserIdentity\"}],\"dbName\":\"user_identities\"},\"UserSession\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tenantId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sid\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userAgent\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"ipAddress\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastActive\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserSession\"},{\"name\":\"tenant\",\"kind\":\"object\",\"type\":\"Tenant\",\"relationName\":\"TenantToUserSession\"},{\"name\":\"refreshTokens\",\"kind\":\"object\",\"type\":\"RefreshToken\",\"relationName\":\"RefreshTokenToUserSession\"}],\"dbName\":\"user_sessions\"},\"RefreshToken\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"clientId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sessionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tokenHash\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"resource\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"scopes\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"RefreshTokenToUser\"},{\"name\":\"session\",\"kind\":\"object\",\"type\":\"UserSession\",\"relationName\":\"RefreshTokenToUserSession\"}],\"dbName\":\"refresh_tokens\"},\"Interaction\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"type\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"details\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":\"interactions\"}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.compilerWasm = {
       getRuntime: async () => require('./query_compiler_bg.js'),

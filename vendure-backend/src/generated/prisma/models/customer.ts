@@ -48,6 +48,9 @@ export type CustomerMinAggregateOutputType = {
   id: number | null
   userId: number | null
   customFieldsStripecustomerid: string | null
+  customFieldsLogtouserid: string | null
+  customFieldsLogtodata: string | null
+  customFieldsWalletaddress: string | null
 }
 
 export type CustomerMaxAggregateOutputType = {
@@ -62,6 +65,9 @@ export type CustomerMaxAggregateOutputType = {
   id: number | null
   userId: number | null
   customFieldsStripecustomerid: string | null
+  customFieldsLogtouserid: string | null
+  customFieldsLogtodata: string | null
+  customFieldsWalletaddress: string | null
 }
 
 export type CustomerCountAggregateOutputType = {
@@ -76,6 +82,9 @@ export type CustomerCountAggregateOutputType = {
   id: number
   userId: number
   customFieldsStripecustomerid: number
+  customFieldsLogtouserid: number
+  customFieldsLogtodata: number
+  customFieldsWalletaddress: number
   _all: number
 }
 
@@ -102,6 +111,9 @@ export type CustomerMinAggregateInputType = {
   id?: true
   userId?: true
   customFieldsStripecustomerid?: true
+  customFieldsLogtouserid?: true
+  customFieldsLogtodata?: true
+  customFieldsWalletaddress?: true
 }
 
 export type CustomerMaxAggregateInputType = {
@@ -116,6 +128,9 @@ export type CustomerMaxAggregateInputType = {
   id?: true
   userId?: true
   customFieldsStripecustomerid?: true
+  customFieldsLogtouserid?: true
+  customFieldsLogtodata?: true
+  customFieldsWalletaddress?: true
 }
 
 export type CustomerCountAggregateInputType = {
@@ -130,6 +145,9 @@ export type CustomerCountAggregateInputType = {
   id?: true
   userId?: true
   customFieldsStripecustomerid?: true
+  customFieldsLogtouserid?: true
+  customFieldsLogtodata?: true
+  customFieldsWalletaddress?: true
   _all?: true
 }
 
@@ -231,6 +249,9 @@ export type CustomerGroupByOutputType = {
   id: number
   userId: number | null
   customFieldsStripecustomerid: string | null
+  customFieldsLogtouserid: string | null
+  customFieldsLogtodata: string | null
+  customFieldsWalletaddress: string | null
   _count: CustomerCountAggregateOutputType | null
   _avg: CustomerAvgAggregateOutputType | null
   _sum: CustomerSumAggregateOutputType | null
@@ -268,6 +289,9 @@ export type customerWhereInput = {
   id?: Prisma.IntFilter<"customer"> | number
   userId?: Prisma.IntNullableFilter<"customer"> | number | null
   customFieldsStripecustomerid?: Prisma.StringNullableFilter<"customer"> | string | null
+  customFieldsLogtouserid?: Prisma.StringNullableFilter<"customer"> | string | null
+  customFieldsLogtodata?: Prisma.StringNullableFilter<"customer"> | string | null
+  customFieldsWalletaddress?: Prisma.StringNullableFilter<"customer"> | string | null
   address?: Prisma.AddressListRelationFilter
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.userWhereInput> | null
   customer_channels_channel?: Prisma.Customer_channels_channelListRelationFilter
@@ -288,6 +312,9 @@ export type customerOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   customFieldsStripecustomerid?: Prisma.SortOrderInput | Prisma.SortOrder
+  customFieldsLogtouserid?: Prisma.SortOrderInput | Prisma.SortOrder
+  customFieldsLogtodata?: Prisma.SortOrderInput | Prisma.SortOrder
+  customFieldsWalletaddress?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.addressOrderByRelationAggregateInput
   user?: Prisma.userOrderByWithRelationInput
   customer_channels_channel?: Prisma.customer_channels_channelOrderByRelationAggregateInput
@@ -299,6 +326,8 @@ export type customerOrderByWithRelationInput = {
 export type customerWhereUniqueInput = Prisma.AtLeast<{
   id?: number
   userId?: number
+  customFieldsLogtouserid?: string
+  customFieldsWalletaddress?: string
   AND?: Prisma.customerWhereInput | Prisma.customerWhereInput[]
   OR?: Prisma.customerWhereInput[]
   NOT?: Prisma.customerWhereInput | Prisma.customerWhereInput[]
@@ -311,13 +340,14 @@ export type customerWhereUniqueInput = Prisma.AtLeast<{
   phoneNumber?: Prisma.StringNullableFilter<"customer"> | string | null
   emailAddress?: Prisma.StringFilter<"customer"> | string
   customFieldsStripecustomerid?: Prisma.StringNullableFilter<"customer"> | string | null
+  customFieldsLogtodata?: Prisma.StringNullableFilter<"customer"> | string | null
   address?: Prisma.AddressListRelationFilter
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.userWhereInput> | null
   customer_channels_channel?: Prisma.Customer_channels_channelListRelationFilter
   customer_groups_customer_group?: Prisma.Customer_groups_customer_groupListRelationFilter
   history_entry?: Prisma.History_entryListRelationFilter
   order?: Prisma.OrderListRelationFilter
-}, "id" | "userId">
+}, "id" | "userId" | "customFieldsLogtouserid" | "customFieldsWalletaddress">
 
 export type customerOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
@@ -331,6 +361,9 @@ export type customerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   customFieldsStripecustomerid?: Prisma.SortOrderInput | Prisma.SortOrder
+  customFieldsLogtouserid?: Prisma.SortOrderInput | Prisma.SortOrder
+  customFieldsLogtodata?: Prisma.SortOrderInput | Prisma.SortOrder
+  customFieldsWalletaddress?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.customerCountOrderByAggregateInput
   _avg?: Prisma.customerAvgOrderByAggregateInput
   _max?: Prisma.customerMaxOrderByAggregateInput
@@ -353,6 +386,9 @@ export type customerScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"customer"> | number
   userId?: Prisma.IntNullableWithAggregatesFilter<"customer"> | number | null
   customFieldsStripecustomerid?: Prisma.StringNullableWithAggregatesFilter<"customer"> | string | null
+  customFieldsLogtouserid?: Prisma.StringNullableWithAggregatesFilter<"customer"> | string | null
+  customFieldsLogtodata?: Prisma.StringNullableWithAggregatesFilter<"customer"> | string | null
+  customFieldsWalletaddress?: Prisma.StringNullableWithAggregatesFilter<"customer"> | string | null
 }
 
 export type customerCreateInput = {
@@ -365,6 +401,9 @@ export type customerCreateInput = {
   phoneNumber?: string | null
   emailAddress: string
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   address?: Prisma.addressCreateNestedManyWithoutCustomerInput
   user?: Prisma.userCreateNestedOneWithoutCustomerInput
   customer_channels_channel?: Prisma.customer_channels_channelCreateNestedManyWithoutCustomerInput
@@ -385,6 +424,9 @@ export type customerUncheckedCreateInput = {
   id?: number
   userId?: number | null
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   address?: Prisma.addressUncheckedCreateNestedManyWithoutCustomerInput
   customer_channels_channel?: Prisma.customer_channels_channelUncheckedCreateNestedManyWithoutCustomerInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUncheckedCreateNestedManyWithoutCustomerInput
@@ -402,6 +444,9 @@ export type customerUpdateInput = {
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.addressUpdateManyWithoutCustomerNestedInput
   user?: Prisma.userUpdateOneWithoutCustomerNestedInput
   customer_channels_channel?: Prisma.customer_channels_channelUpdateManyWithoutCustomerNestedInput
@@ -422,6 +467,9 @@ export type customerUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.addressUncheckedUpdateManyWithoutCustomerNestedInput
   customer_channels_channel?: Prisma.customer_channels_channelUncheckedUpdateManyWithoutCustomerNestedInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUncheckedUpdateManyWithoutCustomerNestedInput
@@ -441,6 +489,9 @@ export type customerCreateManyInput = {
   id?: number
   userId?: number | null
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
 }
 
 export type customerUpdateManyMutationInput = {
@@ -453,6 +504,9 @@ export type customerUpdateManyMutationInput = {
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type customerUncheckedUpdateManyInput = {
@@ -467,6 +521,9 @@ export type customerUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type CustomerNullableScalarRelationFilter = {
@@ -486,6 +543,9 @@ export type customerCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   customFieldsStripecustomerid?: Prisma.SortOrder
+  customFieldsLogtouserid?: Prisma.SortOrder
+  customFieldsLogtodata?: Prisma.SortOrder
+  customFieldsWalletaddress?: Prisma.SortOrder
 }
 
 export type customerAvgOrderByAggregateInput = {
@@ -505,6 +565,9 @@ export type customerMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   customFieldsStripecustomerid?: Prisma.SortOrder
+  customFieldsLogtouserid?: Prisma.SortOrder
+  customFieldsLogtodata?: Prisma.SortOrder
+  customFieldsWalletaddress?: Prisma.SortOrder
 }
 
 export type customerMinOrderByAggregateInput = {
@@ -519,6 +582,9 @@ export type customerMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   customFieldsStripecustomerid?: Prisma.SortOrder
+  customFieldsLogtouserid?: Prisma.SortOrder
+  customFieldsLogtodata?: Prisma.SortOrder
+  customFieldsWalletaddress?: Prisma.SortOrder
 }
 
 export type customerSumOrderByAggregateInput = {
@@ -649,6 +715,9 @@ export type customerCreateWithoutAddressInput = {
   phoneNumber?: string | null
   emailAddress: string
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   user?: Prisma.userCreateNestedOneWithoutCustomerInput
   customer_channels_channel?: Prisma.customer_channels_channelCreateNestedManyWithoutCustomerInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupCreateNestedManyWithoutCustomerInput
@@ -668,6 +737,9 @@ export type customerUncheckedCreateWithoutAddressInput = {
   id?: number
   userId?: number | null
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   customer_channels_channel?: Prisma.customer_channels_channelUncheckedCreateNestedManyWithoutCustomerInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUncheckedCreateNestedManyWithoutCustomerInput
   history_entry?: Prisma.history_entryUncheckedCreateNestedManyWithoutCustomerInput
@@ -700,6 +772,9 @@ export type customerUpdateWithoutAddressInput = {
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.userUpdateOneWithoutCustomerNestedInput
   customer_channels_channel?: Prisma.customer_channels_channelUpdateManyWithoutCustomerNestedInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUpdateManyWithoutCustomerNestedInput
@@ -719,6 +794,9 @@ export type customerUncheckedUpdateWithoutAddressInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer_channels_channel?: Prisma.customer_channels_channelUncheckedUpdateManyWithoutCustomerNestedInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUncheckedUpdateManyWithoutCustomerNestedInput
   history_entry?: Prisma.history_entryUncheckedUpdateManyWithoutCustomerNestedInput
@@ -735,6 +813,9 @@ export type customerCreateWithoutCustomer_channels_channelInput = {
   phoneNumber?: string | null
   emailAddress: string
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   address?: Prisma.addressCreateNestedManyWithoutCustomerInput
   user?: Prisma.userCreateNestedOneWithoutCustomerInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupCreateNestedManyWithoutCustomerInput
@@ -754,6 +835,9 @@ export type customerUncheckedCreateWithoutCustomer_channels_channelInput = {
   id?: number
   userId?: number | null
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   address?: Prisma.addressUncheckedCreateNestedManyWithoutCustomerInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUncheckedCreateNestedManyWithoutCustomerInput
   history_entry?: Prisma.history_entryUncheckedCreateNestedManyWithoutCustomerInput
@@ -786,6 +870,9 @@ export type customerUpdateWithoutCustomer_channels_channelInput = {
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.addressUpdateManyWithoutCustomerNestedInput
   user?: Prisma.userUpdateOneWithoutCustomerNestedInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUpdateManyWithoutCustomerNestedInput
@@ -805,6 +892,9 @@ export type customerUncheckedUpdateWithoutCustomer_channels_channelInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.addressUncheckedUpdateManyWithoutCustomerNestedInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUncheckedUpdateManyWithoutCustomerNestedInput
   history_entry?: Prisma.history_entryUncheckedUpdateManyWithoutCustomerNestedInput
@@ -821,6 +911,9 @@ export type customerCreateWithoutCustomer_groups_customer_groupInput = {
   phoneNumber?: string | null
   emailAddress: string
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   address?: Prisma.addressCreateNestedManyWithoutCustomerInput
   user?: Prisma.userCreateNestedOneWithoutCustomerInput
   customer_channels_channel?: Prisma.customer_channels_channelCreateNestedManyWithoutCustomerInput
@@ -840,6 +933,9 @@ export type customerUncheckedCreateWithoutCustomer_groups_customer_groupInput = 
   id?: number
   userId?: number | null
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   address?: Prisma.addressUncheckedCreateNestedManyWithoutCustomerInput
   customer_channels_channel?: Prisma.customer_channels_channelUncheckedCreateNestedManyWithoutCustomerInput
   history_entry?: Prisma.history_entryUncheckedCreateNestedManyWithoutCustomerInput
@@ -872,6 +968,9 @@ export type customerUpdateWithoutCustomer_groups_customer_groupInput = {
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.addressUpdateManyWithoutCustomerNestedInput
   user?: Prisma.userUpdateOneWithoutCustomerNestedInput
   customer_channels_channel?: Prisma.customer_channels_channelUpdateManyWithoutCustomerNestedInput
@@ -891,6 +990,9 @@ export type customerUncheckedUpdateWithoutCustomer_groups_customer_groupInput = 
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.addressUncheckedUpdateManyWithoutCustomerNestedInput
   customer_channels_channel?: Prisma.customer_channels_channelUncheckedUpdateManyWithoutCustomerNestedInput
   history_entry?: Prisma.history_entryUncheckedUpdateManyWithoutCustomerNestedInput
@@ -907,6 +1009,9 @@ export type customerCreateWithoutHistory_entryInput = {
   phoneNumber?: string | null
   emailAddress: string
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   address?: Prisma.addressCreateNestedManyWithoutCustomerInput
   user?: Prisma.userCreateNestedOneWithoutCustomerInput
   customer_channels_channel?: Prisma.customer_channels_channelCreateNestedManyWithoutCustomerInput
@@ -926,6 +1031,9 @@ export type customerUncheckedCreateWithoutHistory_entryInput = {
   id?: number
   userId?: number | null
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   address?: Prisma.addressUncheckedCreateNestedManyWithoutCustomerInput
   customer_channels_channel?: Prisma.customer_channels_channelUncheckedCreateNestedManyWithoutCustomerInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUncheckedCreateNestedManyWithoutCustomerInput
@@ -958,6 +1066,9 @@ export type customerUpdateWithoutHistory_entryInput = {
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.addressUpdateManyWithoutCustomerNestedInput
   user?: Prisma.userUpdateOneWithoutCustomerNestedInput
   customer_channels_channel?: Prisma.customer_channels_channelUpdateManyWithoutCustomerNestedInput
@@ -977,6 +1088,9 @@ export type customerUncheckedUpdateWithoutHistory_entryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.addressUncheckedUpdateManyWithoutCustomerNestedInput
   customer_channels_channel?: Prisma.customer_channels_channelUncheckedUpdateManyWithoutCustomerNestedInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUncheckedUpdateManyWithoutCustomerNestedInput
@@ -993,6 +1107,9 @@ export type customerCreateWithoutOrderInput = {
   phoneNumber?: string | null
   emailAddress: string
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   address?: Prisma.addressCreateNestedManyWithoutCustomerInput
   user?: Prisma.userCreateNestedOneWithoutCustomerInput
   customer_channels_channel?: Prisma.customer_channels_channelCreateNestedManyWithoutCustomerInput
@@ -1012,6 +1129,9 @@ export type customerUncheckedCreateWithoutOrderInput = {
   id?: number
   userId?: number | null
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   address?: Prisma.addressUncheckedCreateNestedManyWithoutCustomerInput
   customer_channels_channel?: Prisma.customer_channels_channelUncheckedCreateNestedManyWithoutCustomerInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUncheckedCreateNestedManyWithoutCustomerInput
@@ -1044,6 +1164,9 @@ export type customerUpdateWithoutOrderInput = {
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.addressUpdateManyWithoutCustomerNestedInput
   user?: Prisma.userUpdateOneWithoutCustomerNestedInput
   customer_channels_channel?: Prisma.customer_channels_channelUpdateManyWithoutCustomerNestedInput
@@ -1063,6 +1186,9 @@ export type customerUncheckedUpdateWithoutOrderInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.addressUncheckedUpdateManyWithoutCustomerNestedInput
   customer_channels_channel?: Prisma.customer_channels_channelUncheckedUpdateManyWithoutCustomerNestedInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUncheckedUpdateManyWithoutCustomerNestedInput
@@ -1079,6 +1205,9 @@ export type customerCreateWithoutUserInput = {
   phoneNumber?: string | null
   emailAddress: string
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   address?: Prisma.addressCreateNestedManyWithoutCustomerInput
   customer_channels_channel?: Prisma.customer_channels_channelCreateNestedManyWithoutCustomerInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupCreateNestedManyWithoutCustomerInput
@@ -1097,6 +1226,9 @@ export type customerUncheckedCreateWithoutUserInput = {
   emailAddress: string
   id?: number
   customFieldsStripecustomerid?: string | null
+  customFieldsLogtouserid?: string | null
+  customFieldsLogtodata?: string | null
+  customFieldsWalletaddress?: string | null
   address?: Prisma.addressUncheckedCreateNestedManyWithoutCustomerInput
   customer_channels_channel?: Prisma.customer_channels_channelUncheckedCreateNestedManyWithoutCustomerInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUncheckedCreateNestedManyWithoutCustomerInput
@@ -1130,6 +1262,9 @@ export type customerUpdateWithoutUserInput = {
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.addressUpdateManyWithoutCustomerNestedInput
   customer_channels_channel?: Prisma.customer_channels_channelUpdateManyWithoutCustomerNestedInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUpdateManyWithoutCustomerNestedInput
@@ -1148,6 +1283,9 @@ export type customerUncheckedUpdateWithoutUserInput = {
   emailAddress?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.IntFieldUpdateOperationsInput | number
   customFieldsStripecustomerid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtouserid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsLogtodata?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customFieldsWalletaddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.addressUncheckedUpdateManyWithoutCustomerNestedInput
   customer_channels_channel?: Prisma.customer_channels_channelUncheckedUpdateManyWithoutCustomerNestedInput
   customer_groups_customer_group?: Prisma.customer_groups_customer_groupUncheckedUpdateManyWithoutCustomerNestedInput
@@ -1234,6 +1372,9 @@ export type customerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   id?: boolean
   userId?: boolean
   customFieldsStripecustomerid?: boolean
+  customFieldsLogtouserid?: boolean
+  customFieldsLogtodata?: boolean
+  customFieldsWalletaddress?: boolean
   address?: boolean | Prisma.customer$addressArgs<ExtArgs>
   user?: boolean | Prisma.customer$userArgs<ExtArgs>
   customer_channels_channel?: boolean | Prisma.customer$customer_channels_channelArgs<ExtArgs>
@@ -1255,6 +1396,9 @@ export type customerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   id?: boolean
   userId?: boolean
   customFieldsStripecustomerid?: boolean
+  customFieldsLogtouserid?: boolean
+  customFieldsLogtodata?: boolean
+  customFieldsWalletaddress?: boolean
   user?: boolean | Prisma.customer$userArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
 
@@ -1270,6 +1414,9 @@ export type customerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   id?: boolean
   userId?: boolean
   customFieldsStripecustomerid?: boolean
+  customFieldsLogtouserid?: boolean
+  customFieldsLogtodata?: boolean
+  customFieldsWalletaddress?: boolean
   user?: boolean | Prisma.customer$userArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
 
@@ -1285,9 +1432,12 @@ export type customerSelectScalar = {
   id?: boolean
   userId?: boolean
   customFieldsStripecustomerid?: boolean
+  customFieldsLogtouserid?: boolean
+  customFieldsLogtodata?: boolean
+  customFieldsWalletaddress?: boolean
 }
 
-export type customerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"createdAt" | "updatedAt" | "deletedAt" | "title" | "firstName" | "lastName" | "phoneNumber" | "emailAddress" | "id" | "userId" | "customFieldsStripecustomerid", ExtArgs["result"]["customer"]>
+export type customerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"createdAt" | "updatedAt" | "deletedAt" | "title" | "firstName" | "lastName" | "phoneNumber" | "emailAddress" | "id" | "userId" | "customFieldsStripecustomerid" | "customFieldsLogtouserid" | "customFieldsLogtodata" | "customFieldsWalletaddress", ExtArgs["result"]["customer"]>
 export type customerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   address?: boolean | Prisma.customer$addressArgs<ExtArgs>
   user?: boolean | Prisma.customer$userArgs<ExtArgs>
@@ -1326,6 +1476,9 @@ export type $customerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     id: number
     userId: number | null
     customFieldsStripecustomerid: string | null
+    customFieldsLogtouserid: string | null
+    customFieldsLogtodata: string | null
+    customFieldsWalletaddress: string | null
   }, ExtArgs["result"]["customer"]>
   composites: {}
 }
@@ -1766,6 +1919,9 @@ export interface customerFieldRefs {
   readonly id: Prisma.FieldRef<"customer", 'Int'>
   readonly userId: Prisma.FieldRef<"customer", 'Int'>
   readonly customFieldsStripecustomerid: Prisma.FieldRef<"customer", 'String'>
+  readonly customFieldsLogtouserid: Prisma.FieldRef<"customer", 'String'>
+  readonly customFieldsLogtodata: Prisma.FieldRef<"customer", 'String'>
+  readonly customFieldsWalletaddress: Prisma.FieldRef<"customer", 'String'>
 }
     
 

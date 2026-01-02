@@ -126,18 +126,16 @@ exports.Prisma.TenantScalarFieldEnum = {
   slug: 'slug',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  brevoApiKey: 'brevoApiKey',
-  brevoSenderEmail: 'brevoSenderEmail',
-  brevoSenderName: 'brevoSenderName',
-  labsmobileApiKey: 'labsmobileApiKey',
-  labsmobileUser: 'labsmobileUser',
-  labsmobileUrl: 'labsmobileUrl',
-  labsmobileSenderId: 'labsmobileSenderId'
+  integrations: 'integrations',
+  sessionSettings: 'sessionSettings',
+  branding: 'branding',
+  dashboardUrls: 'dashboardUrls'
 };
 
 exports.Prisma.ApplicationScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  description: 'description',
   clientId: 'clientId',
   clientSecret: 'clientSecret',
   tenantId: 'tenantId',
@@ -145,13 +143,16 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   postLogoutRedirectUris: 'postLogoutRedirectUris',
   corsOrigins: 'corsOrigins',
   authMethods: 'authMethods',
-  brevoApiKey: 'brevoApiKey',
-  brevoSenderEmail: 'brevoSenderEmail',
-  brevoSenderName: 'brevoSenderName',
-  labsmobileApiKey: 'labsmobileApiKey',
-  labsmobileUser: 'labsmobileUser',
-  labsmobileUrl: 'labsmobileUrl',
-  labsmobileSenderId: 'labsmobileSenderId',
+  logo: 'logo',
+  primaryColor: 'primaryColor',
+  alwaysIssueRefreshToken: 'alwaysIssueRefreshToken',
+  rotateRefreshToken: 'rotateRefreshToken',
+  refreshTokenTtl: 'refreshTokenTtl',
+  backchannelLogoutUri: 'backchannelLogoutUri',
+  isSessionRequired: 'isSessionRequired',
+  integrations: 'integrations',
+  customData: 'customData',
+  branding: 'branding',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -162,12 +163,16 @@ exports.Prisma.UserScalarFieldEnum = {
   lastName: 'lastName',
   primaryEmail: 'primaryEmail',
   emailVerified: 'emailVerified',
+  phone: 'phone',
   phoneNumber: 'phoneNumber',
   phoneVerified: 'phoneVerified',
+  walletAddress: 'walletAddress',
   passwordHash: 'passwordHash',
+  role: 'role',
   avatar: 'avatar',
   customData: 'customData',
   tenantId: 'tenantId',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -181,9 +186,23 @@ exports.Prisma.UserIdentityScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.UserSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tenantId: 'tenantId',
+  sid: 'sid',
+  userAgent: 'userAgent',
+  ipAddress: 'ipAddress',
+  lastActive: 'lastActive',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.RefreshTokenScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  clientId: 'clientId',
+  sessionId: 'sessionId',
   tokenHash: 'tokenHash',
   resource: 'resource',
   scopes: 'scopes',
@@ -193,6 +212,7 @@ exports.Prisma.RefreshTokenScalarFieldEnum = {
 
 exports.Prisma.InteractionScalarFieldEnum = {
   id: 'id',
+  type: 'type',
   details: 'details',
   expiresAt: 'expiresAt',
   createdAt: 'createdAt'
@@ -217,15 +237,15 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
-exports.Prisma.NullsOrder = {
-  first: 'first',
-  last: 'last'
-};
-
 exports.Prisma.JsonNullValueFilter = {
   DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
 };
 
 
@@ -234,6 +254,7 @@ exports.Prisma.ModelName = {
   Application: 'Application',
   User: 'User',
   UserIdentity: 'UserIdentity',
+  UserSession: 'UserSession',
   RefreshToken: 'RefreshToken',
   Interaction: 'Interaction'
 };

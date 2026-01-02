@@ -11,19 +11,25 @@ interface Tenant {
     id: string;
     name: string;
     slug: string;
-    brevoApiKey?: string;
-    brevoSenderEmail?: string;
-    brevoSenderName?: string;
-    labsmobileApiKey?: string;
-    labsmobileUser?: string;
-    labsmobileUrl?: string;
-    labsmobileSenderId?: string;
+    integrations?: {
+        brevoApiKey?: string;
+        brevoSenderEmail?: string;
+        brevoSenderName?: string;
+        labsmobileApiKey?: string;
+        labsmobileUser?: string;
+        labsmobileUrl?: string;
+        labsmobileSenderId?: string;
+    };
+    sessionSettings?: {
+        ssoEnabled?: boolean;
+        sessionTtl?: number;
+    };
 }
 
 export function EditTenantForm({ tenant }: { tenant: any }) {
     const [isPending, startTransition] = useTransition();
     const [isDeleting, setIsDeleting] = useState(false);
-    const [activeTab, setActiveTab] = useState<'general' | 'providers'>('general');
+    const [activeTab, setActiveTab] = useState<'general' | 'providers' | 'settings'>('general');
     const router = useRouter();
 
     async function handleSubmit(formData: FormData) {
@@ -56,6 +62,7 @@ export function EditTenantForm({ tenant }: { tenant: any }) {
 
     const tabs = [
         { id: 'general', name: 'General', icon: Globe },
+        { id: 'settings', name: 'ZKey SSO', icon: Save },
         { id: 'providers', name: 'Global Providers', icon: Mail },
     ];
 
@@ -108,6 +115,36 @@ export function EditTenantForm({ tenant }: { tenant: any }) {
                 </div>
             </div>
 
+            <div className={cn("space-y-6 animate-in fade-in slide-in-from-left-2 duration-300", activeTab === 'settings' ? "block" : "hidden")}>
+                <div className="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-6">
+                    <h3 className="text-sm font-bold text-slate-800 border-b pb-2">Single Sign-On (SSO) Options</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <label className="flex items-start p-4 bg-white border rounded-xl cursor-pointer hover:border-blue-500 transition-colors">
+                            <input
+                                type="checkbox"
+                                name="ssoEnabled"
+                                defaultChecked={tenant.sessionSettings?.ssoEnabled !== false}
+                                className="w-4 h-4 mt-1 text-blue-600 rounded border-slate-300 mr-4"
+                            />
+                            <div>
+                                <span className="text-sm font-bold text-slate-700 block">Enable SSO (Global Cookies)</span>
+                                <span className="text-xs text-slate-500 mt-1 block">Allow users to stay logged in across all applications of this tenant.</span>
+                            </div>
+                        </label>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700">Global Session TTL (minutes)</label>
+                            <input
+                                name="sessionTtl"
+                                type="number"
+                                defaultValue={tenant.sessionSettings?.sessionTtl || 1440}
+                                className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div className={cn("space-y-6 animate-in fade-in slide-in-from-left-2 duration-300", activeTab === 'providers' ? "block" : "hidden")}>
                 <div className="p-4 bg-amber-50 border border-amber-100 rounded-lg mb-4">
                     <p className="text-xs text-amber-800 leading-relaxed">
@@ -123,15 +160,15 @@ export function EditTenantForm({ tenant }: { tenant: any }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-slate-500">API Key</label>
-                            <input name="brevoApiKey" type="password" defaultValue={tenant.brevoApiKey || ""} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="xkeysib-..." />
+                            <input name="brevoApiKey" type="password" defaultValue={tenant.integrations?.brevoApiKey || ""} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="xkeysib-..." />
                         </div>
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-slate-500">Sender Email</label>
-                            <input name="brevoSenderEmail" type="email" defaultValue={tenant.brevoSenderEmail || ""} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="noreply@acme.com" />
+                            <input name="brevoSenderEmail" type="email" defaultValue={tenant.integrations?.brevoSenderEmail || ""} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="noreply@acme.com" />
                         </div>
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-slate-500">Sender Name</label>
-                            <input name="brevoSenderName" type="text" defaultValue={tenant.brevoSenderName || ""} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Acme Inc." />
+                            <input name="brevoSenderName" type="text" defaultValue={tenant.integrations?.brevoSenderName || ""} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Acme Inc." />
                         </div>
                     </div>
                 </div>
@@ -144,19 +181,19 @@ export function EditTenantForm({ tenant }: { tenant: any }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-slate-500">API Token / Key</label>
-                            <input name="labsmobileApiKey" type="password" defaultValue={tenant.labsmobileApiKey || ""} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Your API Key" />
+                            <input name="labsmobileApiKey" type="password" defaultValue={tenant.integrations?.labsmobileApiKey || ""} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Your API Key" />
                         </div>
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-slate-500">API User / Email</label>
-                            <input name="labsmobileUser" type="email" defaultValue={tenant.labsmobileUser || ""} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="user@example.com" />
+                            <input name="labsmobileUser" type="email" defaultValue={tenant.integrations?.labsmobileUser || ""} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="user@example.com" />
                         </div>
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-slate-500">Sender ID</label>
-                            <input name="labsmobileSenderId" type="text" defaultValue={tenant.labsmobileSenderId || ""} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="ACME" />
+                            <input name="labsmobileSenderId" type="text" defaultValue={tenant.integrations?.labsmobileSenderId || ""} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="ACME" />
                         </div>
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-slate-500">API URL</label>
-                            <input name="labsmobileUrl" type="url" defaultValue={tenant.labsmobileUrl || "https://api.labsmobile.com/json/send"} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://api.labsmobile.com/json/send" />
+                            <input name="labsmobileUrl" type="url" defaultValue={tenant.integrations?.labsmobileUrl || "https://api.labsmobile.com/json/send"} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://api.labsmobile.com/json/send" />
                         </div>
                     </div>
                 </div>

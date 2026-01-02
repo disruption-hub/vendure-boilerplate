@@ -12,7 +12,8 @@ import {
     ChevronRight,
     Database,
     PanelLeftClose,
-    PanelLeftOpen
+    PanelLeftOpen,
+    Palette
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/use-ui-store";
@@ -22,6 +23,7 @@ const navigation = [
     { name: "Tenants", href: "/tenants", icon: Layers },
     { name: "Applications", href: "/applications", icon: ShieldCheck },
     { name: "Users", href: "/users", icon: Users },
+    { name: "Branding", href: "/branding", icon: Palette },
     { name: "Global Settings", href: "/settings", icon: Settings },
 ];
 

@@ -342,7 +342,10 @@ export const CustomerScalarFieldEnum = {
   emailAddress: 'emailAddress',
   id: 'id',
   userId: 'userId',
-  customFieldsStripecustomerid: 'customFieldsStripecustomerid'
+  customFieldsStripecustomerid: 'customFieldsStripecustomerid',
+  customFieldsLogtouserid: 'customFieldsLogtouserid',
+  customFieldsLogtodata: 'customFieldsLogtodata',
+  customFieldsWalletaddress: 'customFieldsWalletaddress'
 } as const
 
 export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]

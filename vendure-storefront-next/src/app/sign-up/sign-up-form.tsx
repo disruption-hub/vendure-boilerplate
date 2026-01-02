@@ -106,7 +106,22 @@ export function SignUpForm() {
             </div>
 
             {error && (
-                <div className="text-red-600 text-sm">{error}</div>
+                <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl text-sm flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="flex items-center gap-2 font-semibold">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+                        Registration Error
+                    </div>
+                    <p>{error}</p>
+                    {error.toLowerCase().includes('already registered') && (
+                        <button
+                            type="button"
+                            onClick={() => router.push('/sign-in')}
+                            className="text-red-500 underline underline-offset-4 hover:text-red-400 font-medium self-start mt-1 transition-colors"
+                        >
+                            Go to Login instead →
+                        </button>
+                    )}
+                </div>
             )}
 
             <button

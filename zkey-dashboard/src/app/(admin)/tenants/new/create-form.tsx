@@ -53,6 +53,39 @@ export default function CreateTenantForm() {
 
             <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
                 <div className="border-b bg-slate-50/50 px-6 py-4 flex items-center">
+                    <Save className="w-5 h-5 text-indigo-500 mr-2" />
+                    <h3 className="font-semibold text-slate-900">ZKey SSO Settings</h3>
+                </div>
+                <div className="p-6 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <label className="flex items-start p-4 bg-slate-50 border rounded-xl cursor-pointer hover:border-blue-500 transition-colors">
+                            <input
+                                type="checkbox"
+                                name="ssoEnabled"
+                                defaultChecked
+                                className="w-4 h-4 mt-1 text-blue-600 rounded border-slate-300 mr-4"
+                            />
+                            <div>
+                                <span className="text-sm font-bold text-slate-700 block">Enable SSO (Global Cookies)</span>
+                                <span className="text-xs text-slate-500 mt-1 block">Allow users to stay logged in across all applications.</span>
+                            </div>
+                        </label>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700">Global Session TTL (minutes)</label>
+                            <input
+                                name="sessionTtl"
+                                type="number"
+                                defaultValue={1440}
+                                className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
+                <div className="border-b bg-slate-50/50 px-6 py-4 flex items-center">
                     <Mail className="w-5 h-5 text-blue-500 mr-2" />
                     <h3 className="font-semibold text-slate-900">Email Provider (Brevo)</h3>
                 </div>

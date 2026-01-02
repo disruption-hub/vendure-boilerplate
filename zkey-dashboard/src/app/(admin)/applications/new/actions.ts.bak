@@ -1,0 +1,75 @@
+"use server";
+
+import { prisma } from "@/lib/prisma";
+import { v4 as uuidv4 } from "uuid";
+
+export async function createApplication(formData: FormData) {
+    const name = formData.get("name") as string;
+    const tenantId = formData.get("tenantId") as string;
+    const corsOriginsStr = formData.get("corsOrigins") as string;
+    const redirectUrisStr = formData.get("redirectUris") as string;
+
+    if (!name || !tenantId) {
+        throw new Error("Name and Tenant are required");
+    }
+
+    const corsOrigins = corsOriginsStr ? corsOriginsStr.split(",").map(s => s.trim()).filter(Boolean) : [];
+    const redirectUris = redirectUrisStr ? redirectUrisStr.split(",").map(s => s.trim()).filter(Boolean) : [];
+
+    // Extract auth methods
+    const authMethods = {
+        password: formData.get("auth_password") === "on",
+        otp: formData.get("auth_otp") === "on",
+        wallet: formData.get("auth_wallet") === "on",
+    };
+
+    // Extract integrations
+    const integrations = {
+        brevo: {
+            apiKey: formData.get("brevoApiKey") as string || null,
+            senderEmail: formData.get("brevoSenderEmail") as string || null,
+            senderName: formData.get("brevoSenderName") as string || null,
+        },
+        labsmobile: {
+            apiKey: formData.get("labsmobileApiKey") as string || null,
+            senderId: formData.get("labsmobileSenderId") as string || null,
+        }
+    };
+
+    // Extract branding
+    const branding = {
+        logo: formData.get("logo") as string || null,
+        primaryColor: formData.get("primaryColor") as string || null,
+        backgroundColor: formData.get("backgroundColor") as string || null,
+        loginTitle: formData.get("loginTitle") as string || null,
+        loginSubtitle: formData.get("loginSubtitle") as string || null,
+    };
+
+    try {
+        const application = await prisma.application.create({
+            data: {
+                name,
+                description: formData.get("description") as string || null,
+                tenantId,
+                clientId: uuidv4(),
+                clientSecret: uuidv4().replace(/-/g, ''), // Simpler secret for now
+                corsOrigins,
+                redirectUris,
+                authMethods,
+                integrations,
+                branding,
+                logo: branding.logo,
+                primaryColor: branding.primaryColor,
+                // Token & Session Settings
+                alwaysIssueRefreshToken: formData.get("alwaysIssueRefreshToken") === "on",
+                rotateRefreshToken: formData.get("rotateRefreshToken") === "on",
+                refreshTokenTtl: parseInt(formData.get("refreshTokenTtl") as string || "14"),
+                backchannelLogoutUri: formData.get("backchannelLogoutUri") as string || null,
+                isSessionRequired: formData.get("isSessionRequired") === "on",
+            },
+        });
+        return application;
+    } catch (error: any) {
+        throw new Error(`Failed to create application: ${error.message}`);
+    }
+}

@@ -39,19 +39,22 @@ async function runMigration() {
         await pool.query(`DROP INDEX IF EXISTS "public"."IDX_customer_customfieldslogtouserid"`);
         await pool.query(`DROP INDEX IF EXISTS "IDX_customer_customFieldsLogtouserid"`);
         await pool.query(`DROP INDEX IF EXISTS "IDX_customer_customfieldslogtouserid"`);
+        await pool.query(`ALTER TABLE customer DROP CONSTRAINT IF EXISTS "UQ_walletAddress"`);
 
         // 2. Drop and Re-add columns to ensure fresh start and correct types
         console.log('Re-creating columns...');
         await pool.query(`
             ALTER TABLE customer 
             DROP COLUMN IF EXISTS "customFieldsLogtouserid",
-            DROP COLUMN IF EXISTS "customFieldsLogtodata"
+            DROP COLUMN IF EXISTS "customFieldsLogtodata",
+            DROP COLUMN IF EXISTS "customFieldsWalletaddress"
         `);
 
         await pool.query(`
             ALTER TABLE customer 
             ADD COLUMN "customFieldsLogtouserid" character varying(255),
-            ADD COLUMN "customFieldsLogtodata" text
+            ADD COLUMN "customFieldsLogtodata" text,
+            ADD COLUMN "customFieldsWalletaddress" character varying(255)
         `);
 
         // 3. Add the specific unique constraint expected by Vendure
@@ -60,6 +63,12 @@ async function runMigration() {
             ALTER TABLE customer 
             ADD CONSTRAINT "UQ_847464ecf377c421b29a3f37943" 
             UNIQUE ("customFieldsLogtouserid")
+        `);
+        
+        await pool.query(`
+            ALTER TABLE customer 
+            ADD CONSTRAINT "UQ_walletAddress" 
+            UNIQUE ("customFieldsWalletaddress")
         `);
 
         // Note: NO manual index creation here. Vendure handles the unique storage via the constraint.

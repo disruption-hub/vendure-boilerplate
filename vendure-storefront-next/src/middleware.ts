@@ -17,7 +17,7 @@ export async function middleware(request: NextRequest) {
             return new NextResponse(null, { status: 401 });
         }
         const signInUrl = new URL('/sign-in', request.url);
-        signInUrl.searchParams.set('redirectUrl', path); // preserve intended destination
+        signInUrl.searchParams.set('redirect', path); // preserve intended destination
         return NextResponse.redirect(signInUrl);
     }
 

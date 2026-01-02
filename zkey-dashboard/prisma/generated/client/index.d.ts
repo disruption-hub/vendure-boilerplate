@@ -34,6 +34,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type UserIdentity = $Result.DefaultSelection<Prisma.$UserIdentityPayload>
 /**
+ * Model UserSession
+ * 
+ */
+export type UserSession = $Result.DefaultSelection<Prisma.$UserSessionPayload>
+/**
  * Model RefreshToken
  * 
  */
@@ -200,6 +205,16 @@ export class PrismaClient<
     * ```
     */
   get userIdentity(): Prisma.UserIdentityDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.userSession`: Exposes CRUD operations for the **UserSession** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UserSessions
+    * const userSessions = await prisma.userSession.findMany()
+    * ```
+    */
+  get userSession(): Prisma.UserSessionDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.refreshToken`: Exposes CRUD operations for the **RefreshToken** model.
@@ -658,6 +673,7 @@ export namespace Prisma {
     Application: 'Application',
     User: 'User',
     UserIdentity: 'UserIdentity',
+    UserSession: 'UserSession',
     RefreshToken: 'RefreshToken',
     Interaction: 'Interaction'
   };
@@ -675,7 +691,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "tenant" | "application" | "user" | "userIdentity" | "refreshToken" | "interaction"
+      modelProps: "tenant" | "application" | "user" | "userIdentity" | "userSession" | "refreshToken" | "interaction"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -975,6 +991,80 @@ export namespace Prisma {
           }
         }
       }
+      UserSession: {
+        payload: Prisma.$UserSessionPayload<ExtArgs>
+        fields: Prisma.UserSessionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.UserSessionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserSessionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.UserSessionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserSessionPayload>
+          }
+          findFirst: {
+            args: Prisma.UserSessionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserSessionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.UserSessionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserSessionPayload>
+          }
+          findMany: {
+            args: Prisma.UserSessionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserSessionPayload>[]
+          }
+          create: {
+            args: Prisma.UserSessionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserSessionPayload>
+          }
+          createMany: {
+            args: Prisma.UserSessionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.UserSessionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserSessionPayload>[]
+          }
+          delete: {
+            args: Prisma.UserSessionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserSessionPayload>
+          }
+          update: {
+            args: Prisma.UserSessionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserSessionPayload>
+          }
+          deleteMany: {
+            args: Prisma.UserSessionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.UserSessionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.UserSessionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserSessionPayload>[]
+          }
+          upsert: {
+            args: Prisma.UserSessionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$UserSessionPayload>
+          }
+          aggregate: {
+            args: Prisma.UserSessionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateUserSession>
+          }
+          groupBy: {
+            args: Prisma.UserSessionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<UserSessionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.UserSessionCountArgs<ExtArgs>
+            result: $Utils.Optional<UserSessionCountAggregateOutputType> | number
+          }
+        }
+      }
       RefreshToken: {
         payload: Prisma.$RefreshTokenPayload<ExtArgs>
         fields: Prisma.RefreshTokenFieldRefs
@@ -1235,6 +1325,7 @@ export namespace Prisma {
     application?: ApplicationOmit
     user?: UserOmit
     userIdentity?: UserIdentityOmit
+    userSession?: UserSessionOmit
     refreshToken?: RefreshTokenOmit
     interaction?: InteractionOmit
   }
@@ -1317,13 +1408,15 @@ export namespace Prisma {
    */
 
   export type TenantCountOutputType = {
-    users: number
     applications: number
+    users: number
+    sessions: number
   }
 
   export type TenantCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    users?: boolean | TenantCountOutputTypeCountUsersArgs
     applications?: boolean | TenantCountOutputTypeCountApplicationsArgs
+    users?: boolean | TenantCountOutputTypeCountUsersArgs
+    sessions?: boolean | TenantCountOutputTypeCountSessionsArgs
   }
 
   // Custom InputTypes
@@ -1340,6 +1433,13 @@ export namespace Prisma {
   /**
    * TenantCountOutputType without action
    */
+  export type TenantCountOutputTypeCountApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ApplicationWhereInput
+  }
+
+  /**
+   * TenantCountOutputType without action
+   */
   export type TenantCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserWhereInput
   }
@@ -1347,8 +1447,8 @@ export namespace Prisma {
   /**
    * TenantCountOutputType without action
    */
-  export type TenantCountOutputTypeCountApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ApplicationWhereInput
+  export type TenantCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserSessionWhereInput
   }
 
 
@@ -1357,13 +1457,15 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    identities: number
     refreshTokens: number
+    identities: number
+    sessions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    identities?: boolean | UserCountOutputTypeCountIdentitiesArgs
     refreshTokens?: boolean | UserCountOutputTypeCountRefreshTokensArgs
+    identities?: boolean | UserCountOutputTypeCountIdentitiesArgs
+    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   }
 
   // Custom InputTypes
@@ -1380,6 +1482,13 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
+  export type UserCountOutputTypeCountRefreshTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RefreshTokenWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
   export type UserCountOutputTypeCountIdentitiesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserIdentityWhereInput
   }
@@ -1387,7 +1496,38 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountRefreshTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserSessionWhereInput
+  }
+
+
+  /**
+   * Count Type UserSessionCountOutputType
+   */
+
+  export type UserSessionCountOutputType = {
+    refreshTokens: number
+  }
+
+  export type UserSessionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    refreshTokens?: boolean | UserSessionCountOutputTypeCountRefreshTokensArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * UserSessionCountOutputType without action
+   */
+  export type UserSessionCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSessionCountOutputType
+     */
+    select?: UserSessionCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserSessionCountOutputType without action
+   */
+  export type UserSessionCountOutputTypeCountRefreshTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RefreshTokenWhereInput
   }
 
@@ -1412,13 +1552,6 @@ export namespace Prisma {
     slug: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    brevoApiKey: string | null
-    brevoSenderEmail: string | null
-    brevoSenderName: string | null
-    labsmobileApiKey: string | null
-    labsmobileUser: string | null
-    labsmobileUrl: string | null
-    labsmobileSenderId: string | null
   }
 
   export type TenantMaxAggregateOutputType = {
@@ -1427,13 +1560,6 @@ export namespace Prisma {
     slug: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    brevoApiKey: string | null
-    brevoSenderEmail: string | null
-    brevoSenderName: string | null
-    labsmobileApiKey: string | null
-    labsmobileUser: string | null
-    labsmobileUrl: string | null
-    labsmobileSenderId: string | null
   }
 
   export type TenantCountAggregateOutputType = {
@@ -1442,13 +1568,10 @@ export namespace Prisma {
     slug: number
     createdAt: number
     updatedAt: number
-    brevoApiKey: number
-    brevoSenderEmail: number
-    brevoSenderName: number
-    labsmobileApiKey: number
-    labsmobileUser: number
-    labsmobileUrl: number
-    labsmobileSenderId: number
+    integrations: number
+    sessionSettings: number
+    branding: number
+    dashboardUrls: number
     _all: number
   }
 
@@ -1459,13 +1582,6 @@ export namespace Prisma {
     slug?: true
     createdAt?: true
     updatedAt?: true
-    brevoApiKey?: true
-    brevoSenderEmail?: true
-    brevoSenderName?: true
-    labsmobileApiKey?: true
-    labsmobileUser?: true
-    labsmobileUrl?: true
-    labsmobileSenderId?: true
   }
 
   export type TenantMaxAggregateInputType = {
@@ -1474,13 +1590,6 @@ export namespace Prisma {
     slug?: true
     createdAt?: true
     updatedAt?: true
-    brevoApiKey?: true
-    brevoSenderEmail?: true
-    brevoSenderName?: true
-    labsmobileApiKey?: true
-    labsmobileUser?: true
-    labsmobileUrl?: true
-    labsmobileSenderId?: true
   }
 
   export type TenantCountAggregateInputType = {
@@ -1489,13 +1598,10 @@ export namespace Prisma {
     slug?: true
     createdAt?: true
     updatedAt?: true
-    brevoApiKey?: true
-    brevoSenderEmail?: true
-    brevoSenderName?: true
-    labsmobileApiKey?: true
-    labsmobileUser?: true
-    labsmobileUrl?: true
-    labsmobileSenderId?: true
+    integrations?: true
+    sessionSettings?: true
+    branding?: true
+    dashboardUrls?: true
     _all?: true
   }
 
@@ -1577,13 +1683,10 @@ export namespace Prisma {
     slug: string
     createdAt: Date
     updatedAt: Date
-    brevoApiKey: string | null
-    brevoSenderEmail: string | null
-    brevoSenderName: string | null
-    labsmobileApiKey: string | null
-    labsmobileUser: string | null
-    labsmobileUrl: string | null
-    labsmobileSenderId: string | null
+    integrations: JsonValue | null
+    sessionSettings: JsonValue | null
+    branding: JsonValue | null
+    dashboardUrls: JsonValue | null
     _count: TenantCountAggregateOutputType | null
     _min: TenantMinAggregateOutputType | null
     _max: TenantMaxAggregateOutputType | null
@@ -1609,15 +1712,13 @@ export namespace Prisma {
     slug?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    brevoApiKey?: boolean
-    brevoSenderEmail?: boolean
-    brevoSenderName?: boolean
-    labsmobileApiKey?: boolean
-    labsmobileUser?: boolean
-    labsmobileUrl?: boolean
-    labsmobileSenderId?: boolean
-    users?: boolean | Tenant$usersArgs<ExtArgs>
+    integrations?: boolean
+    sessionSettings?: boolean
+    branding?: boolean
+    dashboardUrls?: boolean
     applications?: boolean | Tenant$applicationsArgs<ExtArgs>
+    users?: boolean | Tenant$usersArgs<ExtArgs>
+    sessions?: boolean | Tenant$sessionsArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["tenant"]>
 
@@ -1627,13 +1728,10 @@ export namespace Prisma {
     slug?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    brevoApiKey?: boolean
-    brevoSenderEmail?: boolean
-    brevoSenderName?: boolean
-    labsmobileApiKey?: boolean
-    labsmobileUser?: boolean
-    labsmobileUrl?: boolean
-    labsmobileSenderId?: boolean
+    integrations?: boolean
+    sessionSettings?: boolean
+    branding?: boolean
+    dashboardUrls?: boolean
   }, ExtArgs["result"]["tenant"]>
 
   export type TenantSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1642,13 +1740,10 @@ export namespace Prisma {
     slug?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    brevoApiKey?: boolean
-    brevoSenderEmail?: boolean
-    brevoSenderName?: boolean
-    labsmobileApiKey?: boolean
-    labsmobileUser?: boolean
-    labsmobileUrl?: boolean
-    labsmobileSenderId?: boolean
+    integrations?: boolean
+    sessionSettings?: boolean
+    branding?: boolean
+    dashboardUrls?: boolean
   }, ExtArgs["result"]["tenant"]>
 
   export type TenantSelectScalar = {
@@ -1657,19 +1752,17 @@ export namespace Prisma {
     slug?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    brevoApiKey?: boolean
-    brevoSenderEmail?: boolean
-    brevoSenderName?: boolean
-    labsmobileApiKey?: boolean
-    labsmobileUser?: boolean
-    labsmobileUrl?: boolean
-    labsmobileSenderId?: boolean
+    integrations?: boolean
+    sessionSettings?: boolean
+    branding?: boolean
+    dashboardUrls?: boolean
   }
 
-  export type TenantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "createdAt" | "updatedAt" | "brevoApiKey" | "brevoSenderEmail" | "brevoSenderName" | "labsmobileApiKey" | "labsmobileUser" | "labsmobileUrl" | "labsmobileSenderId", ExtArgs["result"]["tenant"]>
+  export type TenantOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "createdAt" | "updatedAt" | "integrations" | "sessionSettings" | "branding" | "dashboardUrls", ExtArgs["result"]["tenant"]>
   export type TenantInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    users?: boolean | Tenant$usersArgs<ExtArgs>
     applications?: boolean | Tenant$applicationsArgs<ExtArgs>
+    users?: boolean | Tenant$usersArgs<ExtArgs>
+    sessions?: boolean | Tenant$sessionsArgs<ExtArgs>
     _count?: boolean | TenantCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TenantIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1678,8 +1771,9 @@ export namespace Prisma {
   export type $TenantPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Tenant"
     objects: {
-      users: Prisma.$UserPayload<ExtArgs>[]
       applications: Prisma.$ApplicationPayload<ExtArgs>[]
+      users: Prisma.$UserPayload<ExtArgs>[]
+      sessions: Prisma.$UserSessionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1687,13 +1781,10 @@ export namespace Prisma {
       slug: string
       createdAt: Date
       updatedAt: Date
-      brevoApiKey: string | null
-      brevoSenderEmail: string | null
-      brevoSenderName: string | null
-      labsmobileApiKey: string | null
-      labsmobileUser: string | null
-      labsmobileUrl: string | null
-      labsmobileSenderId: string | null
+      integrations: Prisma.JsonValue | null
+      sessionSettings: Prisma.JsonValue | null
+      branding: Prisma.JsonValue | null
+      dashboardUrls: Prisma.JsonValue | null
     }, ExtArgs["result"]["tenant"]>
     composites: {}
   }
@@ -2088,8 +2179,9 @@ export namespace Prisma {
    */
   export interface Prisma__TenantClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    users<T extends Tenant$usersArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     applications<T extends Tenant$applicationsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$applicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    users<T extends Tenant$usersArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sessions<T extends Tenant$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, Tenant$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2124,13 +2216,10 @@ export namespace Prisma {
     readonly slug: FieldRef<"Tenant", 'String'>
     readonly createdAt: FieldRef<"Tenant", 'DateTime'>
     readonly updatedAt: FieldRef<"Tenant", 'DateTime'>
-    readonly brevoApiKey: FieldRef<"Tenant", 'String'>
-    readonly brevoSenderEmail: FieldRef<"Tenant", 'String'>
-    readonly brevoSenderName: FieldRef<"Tenant", 'String'>
-    readonly labsmobileApiKey: FieldRef<"Tenant", 'String'>
-    readonly labsmobileUser: FieldRef<"Tenant", 'String'>
-    readonly labsmobileUrl: FieldRef<"Tenant", 'String'>
-    readonly labsmobileSenderId: FieldRef<"Tenant", 'String'>
+    readonly integrations: FieldRef<"Tenant", 'Json'>
+    readonly sessionSettings: FieldRef<"Tenant", 'Json'>
+    readonly branding: FieldRef<"Tenant", 'Json'>
+    readonly dashboardUrls: FieldRef<"Tenant", 'Json'>
   }
     
 
@@ -2519,6 +2608,30 @@ export namespace Prisma {
   }
 
   /**
+   * Tenant.applications
+   */
+  export type Tenant$applicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Application
+     */
+    select?: ApplicationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Application
+     */
+    omit?: ApplicationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ApplicationInclude<ExtArgs> | null
+    where?: ApplicationWhereInput
+    orderBy?: ApplicationOrderByWithRelationInput | ApplicationOrderByWithRelationInput[]
+    cursor?: ApplicationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ApplicationScalarFieldEnum | ApplicationScalarFieldEnum[]
+  }
+
+  /**
    * Tenant.users
    */
   export type Tenant$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2543,27 +2656,27 @@ export namespace Prisma {
   }
 
   /**
-   * Tenant.applications
+   * Tenant.sessions
    */
-  export type Tenant$applicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Tenant$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Application
+     * Select specific fields to fetch from the UserSession
      */
-    select?: ApplicationSelect<ExtArgs> | null
+    select?: UserSessionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Application
+     * Omit specific fields from the UserSession
      */
-    omit?: ApplicationOmit<ExtArgs> | null
+    omit?: UserSessionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ApplicationInclude<ExtArgs> | null
-    where?: ApplicationWhereInput
-    orderBy?: ApplicationOrderByWithRelationInput | ApplicationOrderByWithRelationInput[]
-    cursor?: ApplicationWhereUniqueInput
+    include?: UserSessionInclude<ExtArgs> | null
+    where?: UserSessionWhereInput
+    orderBy?: UserSessionOrderByWithRelationInput | UserSessionOrderByWithRelationInput[]
+    cursor?: UserSessionWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: ApplicationScalarFieldEnum | ApplicationScalarFieldEnum[]
+    distinct?: UserSessionScalarFieldEnum | UserSessionScalarFieldEnum[]
   }
 
   /**
@@ -2591,23 +2704,34 @@ export namespace Prisma {
 
   export type AggregateApplication = {
     _count: ApplicationCountAggregateOutputType | null
+    _avg: ApplicationAvgAggregateOutputType | null
+    _sum: ApplicationSumAggregateOutputType | null
     _min: ApplicationMinAggregateOutputType | null
     _max: ApplicationMaxAggregateOutputType | null
+  }
+
+  export type ApplicationAvgAggregateOutputType = {
+    refreshTokenTtl: number | null
+  }
+
+  export type ApplicationSumAggregateOutputType = {
+    refreshTokenTtl: number | null
   }
 
   export type ApplicationMinAggregateOutputType = {
     id: string | null
     name: string | null
+    description: string | null
     clientId: string | null
     clientSecret: string | null
     tenantId: string | null
-    brevoApiKey: string | null
-    brevoSenderEmail: string | null
-    brevoSenderName: string | null
-    labsmobileApiKey: string | null
-    labsmobileUser: string | null
-    labsmobileUrl: string | null
-    labsmobileSenderId: string | null
+    logo: string | null
+    primaryColor: string | null
+    alwaysIssueRefreshToken: boolean | null
+    rotateRefreshToken: boolean | null
+    refreshTokenTtl: number | null
+    backchannelLogoutUri: string | null
+    isSessionRequired: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2615,16 +2739,17 @@ export namespace Prisma {
   export type ApplicationMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    description: string | null
     clientId: string | null
     clientSecret: string | null
     tenantId: string | null
-    brevoApiKey: string | null
-    brevoSenderEmail: string | null
-    brevoSenderName: string | null
-    labsmobileApiKey: string | null
-    labsmobileUser: string | null
-    labsmobileUrl: string | null
-    labsmobileSenderId: string | null
+    logo: string | null
+    primaryColor: string | null
+    alwaysIssueRefreshToken: boolean | null
+    rotateRefreshToken: boolean | null
+    refreshTokenTtl: number | null
+    backchannelLogoutUri: string | null
+    isSessionRequired: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2632,6 +2757,7 @@ export namespace Prisma {
   export type ApplicationCountAggregateOutputType = {
     id: number
     name: number
+    description: number
     clientId: number
     clientSecret: number
     tenantId: number
@@ -2639,32 +2765,44 @@ export namespace Prisma {
     postLogoutRedirectUris: number
     corsOrigins: number
     authMethods: number
-    brevoApiKey: number
-    brevoSenderEmail: number
-    brevoSenderName: number
-    labsmobileApiKey: number
-    labsmobileUser: number
-    labsmobileUrl: number
-    labsmobileSenderId: number
+    logo: number
+    primaryColor: number
+    alwaysIssueRefreshToken: number
+    rotateRefreshToken: number
+    refreshTokenTtl: number
+    backchannelLogoutUri: number
+    isSessionRequired: number
+    integrations: number
+    customData: number
+    branding: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
 
+  export type ApplicationAvgAggregateInputType = {
+    refreshTokenTtl?: true
+  }
+
+  export type ApplicationSumAggregateInputType = {
+    refreshTokenTtl?: true
+  }
+
   export type ApplicationMinAggregateInputType = {
     id?: true
     name?: true
+    description?: true
     clientId?: true
     clientSecret?: true
     tenantId?: true
-    brevoApiKey?: true
-    brevoSenderEmail?: true
-    brevoSenderName?: true
-    labsmobileApiKey?: true
-    labsmobileUser?: true
-    labsmobileUrl?: true
-    labsmobileSenderId?: true
+    logo?: true
+    primaryColor?: true
+    alwaysIssueRefreshToken?: true
+    rotateRefreshToken?: true
+    refreshTokenTtl?: true
+    backchannelLogoutUri?: true
+    isSessionRequired?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2672,16 +2810,17 @@ export namespace Prisma {
   export type ApplicationMaxAggregateInputType = {
     id?: true
     name?: true
+    description?: true
     clientId?: true
     clientSecret?: true
     tenantId?: true
-    brevoApiKey?: true
-    brevoSenderEmail?: true
-    brevoSenderName?: true
-    labsmobileApiKey?: true
-    labsmobileUser?: true
-    labsmobileUrl?: true
-    labsmobileSenderId?: true
+    logo?: true
+    primaryColor?: true
+    alwaysIssueRefreshToken?: true
+    rotateRefreshToken?: true
+    refreshTokenTtl?: true
+    backchannelLogoutUri?: true
+    isSessionRequired?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2689,6 +2828,7 @@ export namespace Prisma {
   export type ApplicationCountAggregateInputType = {
     id?: true
     name?: true
+    description?: true
     clientId?: true
     clientSecret?: true
     tenantId?: true
@@ -2696,13 +2836,16 @@ export namespace Prisma {
     postLogoutRedirectUris?: true
     corsOrigins?: true
     authMethods?: true
-    brevoApiKey?: true
-    brevoSenderEmail?: true
-    brevoSenderName?: true
-    labsmobileApiKey?: true
-    labsmobileUser?: true
-    labsmobileUrl?: true
-    labsmobileSenderId?: true
+    logo?: true
+    primaryColor?: true
+    alwaysIssueRefreshToken?: true
+    rotateRefreshToken?: true
+    refreshTokenTtl?: true
+    backchannelLogoutUri?: true
+    isSessionRequired?: true
+    integrations?: true
+    customData?: true
+    branding?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2746,6 +2889,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ApplicationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ApplicationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ApplicationMinAggregateInputType
@@ -2776,6 +2931,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ApplicationCountAggregateInputType | true
+    _avg?: ApplicationAvgAggregateInputType
+    _sum?: ApplicationSumAggregateInputType
     _min?: ApplicationMinAggregateInputType
     _max?: ApplicationMaxAggregateInputType
   }
@@ -2783,6 +2940,7 @@ export namespace Prisma {
   export type ApplicationGroupByOutputType = {
     id: string
     name: string
+    description: string | null
     clientId: string
     clientSecret: string | null
     tenantId: string
@@ -2790,16 +2948,21 @@ export namespace Prisma {
     postLogoutRedirectUris: string[]
     corsOrigins: string[]
     authMethods: JsonValue | null
-    brevoApiKey: string | null
-    brevoSenderEmail: string | null
-    brevoSenderName: string | null
-    labsmobileApiKey: string | null
-    labsmobileUser: string | null
-    labsmobileUrl: string | null
-    labsmobileSenderId: string | null
+    logo: string | null
+    primaryColor: string | null
+    alwaysIssueRefreshToken: boolean
+    rotateRefreshToken: boolean
+    refreshTokenTtl: number
+    backchannelLogoutUri: string | null
+    isSessionRequired: boolean
+    integrations: JsonValue | null
+    customData: JsonValue | null
+    branding: JsonValue | null
     createdAt: Date
     updatedAt: Date
     _count: ApplicationCountAggregateOutputType | null
+    _avg: ApplicationAvgAggregateOutputType | null
+    _sum: ApplicationSumAggregateOutputType | null
     _min: ApplicationMinAggregateOutputType | null
     _max: ApplicationMaxAggregateOutputType | null
   }
@@ -2821,6 +2984,7 @@ export namespace Prisma {
   export type ApplicationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    description?: boolean
     clientId?: boolean
     clientSecret?: boolean
     tenantId?: boolean
@@ -2828,13 +2992,16 @@ export namespace Prisma {
     postLogoutRedirectUris?: boolean
     corsOrigins?: boolean
     authMethods?: boolean
-    brevoApiKey?: boolean
-    brevoSenderEmail?: boolean
-    brevoSenderName?: boolean
-    labsmobileApiKey?: boolean
-    labsmobileUser?: boolean
-    labsmobileUrl?: boolean
-    labsmobileSenderId?: boolean
+    logo?: boolean
+    primaryColor?: boolean
+    alwaysIssueRefreshToken?: boolean
+    rotateRefreshToken?: boolean
+    refreshTokenTtl?: boolean
+    backchannelLogoutUri?: boolean
+    isSessionRequired?: boolean
+    integrations?: boolean
+    customData?: boolean
+    branding?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
@@ -2843,6 +3010,7 @@ export namespace Prisma {
   export type ApplicationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    description?: boolean
     clientId?: boolean
     clientSecret?: boolean
     tenantId?: boolean
@@ -2850,13 +3018,16 @@ export namespace Prisma {
     postLogoutRedirectUris?: boolean
     corsOrigins?: boolean
     authMethods?: boolean
-    brevoApiKey?: boolean
-    brevoSenderEmail?: boolean
-    brevoSenderName?: boolean
-    labsmobileApiKey?: boolean
-    labsmobileUser?: boolean
-    labsmobileUrl?: boolean
-    labsmobileSenderId?: boolean
+    logo?: boolean
+    primaryColor?: boolean
+    alwaysIssueRefreshToken?: boolean
+    rotateRefreshToken?: boolean
+    refreshTokenTtl?: boolean
+    backchannelLogoutUri?: boolean
+    isSessionRequired?: boolean
+    integrations?: boolean
+    customData?: boolean
+    branding?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
@@ -2865,6 +3036,7 @@ export namespace Prisma {
   export type ApplicationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    description?: boolean
     clientId?: boolean
     clientSecret?: boolean
     tenantId?: boolean
@@ -2872,13 +3044,16 @@ export namespace Prisma {
     postLogoutRedirectUris?: boolean
     corsOrigins?: boolean
     authMethods?: boolean
-    brevoApiKey?: boolean
-    brevoSenderEmail?: boolean
-    brevoSenderName?: boolean
-    labsmobileApiKey?: boolean
-    labsmobileUser?: boolean
-    labsmobileUrl?: boolean
-    labsmobileSenderId?: boolean
+    logo?: boolean
+    primaryColor?: boolean
+    alwaysIssueRefreshToken?: boolean
+    rotateRefreshToken?: boolean
+    refreshTokenTtl?: boolean
+    backchannelLogoutUri?: boolean
+    isSessionRequired?: boolean
+    integrations?: boolean
+    customData?: boolean
+    branding?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
@@ -2887,6 +3062,7 @@ export namespace Prisma {
   export type ApplicationSelectScalar = {
     id?: boolean
     name?: boolean
+    description?: boolean
     clientId?: boolean
     clientSecret?: boolean
     tenantId?: boolean
@@ -2894,18 +3070,21 @@ export namespace Prisma {
     postLogoutRedirectUris?: boolean
     corsOrigins?: boolean
     authMethods?: boolean
-    brevoApiKey?: boolean
-    brevoSenderEmail?: boolean
-    brevoSenderName?: boolean
-    labsmobileApiKey?: boolean
-    labsmobileUser?: boolean
-    labsmobileUrl?: boolean
-    labsmobileSenderId?: boolean
+    logo?: boolean
+    primaryColor?: boolean
+    alwaysIssueRefreshToken?: boolean
+    rotateRefreshToken?: boolean
+    refreshTokenTtl?: boolean
+    backchannelLogoutUri?: boolean
+    isSessionRequired?: boolean
+    integrations?: boolean
+    customData?: boolean
+    branding?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "clientId" | "clientSecret" | "tenantId" | "redirectUris" | "postLogoutRedirectUris" | "corsOrigins" | "authMethods" | "brevoApiKey" | "brevoSenderEmail" | "brevoSenderName" | "labsmobileApiKey" | "labsmobileUser" | "labsmobileUrl" | "labsmobileSenderId" | "createdAt" | "updatedAt", ExtArgs["result"]["application"]>
+  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "clientId" | "clientSecret" | "tenantId" | "redirectUris" | "postLogoutRedirectUris" | "corsOrigins" | "authMethods" | "logo" | "primaryColor" | "alwaysIssueRefreshToken" | "rotateRefreshToken" | "refreshTokenTtl" | "backchannelLogoutUri" | "isSessionRequired" | "integrations" | "customData" | "branding" | "createdAt" | "updatedAt", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
   }
@@ -2924,6 +3103,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
+      description: string | null
       clientId: string
       clientSecret: string | null
       tenantId: string
@@ -2931,13 +3111,16 @@ export namespace Prisma {
       postLogoutRedirectUris: string[]
       corsOrigins: string[]
       authMethods: Prisma.JsonValue | null
-      brevoApiKey: string | null
-      brevoSenderEmail: string | null
-      brevoSenderName: string | null
-      labsmobileApiKey: string | null
-      labsmobileUser: string | null
-      labsmobileUrl: string | null
-      labsmobileSenderId: string | null
+      logo: string | null
+      primaryColor: string | null
+      alwaysIssueRefreshToken: boolean
+      rotateRefreshToken: boolean
+      refreshTokenTtl: number
+      backchannelLogoutUri: string | null
+      isSessionRequired: boolean
+      integrations: Prisma.JsonValue | null
+      customData: Prisma.JsonValue | null
+      branding: Prisma.JsonValue | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["application"]>
@@ -3366,6 +3549,7 @@ export namespace Prisma {
   interface ApplicationFieldRefs {
     readonly id: FieldRef<"Application", 'String'>
     readonly name: FieldRef<"Application", 'String'>
+    readonly description: FieldRef<"Application", 'String'>
     readonly clientId: FieldRef<"Application", 'String'>
     readonly clientSecret: FieldRef<"Application", 'String'>
     readonly tenantId: FieldRef<"Application", 'String'>
@@ -3373,13 +3557,16 @@ export namespace Prisma {
     readonly postLogoutRedirectUris: FieldRef<"Application", 'String[]'>
     readonly corsOrigins: FieldRef<"Application", 'String[]'>
     readonly authMethods: FieldRef<"Application", 'Json'>
-    readonly brevoApiKey: FieldRef<"Application", 'String'>
-    readonly brevoSenderEmail: FieldRef<"Application", 'String'>
-    readonly brevoSenderName: FieldRef<"Application", 'String'>
-    readonly labsmobileApiKey: FieldRef<"Application", 'String'>
-    readonly labsmobileUser: FieldRef<"Application", 'String'>
-    readonly labsmobileUrl: FieldRef<"Application", 'String'>
-    readonly labsmobileSenderId: FieldRef<"Application", 'String'>
+    readonly logo: FieldRef<"Application", 'String'>
+    readonly primaryColor: FieldRef<"Application", 'String'>
+    readonly alwaysIssueRefreshToken: FieldRef<"Application", 'Boolean'>
+    readonly rotateRefreshToken: FieldRef<"Application", 'Boolean'>
+    readonly refreshTokenTtl: FieldRef<"Application", 'Int'>
+    readonly backchannelLogoutUri: FieldRef<"Application", 'String'>
+    readonly isSessionRequired: FieldRef<"Application", 'Boolean'>
+    readonly integrations: FieldRef<"Application", 'Json'>
+    readonly customData: FieldRef<"Application", 'Json'>
+    readonly branding: FieldRef<"Application", 'Json'>
     readonly createdAt: FieldRef<"Application", 'DateTime'>
     readonly updatedAt: FieldRef<"Application", 'DateTime'>
   }
@@ -3812,11 +3999,15 @@ export namespace Prisma {
     lastName: string | null
     primaryEmail: string | null
     emailVerified: boolean | null
+    phone: string | null
     phoneNumber: string | null
     phoneVerified: boolean | null
+    walletAddress: string | null
     passwordHash: string | null
+    role: string | null
     avatar: string | null
     tenantId: string | null
+    deletedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3827,11 +4018,15 @@ export namespace Prisma {
     lastName: string | null
     primaryEmail: string | null
     emailVerified: boolean | null
+    phone: string | null
     phoneNumber: string | null
     phoneVerified: boolean | null
+    walletAddress: string | null
     passwordHash: string | null
+    role: string | null
     avatar: string | null
     tenantId: string | null
+    deletedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3842,12 +4037,16 @@ export namespace Prisma {
     lastName: number
     primaryEmail: number
     emailVerified: number
+    phone: number
     phoneNumber: number
     phoneVerified: number
+    walletAddress: number
     passwordHash: number
+    role: number
     avatar: number
     customData: number
     tenantId: number
+    deletedAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -3860,11 +4059,15 @@ export namespace Prisma {
     lastName?: true
     primaryEmail?: true
     emailVerified?: true
+    phone?: true
     phoneNumber?: true
     phoneVerified?: true
+    walletAddress?: true
     passwordHash?: true
+    role?: true
     avatar?: true
     tenantId?: true
+    deletedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -3875,11 +4078,15 @@ export namespace Prisma {
     lastName?: true
     primaryEmail?: true
     emailVerified?: true
+    phone?: true
     phoneNumber?: true
     phoneVerified?: true
+    walletAddress?: true
     passwordHash?: true
+    role?: true
     avatar?: true
     tenantId?: true
+    deletedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -3890,12 +4097,16 @@ export namespace Prisma {
     lastName?: true
     primaryEmail?: true
     emailVerified?: true
+    phone?: true
     phoneNumber?: true
     phoneVerified?: true
+    walletAddress?: true
     passwordHash?: true
+    role?: true
     avatar?: true
     customData?: true
     tenantId?: true
+    deletedAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -3979,12 +4190,16 @@ export namespace Prisma {
     lastName: string | null
     primaryEmail: string | null
     emailVerified: boolean
+    phone: string | null
     phoneNumber: string | null
     phoneVerified: boolean
+    walletAddress: string | null
     passwordHash: string | null
+    role: string
     avatar: string | null
     customData: JsonValue | null
     tenantId: string | null
+    deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -4012,17 +4227,22 @@ export namespace Prisma {
     lastName?: boolean
     primaryEmail?: boolean
     emailVerified?: boolean
+    phone?: boolean
     phoneNumber?: boolean
     phoneVerified?: boolean
+    walletAddress?: boolean
     passwordHash?: boolean
+    role?: boolean
     avatar?: boolean
     customData?: boolean
     tenantId?: boolean
+    deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    tenant?: boolean | User$tenantArgs<ExtArgs>
-    identities?: boolean | User$identitiesArgs<ExtArgs>
     refreshTokens?: boolean | User$refreshTokensArgs<ExtArgs>
+    identities?: boolean | User$identitiesArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
+    tenant?: boolean | User$tenantArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4032,12 +4252,16 @@ export namespace Prisma {
     lastName?: boolean
     primaryEmail?: boolean
     emailVerified?: boolean
+    phone?: boolean
     phoneNumber?: boolean
     phoneVerified?: boolean
+    walletAddress?: boolean
     passwordHash?: boolean
+    role?: boolean
     avatar?: boolean
     customData?: boolean
     tenantId?: boolean
+    deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tenant?: boolean | User$tenantArgs<ExtArgs>
@@ -4049,12 +4273,16 @@ export namespace Prisma {
     lastName?: boolean
     primaryEmail?: boolean
     emailVerified?: boolean
+    phone?: boolean
     phoneNumber?: boolean
     phoneVerified?: boolean
+    walletAddress?: boolean
     passwordHash?: boolean
+    role?: boolean
     avatar?: boolean
     customData?: boolean
     tenantId?: boolean
+    deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     tenant?: boolean | User$tenantArgs<ExtArgs>
@@ -4066,21 +4294,26 @@ export namespace Prisma {
     lastName?: boolean
     primaryEmail?: boolean
     emailVerified?: boolean
+    phone?: boolean
     phoneNumber?: boolean
     phoneVerified?: boolean
+    walletAddress?: boolean
     passwordHash?: boolean
+    role?: boolean
     avatar?: boolean
     customData?: boolean
     tenantId?: boolean
+    deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "primaryEmail" | "emailVerified" | "phoneNumber" | "phoneVerified" | "passwordHash" | "avatar" | "customData" | "tenantId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "primaryEmail" | "emailVerified" | "phone" | "phoneNumber" | "phoneVerified" | "walletAddress" | "passwordHash" | "role" | "avatar" | "customData" | "tenantId" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    tenant?: boolean | User$tenantArgs<ExtArgs>
-    identities?: boolean | User$identitiesArgs<ExtArgs>
     refreshTokens?: boolean | User$refreshTokensArgs<ExtArgs>
+    identities?: boolean | User$identitiesArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
+    tenant?: boolean | User$tenantArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4093,9 +4326,10 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      tenant: Prisma.$TenantPayload<ExtArgs> | null
-      identities: Prisma.$UserIdentityPayload<ExtArgs>[]
       refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
+      identities: Prisma.$UserIdentityPayload<ExtArgs>[]
+      sessions: Prisma.$UserSessionPayload<ExtArgs>[]
+      tenant: Prisma.$TenantPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4103,12 +4337,16 @@ export namespace Prisma {
       lastName: string | null
       primaryEmail: string | null
       emailVerified: boolean
+      phone: string | null
       phoneNumber: string | null
       phoneVerified: boolean
+      walletAddress: string | null
       passwordHash: string | null
+      role: string
       avatar: string | null
       customData: Prisma.JsonValue | null
       tenantId: string | null
+      deletedAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -4505,9 +4743,10 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    tenant<T extends User$tenantArgs<ExtArgs> = {}>(args?: Subset<T, User$tenantArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    identities<T extends User$identitiesArgs<ExtArgs> = {}>(args?: Subset<T, User$identitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserIdentityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     refreshTokens<T extends User$refreshTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    identities<T extends User$identitiesArgs<ExtArgs> = {}>(args?: Subset<T, User$identitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserIdentityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    tenant<T extends User$tenantArgs<ExtArgs> = {}>(args?: Subset<T, User$tenantArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4542,12 +4781,16 @@ export namespace Prisma {
     readonly lastName: FieldRef<"User", 'String'>
     readonly primaryEmail: FieldRef<"User", 'String'>
     readonly emailVerified: FieldRef<"User", 'Boolean'>
+    readonly phone: FieldRef<"User", 'String'>
     readonly phoneNumber: FieldRef<"User", 'String'>
     readonly phoneVerified: FieldRef<"User", 'Boolean'>
+    readonly walletAddress: FieldRef<"User", 'String'>
     readonly passwordHash: FieldRef<"User", 'String'>
+    readonly role: FieldRef<"User", 'String'>
     readonly avatar: FieldRef<"User", 'String'>
     readonly customData: FieldRef<"User", 'Json'>
     readonly tenantId: FieldRef<"User", 'String'>
+    readonly deletedAt: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -4946,22 +5189,27 @@ export namespace Prisma {
   }
 
   /**
-   * User.tenant
+   * User.refreshTokens
    */
-  export type User$tenantArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$refreshTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Tenant
+     * Select specific fields to fetch from the RefreshToken
      */
-    select?: TenantSelect<ExtArgs> | null
+    select?: RefreshTokenSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Tenant
+     * Omit specific fields from the RefreshToken
      */
-    omit?: TenantOmit<ExtArgs> | null
+    omit?: RefreshTokenOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: TenantInclude<ExtArgs> | null
-    where?: TenantWhereInput
+    include?: RefreshTokenInclude<ExtArgs> | null
+    where?: RefreshTokenWhereInput
+    orderBy?: RefreshTokenOrderByWithRelationInput | RefreshTokenOrderByWithRelationInput[]
+    cursor?: RefreshTokenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RefreshTokenScalarFieldEnum | RefreshTokenScalarFieldEnum[]
   }
 
   /**
@@ -4989,27 +5237,46 @@ export namespace Prisma {
   }
 
   /**
-   * User.refreshTokens
+   * User.sessions
    */
-  export type User$refreshTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the RefreshToken
+     * Select specific fields to fetch from the UserSession
      */
-    select?: RefreshTokenSelect<ExtArgs> | null
+    select?: UserSessionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the RefreshToken
+     * Omit specific fields from the UserSession
      */
-    omit?: RefreshTokenOmit<ExtArgs> | null
+    omit?: UserSessionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: RefreshTokenInclude<ExtArgs> | null
-    where?: RefreshTokenWhereInput
-    orderBy?: RefreshTokenOrderByWithRelationInput | RefreshTokenOrderByWithRelationInput[]
-    cursor?: RefreshTokenWhereUniqueInput
+    include?: UserSessionInclude<ExtArgs> | null
+    where?: UserSessionWhereInput
+    orderBy?: UserSessionOrderByWithRelationInput | UserSessionOrderByWithRelationInput[]
+    cursor?: UserSessionWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: RefreshTokenScalarFieldEnum | RefreshTokenScalarFieldEnum[]
+    distinct?: UserSessionScalarFieldEnum | UserSessionScalarFieldEnum[]
+  }
+
+  /**
+   * User.tenant
+   */
+  export type User$tenantArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Tenant
+     */
+    select?: TenantSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Tenant
+     */
+    omit?: TenantOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TenantInclude<ExtArgs> | null
+    where?: TenantWhereInput
   }
 
   /**
@@ -6099,6 +6366,1154 @@ export namespace Prisma {
 
 
   /**
+   * Model UserSession
+   */
+
+  export type AggregateUserSession = {
+    _count: UserSessionCountAggregateOutputType | null
+    _min: UserSessionMinAggregateOutputType | null
+    _max: UserSessionMaxAggregateOutputType | null
+  }
+
+  export type UserSessionMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    tenantId: string | null
+    sid: string | null
+    userAgent: string | null
+    ipAddress: string | null
+    lastActive: Date | null
+    expiresAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type UserSessionMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    tenantId: string | null
+    sid: string | null
+    userAgent: string | null
+    ipAddress: string | null
+    lastActive: Date | null
+    expiresAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type UserSessionCountAggregateOutputType = {
+    id: number
+    userId: number
+    tenantId: number
+    sid: number
+    userAgent: number
+    ipAddress: number
+    lastActive: number
+    expiresAt: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type UserSessionMinAggregateInputType = {
+    id?: true
+    userId?: true
+    tenantId?: true
+    sid?: true
+    userAgent?: true
+    ipAddress?: true
+    lastActive?: true
+    expiresAt?: true
+    createdAt?: true
+  }
+
+  export type UserSessionMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    tenantId?: true
+    sid?: true
+    userAgent?: true
+    ipAddress?: true
+    lastActive?: true
+    expiresAt?: true
+    createdAt?: true
+  }
+
+  export type UserSessionCountAggregateInputType = {
+    id?: true
+    userId?: true
+    tenantId?: true
+    sid?: true
+    userAgent?: true
+    ipAddress?: true
+    lastActive?: true
+    expiresAt?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type UserSessionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserSession to aggregate.
+     */
+    where?: UserSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserSessions to fetch.
+     */
+    orderBy?: UserSessionOrderByWithRelationInput | UserSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: UserSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned UserSessions
+    **/
+    _count?: true | UserSessionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: UserSessionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: UserSessionMaxAggregateInputType
+  }
+
+  export type GetUserSessionAggregateType<T extends UserSessionAggregateArgs> = {
+        [P in keyof T & keyof AggregateUserSession]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateUserSession[P]>
+      : GetScalarType<T[P], AggregateUserSession[P]>
+  }
+
+
+
+
+  export type UserSessionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserSessionWhereInput
+    orderBy?: UserSessionOrderByWithAggregationInput | UserSessionOrderByWithAggregationInput[]
+    by: UserSessionScalarFieldEnum[] | UserSessionScalarFieldEnum
+    having?: UserSessionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: UserSessionCountAggregateInputType | true
+    _min?: UserSessionMinAggregateInputType
+    _max?: UserSessionMaxAggregateInputType
+  }
+
+  export type UserSessionGroupByOutputType = {
+    id: string
+    userId: string
+    tenantId: string
+    sid: string
+    userAgent: string | null
+    ipAddress: string | null
+    lastActive: Date
+    expiresAt: Date
+    createdAt: Date
+    _count: UserSessionCountAggregateOutputType | null
+    _min: UserSessionMinAggregateOutputType | null
+    _max: UserSessionMaxAggregateOutputType | null
+  }
+
+  type GetUserSessionGroupByPayload<T extends UserSessionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<UserSessionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof UserSessionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], UserSessionGroupByOutputType[P]>
+            : GetScalarType<T[P], UserSessionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type UserSessionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    tenantId?: boolean
+    sid?: boolean
+    userAgent?: boolean
+    ipAddress?: boolean
+    lastActive?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    refreshTokens?: boolean | UserSession$refreshTokensArgs<ExtArgs>
+    _count?: boolean | UserSessionCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userSession"]>
+
+  export type UserSessionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    tenantId?: boolean
+    sid?: boolean
+    userAgent?: boolean
+    ipAddress?: boolean
+    lastActive?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userSession"]>
+
+  export type UserSessionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    tenantId?: boolean
+    sid?: boolean
+    userAgent?: boolean
+    ipAddress?: boolean
+    lastActive?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["userSession"]>
+
+  export type UserSessionSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    tenantId?: boolean
+    sid?: boolean
+    userAgent?: boolean
+    ipAddress?: boolean
+    lastActive?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+  }
+
+  export type UserSessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "tenantId" | "sid" | "userAgent" | "ipAddress" | "lastActive" | "expiresAt" | "createdAt", ExtArgs["result"]["userSession"]>
+  export type UserSessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    refreshTokens?: boolean | UserSession$refreshTokensArgs<ExtArgs>
+    _count?: boolean | UserSessionCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type UserSessionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }
+  export type UserSessionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    tenant?: boolean | TenantDefaultArgs<ExtArgs>
+  }
+
+  export type $UserSessionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "UserSession"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      tenant: Prisma.$TenantPayload<ExtArgs>
+      refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      tenantId: string
+      sid: string
+      userAgent: string | null
+      ipAddress: string | null
+      lastActive: Date
+      expiresAt: Date
+      createdAt: Date
+    }, ExtArgs["result"]["userSession"]>
+    composites: {}
+  }
+
+  type UserSessionGetPayload<S extends boolean | null | undefined | UserSessionDefaultArgs> = $Result.GetResult<Prisma.$UserSessionPayload, S>
+
+  type UserSessionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserSessionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: UserSessionCountAggregateInputType | true
+    }
+
+  export interface UserSessionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserSession'], meta: { name: 'UserSession' } }
+    /**
+     * Find zero or one UserSession that matches the filter.
+     * @param {UserSessionFindUniqueArgs} args - Arguments to find a UserSession
+     * @example
+     * // Get one UserSession
+     * const userSession = await prisma.userSession.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends UserSessionFindUniqueArgs>(args: SelectSubset<T, UserSessionFindUniqueArgs<ExtArgs>>): Prisma__UserSessionClient<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one UserSession that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {UserSessionFindUniqueOrThrowArgs} args - Arguments to find a UserSession
+     * @example
+     * // Get one UserSession
+     * const userSession = await prisma.userSession.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends UserSessionFindUniqueOrThrowArgs>(args: SelectSubset<T, UserSessionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserSessionClient<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserSession that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserSessionFindFirstArgs} args - Arguments to find a UserSession
+     * @example
+     * // Get one UserSession
+     * const userSession = await prisma.userSession.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends UserSessionFindFirstArgs>(args?: SelectSubset<T, UserSessionFindFirstArgs<ExtArgs>>): Prisma__UserSessionClient<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first UserSession that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserSessionFindFirstOrThrowArgs} args - Arguments to find a UserSession
+     * @example
+     * // Get one UserSession
+     * const userSession = await prisma.userSession.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends UserSessionFindFirstOrThrowArgs>(args?: SelectSubset<T, UserSessionFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserSessionClient<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more UserSessions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserSessionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all UserSessions
+     * const userSessions = await prisma.userSession.findMany()
+     * 
+     * // Get first 10 UserSessions
+     * const userSessions = await prisma.userSession.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const userSessionWithIdOnly = await prisma.userSession.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends UserSessionFindManyArgs>(args?: SelectSubset<T, UserSessionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a UserSession.
+     * @param {UserSessionCreateArgs} args - Arguments to create a UserSession.
+     * @example
+     * // Create one UserSession
+     * const UserSession = await prisma.userSession.create({
+     *   data: {
+     *     // ... data to create a UserSession
+     *   }
+     * })
+     * 
+     */
+    create<T extends UserSessionCreateArgs>(args: SelectSubset<T, UserSessionCreateArgs<ExtArgs>>): Prisma__UserSessionClient<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many UserSessions.
+     * @param {UserSessionCreateManyArgs} args - Arguments to create many UserSessions.
+     * @example
+     * // Create many UserSessions
+     * const userSession = await prisma.userSession.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends UserSessionCreateManyArgs>(args?: SelectSubset<T, UserSessionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many UserSessions and returns the data saved in the database.
+     * @param {UserSessionCreateManyAndReturnArgs} args - Arguments to create many UserSessions.
+     * @example
+     * // Create many UserSessions
+     * const userSession = await prisma.userSession.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many UserSessions and only return the `id`
+     * const userSessionWithIdOnly = await prisma.userSession.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends UserSessionCreateManyAndReturnArgs>(args?: SelectSubset<T, UserSessionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a UserSession.
+     * @param {UserSessionDeleteArgs} args - Arguments to delete one UserSession.
+     * @example
+     * // Delete one UserSession
+     * const UserSession = await prisma.userSession.delete({
+     *   where: {
+     *     // ... filter to delete one UserSession
+     *   }
+     * })
+     * 
+     */
+    delete<T extends UserSessionDeleteArgs>(args: SelectSubset<T, UserSessionDeleteArgs<ExtArgs>>): Prisma__UserSessionClient<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one UserSession.
+     * @param {UserSessionUpdateArgs} args - Arguments to update one UserSession.
+     * @example
+     * // Update one UserSession
+     * const userSession = await prisma.userSession.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends UserSessionUpdateArgs>(args: SelectSubset<T, UserSessionUpdateArgs<ExtArgs>>): Prisma__UserSessionClient<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more UserSessions.
+     * @param {UserSessionDeleteManyArgs} args - Arguments to filter UserSessions to delete.
+     * @example
+     * // Delete a few UserSessions
+     * const { count } = await prisma.userSession.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends UserSessionDeleteManyArgs>(args?: SelectSubset<T, UserSessionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserSessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserSessionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many UserSessions
+     * const userSession = await prisma.userSession.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends UserSessionUpdateManyArgs>(args: SelectSubset<T, UserSessionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more UserSessions and returns the data updated in the database.
+     * @param {UserSessionUpdateManyAndReturnArgs} args - Arguments to update many UserSessions.
+     * @example
+     * // Update many UserSessions
+     * const userSession = await prisma.userSession.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more UserSessions and only return the `id`
+     * const userSessionWithIdOnly = await prisma.userSession.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends UserSessionUpdateManyAndReturnArgs>(args: SelectSubset<T, UserSessionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one UserSession.
+     * @param {UserSessionUpsertArgs} args - Arguments to update or create a UserSession.
+     * @example
+     * // Update or create a UserSession
+     * const userSession = await prisma.userSession.upsert({
+     *   create: {
+     *     // ... data to create a UserSession
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the UserSession we want to update
+     *   }
+     * })
+     */
+    upsert<T extends UserSessionUpsertArgs>(args: SelectSubset<T, UserSessionUpsertArgs<ExtArgs>>): Prisma__UserSessionClient<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of UserSessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserSessionCountArgs} args - Arguments to filter UserSessions to count.
+     * @example
+     * // Count the number of UserSessions
+     * const count = await prisma.userSession.count({
+     *   where: {
+     *     // ... the filter for the UserSessions we want to count
+     *   }
+     * })
+    **/
+    count<T extends UserSessionCountArgs>(
+      args?: Subset<T, UserSessionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], UserSessionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a UserSession.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserSessionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends UserSessionAggregateArgs>(args: Subset<T, UserSessionAggregateArgs>): Prisma.PrismaPromise<GetUserSessionAggregateType<T>>
+
+    /**
+     * Group by UserSession.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {UserSessionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends UserSessionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: UserSessionGroupByArgs['orderBy'] }
+        : { orderBy?: UserSessionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, UserSessionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUserSessionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the UserSession model
+   */
+  readonly fields: UserSessionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for UserSession.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__UserSessionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    refreshTokens<T extends UserSession$refreshTokensArgs<ExtArgs> = {}>(args?: Subset<T, UserSession$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the UserSession model
+   */
+  interface UserSessionFieldRefs {
+    readonly id: FieldRef<"UserSession", 'String'>
+    readonly userId: FieldRef<"UserSession", 'String'>
+    readonly tenantId: FieldRef<"UserSession", 'String'>
+    readonly sid: FieldRef<"UserSession", 'String'>
+    readonly userAgent: FieldRef<"UserSession", 'String'>
+    readonly ipAddress: FieldRef<"UserSession", 'String'>
+    readonly lastActive: FieldRef<"UserSession", 'DateTime'>
+    readonly expiresAt: FieldRef<"UserSession", 'DateTime'>
+    readonly createdAt: FieldRef<"UserSession", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * UserSession findUnique
+   */
+  export type UserSessionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSession
+     */
+    select?: UserSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserSession
+     */
+    omit?: UserSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which UserSession to fetch.
+     */
+    where: UserSessionWhereUniqueInput
+  }
+
+  /**
+   * UserSession findUniqueOrThrow
+   */
+  export type UserSessionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSession
+     */
+    select?: UserSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserSession
+     */
+    omit?: UserSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which UserSession to fetch.
+     */
+    where: UserSessionWhereUniqueInput
+  }
+
+  /**
+   * UserSession findFirst
+   */
+  export type UserSessionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSession
+     */
+    select?: UserSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserSession
+     */
+    omit?: UserSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which UserSession to fetch.
+     */
+    where?: UserSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserSessions to fetch.
+     */
+    orderBy?: UserSessionOrderByWithRelationInput | UserSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserSessions.
+     */
+    cursor?: UserSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserSessions.
+     */
+    distinct?: UserSessionScalarFieldEnum | UserSessionScalarFieldEnum[]
+  }
+
+  /**
+   * UserSession findFirstOrThrow
+   */
+  export type UserSessionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSession
+     */
+    select?: UserSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserSession
+     */
+    omit?: UserSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which UserSession to fetch.
+     */
+    where?: UserSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserSessions to fetch.
+     */
+    orderBy?: UserSessionOrderByWithRelationInput | UserSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for UserSessions.
+     */
+    cursor?: UserSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of UserSessions.
+     */
+    distinct?: UserSessionScalarFieldEnum | UserSessionScalarFieldEnum[]
+  }
+
+  /**
+   * UserSession findMany
+   */
+  export type UserSessionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSession
+     */
+    select?: UserSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserSession
+     */
+    omit?: UserSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which UserSessions to fetch.
+     */
+    where?: UserSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of UserSessions to fetch.
+     */
+    orderBy?: UserSessionOrderByWithRelationInput | UserSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing UserSessions.
+     */
+    cursor?: UserSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` UserSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` UserSessions.
+     */
+    skip?: number
+    distinct?: UserSessionScalarFieldEnum | UserSessionScalarFieldEnum[]
+  }
+
+  /**
+   * UserSession create
+   */
+  export type UserSessionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSession
+     */
+    select?: UserSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserSession
+     */
+    omit?: UserSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserSessionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a UserSession.
+     */
+    data: XOR<UserSessionCreateInput, UserSessionUncheckedCreateInput>
+  }
+
+  /**
+   * UserSession createMany
+   */
+  export type UserSessionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many UserSessions.
+     */
+    data: UserSessionCreateManyInput | UserSessionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * UserSession createManyAndReturn
+   */
+  export type UserSessionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSession
+     */
+    select?: UserSessionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserSession
+     */
+    omit?: UserSessionOmit<ExtArgs> | null
+    /**
+     * The data used to create many UserSessions.
+     */
+    data: UserSessionCreateManyInput | UserSessionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserSessionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UserSession update
+   */
+  export type UserSessionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSession
+     */
+    select?: UserSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserSession
+     */
+    omit?: UserSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserSessionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a UserSession.
+     */
+    data: XOR<UserSessionUpdateInput, UserSessionUncheckedUpdateInput>
+    /**
+     * Choose, which UserSession to update.
+     */
+    where: UserSessionWhereUniqueInput
+  }
+
+  /**
+   * UserSession updateMany
+   */
+  export type UserSessionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update UserSessions.
+     */
+    data: XOR<UserSessionUpdateManyMutationInput, UserSessionUncheckedUpdateManyInput>
+    /**
+     * Filter which UserSessions to update
+     */
+    where?: UserSessionWhereInput
+    /**
+     * Limit how many UserSessions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserSession updateManyAndReturn
+   */
+  export type UserSessionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSession
+     */
+    select?: UserSessionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserSession
+     */
+    omit?: UserSessionOmit<ExtArgs> | null
+    /**
+     * The data used to update UserSessions.
+     */
+    data: XOR<UserSessionUpdateManyMutationInput, UserSessionUncheckedUpdateManyInput>
+    /**
+     * Filter which UserSessions to update
+     */
+    where?: UserSessionWhereInput
+    /**
+     * Limit how many UserSessions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserSessionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * UserSession upsert
+   */
+  export type UserSessionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSession
+     */
+    select?: UserSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserSession
+     */
+    omit?: UserSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserSessionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the UserSession to update in case it exists.
+     */
+    where: UserSessionWhereUniqueInput
+    /**
+     * In case the UserSession found by the `where` argument doesn't exist, create a new UserSession with this data.
+     */
+    create: XOR<UserSessionCreateInput, UserSessionUncheckedCreateInput>
+    /**
+     * In case the UserSession was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<UserSessionUpdateInput, UserSessionUncheckedUpdateInput>
+  }
+
+  /**
+   * UserSession delete
+   */
+  export type UserSessionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSession
+     */
+    select?: UserSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserSession
+     */
+    omit?: UserSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserSessionInclude<ExtArgs> | null
+    /**
+     * Filter which UserSession to delete.
+     */
+    where: UserSessionWhereUniqueInput
+  }
+
+  /**
+   * UserSession deleteMany
+   */
+  export type UserSessionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which UserSessions to delete
+     */
+    where?: UserSessionWhereInput
+    /**
+     * Limit how many UserSessions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * UserSession.refreshTokens
+   */
+  export type UserSession$refreshTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RefreshToken
+     */
+    select?: RefreshTokenSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RefreshToken
+     */
+    omit?: RefreshTokenOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RefreshTokenInclude<ExtArgs> | null
+    where?: RefreshTokenWhereInput
+    orderBy?: RefreshTokenOrderByWithRelationInput | RefreshTokenOrderByWithRelationInput[]
+    cursor?: RefreshTokenWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RefreshTokenScalarFieldEnum | RefreshTokenScalarFieldEnum[]
+  }
+
+  /**
+   * UserSession without action
+   */
+  export type UserSessionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSession
+     */
+    select?: UserSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserSession
+     */
+    omit?: UserSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserSessionInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model RefreshToken
    */
 
@@ -6111,6 +7526,8 @@ export namespace Prisma {
   export type RefreshTokenMinAggregateOutputType = {
     id: string | null
     userId: string | null
+    clientId: string | null
+    sessionId: string | null
     tokenHash: string | null
     resource: string | null
     expiresAt: Date | null
@@ -6120,6 +7537,8 @@ export namespace Prisma {
   export type RefreshTokenMaxAggregateOutputType = {
     id: string | null
     userId: string | null
+    clientId: string | null
+    sessionId: string | null
     tokenHash: string | null
     resource: string | null
     expiresAt: Date | null
@@ -6129,6 +7548,8 @@ export namespace Prisma {
   export type RefreshTokenCountAggregateOutputType = {
     id: number
     userId: number
+    clientId: number
+    sessionId: number
     tokenHash: number
     resource: number
     scopes: number
@@ -6141,6 +7562,8 @@ export namespace Prisma {
   export type RefreshTokenMinAggregateInputType = {
     id?: true
     userId?: true
+    clientId?: true
+    sessionId?: true
     tokenHash?: true
     resource?: true
     expiresAt?: true
@@ -6150,6 +7573,8 @@ export namespace Prisma {
   export type RefreshTokenMaxAggregateInputType = {
     id?: true
     userId?: true
+    clientId?: true
+    sessionId?: true
     tokenHash?: true
     resource?: true
     expiresAt?: true
@@ -6159,6 +7584,8 @@ export namespace Prisma {
   export type RefreshTokenCountAggregateInputType = {
     id?: true
     userId?: true
+    clientId?: true
+    sessionId?: true
     tokenHash?: true
     resource?: true
     scopes?: true
@@ -6242,6 +7669,8 @@ export namespace Prisma {
   export type RefreshTokenGroupByOutputType = {
     id: string
     userId: string
+    clientId: string | null
+    sessionId: string | null
     tokenHash: string
     resource: string | null
     scopes: string[]
@@ -6269,39 +7698,50 @@ export namespace Prisma {
   export type RefreshTokenSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
+    clientId?: boolean
+    sessionId?: boolean
     tokenHash?: boolean
     resource?: boolean
     scopes?: boolean
     expiresAt?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    session?: boolean | RefreshToken$sessionArgs<ExtArgs>
   }, ExtArgs["result"]["refreshToken"]>
 
   export type RefreshTokenSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
+    clientId?: boolean
+    sessionId?: boolean
     tokenHash?: boolean
     resource?: boolean
     scopes?: boolean
     expiresAt?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    session?: boolean | RefreshToken$sessionArgs<ExtArgs>
   }, ExtArgs["result"]["refreshToken"]>
 
   export type RefreshTokenSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
+    clientId?: boolean
+    sessionId?: boolean
     tokenHash?: boolean
     resource?: boolean
     scopes?: boolean
     expiresAt?: boolean
     createdAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    session?: boolean | RefreshToken$sessionArgs<ExtArgs>
   }, ExtArgs["result"]["refreshToken"]>
 
   export type RefreshTokenSelectScalar = {
     id?: boolean
     userId?: boolean
+    clientId?: boolean
+    sessionId?: boolean
     tokenHash?: boolean
     resource?: boolean
     scopes?: boolean
@@ -6309,25 +7749,31 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type RefreshTokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "tokenHash" | "resource" | "scopes" | "expiresAt" | "createdAt", ExtArgs["result"]["refreshToken"]>
+  export type RefreshTokenOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "clientId" | "sessionId" | "tokenHash" | "resource" | "scopes" | "expiresAt" | "createdAt", ExtArgs["result"]["refreshToken"]>
   export type RefreshTokenInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    session?: boolean | RefreshToken$sessionArgs<ExtArgs>
   }
   export type RefreshTokenIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    session?: boolean | RefreshToken$sessionArgs<ExtArgs>
   }
   export type RefreshTokenIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    session?: boolean | RefreshToken$sessionArgs<ExtArgs>
   }
 
   export type $RefreshTokenPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "RefreshToken"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
+      session: Prisma.$UserSessionPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
+      clientId: string | null
+      sessionId: string | null
       tokenHash: string
       resource: string | null
       scopes: string[]
@@ -6728,6 +8174,7 @@ export namespace Prisma {
   export interface Prisma__RefreshTokenClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    session<T extends RefreshToken$sessionArgs<ExtArgs> = {}>(args?: Subset<T, RefreshToken$sessionArgs<ExtArgs>>): Prisma__UserSessionClient<$Result.GetResult<Prisma.$UserSessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6759,6 +8206,8 @@ export namespace Prisma {
   interface RefreshTokenFieldRefs {
     readonly id: FieldRef<"RefreshToken", 'String'>
     readonly userId: FieldRef<"RefreshToken", 'String'>
+    readonly clientId: FieldRef<"RefreshToken", 'String'>
+    readonly sessionId: FieldRef<"RefreshToken", 'String'>
     readonly tokenHash: FieldRef<"RefreshToken", 'String'>
     readonly resource: FieldRef<"RefreshToken", 'String'>
     readonly scopes: FieldRef<"RefreshToken", 'String[]'>
@@ -7160,6 +8609,25 @@ export namespace Prisma {
   }
 
   /**
+   * RefreshToken.session
+   */
+  export type RefreshToken$sessionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserSession
+     */
+    select?: UserSessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserSession
+     */
+    omit?: UserSessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserSessionInclude<ExtArgs> | null
+    where?: UserSessionWhereInput
+  }
+
+  /**
    * RefreshToken without action
    */
   export type RefreshTokenDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7190,18 +8658,21 @@ export namespace Prisma {
 
   export type InteractionMinAggregateOutputType = {
     id: string | null
+    type: string | null
     expiresAt: Date | null
     createdAt: Date | null
   }
 
   export type InteractionMaxAggregateOutputType = {
     id: string | null
+    type: string | null
     expiresAt: Date | null
     createdAt: Date | null
   }
 
   export type InteractionCountAggregateOutputType = {
     id: number
+    type: number
     details: number
     expiresAt: number
     createdAt: number
@@ -7211,18 +8682,21 @@ export namespace Prisma {
 
   export type InteractionMinAggregateInputType = {
     id?: true
+    type?: true
     expiresAt?: true
     createdAt?: true
   }
 
   export type InteractionMaxAggregateInputType = {
     id?: true
+    type?: true
     expiresAt?: true
     createdAt?: true
   }
 
   export type InteractionCountAggregateInputType = {
     id?: true
+    type?: true
     details?: true
     expiresAt?: true
     createdAt?: true
@@ -7303,6 +8777,7 @@ export namespace Prisma {
 
   export type InteractionGroupByOutputType = {
     id: string
+    type: string
     details: JsonValue
     expiresAt: Date
     createdAt: Date
@@ -7327,6 +8802,7 @@ export namespace Prisma {
 
   export type InteractionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    type?: boolean
     details?: boolean
     expiresAt?: boolean
     createdAt?: boolean
@@ -7334,6 +8810,7 @@ export namespace Prisma {
 
   export type InteractionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    type?: boolean
     details?: boolean
     expiresAt?: boolean
     createdAt?: boolean
@@ -7341,6 +8818,7 @@ export namespace Prisma {
 
   export type InteractionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    type?: boolean
     details?: boolean
     expiresAt?: boolean
     createdAt?: boolean
@@ -7348,18 +8826,20 @@ export namespace Prisma {
 
   export type InteractionSelectScalar = {
     id?: boolean
+    type?: boolean
     details?: boolean
     expiresAt?: boolean
     createdAt?: boolean
   }
 
-  export type InteractionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "details" | "expiresAt" | "createdAt", ExtArgs["result"]["interaction"]>
+  export type InteractionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "details" | "expiresAt" | "createdAt", ExtArgs["result"]["interaction"]>
 
   export type $InteractionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Interaction"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      type: string
       details: Prisma.JsonValue
       expiresAt: Date
       createdAt: Date
@@ -7787,6 +9267,7 @@ export namespace Prisma {
    */
   interface InteractionFieldRefs {
     readonly id: FieldRef<"Interaction", 'String'>
+    readonly type: FieldRef<"Interaction", 'String'>
     readonly details: FieldRef<"Interaction", 'Json'>
     readonly expiresAt: FieldRef<"Interaction", 'DateTime'>
     readonly createdAt: FieldRef<"Interaction", 'DateTime'>
@@ -8176,13 +9657,10 @@ export namespace Prisma {
     slug: 'slug',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    brevoApiKey: 'brevoApiKey',
-    brevoSenderEmail: 'brevoSenderEmail',
-    brevoSenderName: 'brevoSenderName',
-    labsmobileApiKey: 'labsmobileApiKey',
-    labsmobileUser: 'labsmobileUser',
-    labsmobileUrl: 'labsmobileUrl',
-    labsmobileSenderId: 'labsmobileSenderId'
+    integrations: 'integrations',
+    sessionSettings: 'sessionSettings',
+    branding: 'branding',
+    dashboardUrls: 'dashboardUrls'
   };
 
   export type TenantScalarFieldEnum = (typeof TenantScalarFieldEnum)[keyof typeof TenantScalarFieldEnum]
@@ -8191,6 +9669,7 @@ export namespace Prisma {
   export const ApplicationScalarFieldEnum: {
     id: 'id',
     name: 'name',
+    description: 'description',
     clientId: 'clientId',
     clientSecret: 'clientSecret',
     tenantId: 'tenantId',
@@ -8198,13 +9677,16 @@ export namespace Prisma {
     postLogoutRedirectUris: 'postLogoutRedirectUris',
     corsOrigins: 'corsOrigins',
     authMethods: 'authMethods',
-    brevoApiKey: 'brevoApiKey',
-    brevoSenderEmail: 'brevoSenderEmail',
-    brevoSenderName: 'brevoSenderName',
-    labsmobileApiKey: 'labsmobileApiKey',
-    labsmobileUser: 'labsmobileUser',
-    labsmobileUrl: 'labsmobileUrl',
-    labsmobileSenderId: 'labsmobileSenderId',
+    logo: 'logo',
+    primaryColor: 'primaryColor',
+    alwaysIssueRefreshToken: 'alwaysIssueRefreshToken',
+    rotateRefreshToken: 'rotateRefreshToken',
+    refreshTokenTtl: 'refreshTokenTtl',
+    backchannelLogoutUri: 'backchannelLogoutUri',
+    isSessionRequired: 'isSessionRequired',
+    integrations: 'integrations',
+    customData: 'customData',
+    branding: 'branding',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -8218,12 +9700,16 @@ export namespace Prisma {
     lastName: 'lastName',
     primaryEmail: 'primaryEmail',
     emailVerified: 'emailVerified',
+    phone: 'phone',
     phoneNumber: 'phoneNumber',
     phoneVerified: 'phoneVerified',
+    walletAddress: 'walletAddress',
     passwordHash: 'passwordHash',
+    role: 'role',
     avatar: 'avatar',
     customData: 'customData',
     tenantId: 'tenantId',
+    deletedAt: 'deletedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -8243,9 +9729,26 @@ export namespace Prisma {
   export type UserIdentityScalarFieldEnum = (typeof UserIdentityScalarFieldEnum)[keyof typeof UserIdentityScalarFieldEnum]
 
 
+  export const UserSessionScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    tenantId: 'tenantId',
+    sid: 'sid',
+    userAgent: 'userAgent',
+    ipAddress: 'ipAddress',
+    lastActive: 'lastActive',
+    expiresAt: 'expiresAt',
+    createdAt: 'createdAt'
+  };
+
+  export type UserSessionScalarFieldEnum = (typeof UserSessionScalarFieldEnum)[keyof typeof UserSessionScalarFieldEnum]
+
+
   export const RefreshTokenScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
+    clientId: 'clientId',
+    sessionId: 'sessionId',
     tokenHash: 'tokenHash',
     resource: 'resource',
     scopes: 'scopes',
@@ -8258,6 +9761,7 @@ export namespace Prisma {
 
   export const InteractionScalarFieldEnum: {
     id: 'id',
+    type: 'type',
     details: 'details',
     expiresAt: 'expiresAt',
     createdAt: 'createdAt'
@@ -8297,14 +9801,6 @@ export namespace Prisma {
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
-  export const NullsOrder: {
-    first: 'first',
-    last: 'last'
-  };
-
-  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
   export const JsonNullValueFilter: {
     DbNull: typeof DbNull,
     JsonNull: typeof JsonNull,
@@ -8312,6 +9808,14 @@ export namespace Prisma {
   };
 
   export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+  export const NullsOrder: {
+    first: 'first',
+    last: 'last'
+  };
+
+  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
   /**
@@ -8380,6 +9884,20 @@ export namespace Prisma {
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
   /**
    * Deep Input Types
    */
@@ -8394,15 +9912,13 @@ export namespace Prisma {
     slug?: StringFilter<"Tenant"> | string
     createdAt?: DateTimeFilter<"Tenant"> | Date | string
     updatedAt?: DateTimeFilter<"Tenant"> | Date | string
-    brevoApiKey?: StringNullableFilter<"Tenant"> | string | null
-    brevoSenderEmail?: StringNullableFilter<"Tenant"> | string | null
-    brevoSenderName?: StringNullableFilter<"Tenant"> | string | null
-    labsmobileApiKey?: StringNullableFilter<"Tenant"> | string | null
-    labsmobileUser?: StringNullableFilter<"Tenant"> | string | null
-    labsmobileUrl?: StringNullableFilter<"Tenant"> | string | null
-    labsmobileSenderId?: StringNullableFilter<"Tenant"> | string | null
-    users?: UserListRelationFilter
+    integrations?: JsonNullableFilter<"Tenant">
+    sessionSettings?: JsonNullableFilter<"Tenant">
+    branding?: JsonNullableFilter<"Tenant">
+    dashboardUrls?: JsonNullableFilter<"Tenant">
     applications?: ApplicationListRelationFilter
+    users?: UserListRelationFilter
+    sessions?: UserSessionListRelationFilter
   }
 
   export type TenantOrderByWithRelationInput = {
@@ -8411,15 +9927,13 @@ export namespace Prisma {
     slug?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    brevoApiKey?: SortOrderInput | SortOrder
-    brevoSenderEmail?: SortOrderInput | SortOrder
-    brevoSenderName?: SortOrderInput | SortOrder
-    labsmobileApiKey?: SortOrderInput | SortOrder
-    labsmobileUser?: SortOrderInput | SortOrder
-    labsmobileUrl?: SortOrderInput | SortOrder
-    labsmobileSenderId?: SortOrderInput | SortOrder
-    users?: UserOrderByRelationAggregateInput
+    integrations?: SortOrderInput | SortOrder
+    sessionSettings?: SortOrderInput | SortOrder
+    branding?: SortOrderInput | SortOrder
+    dashboardUrls?: SortOrderInput | SortOrder
     applications?: ApplicationOrderByRelationAggregateInput
+    users?: UserOrderByRelationAggregateInput
+    sessions?: UserSessionOrderByRelationAggregateInput
   }
 
   export type TenantWhereUniqueInput = Prisma.AtLeast<{
@@ -8431,15 +9945,13 @@ export namespace Prisma {
     name?: StringFilter<"Tenant"> | string
     createdAt?: DateTimeFilter<"Tenant"> | Date | string
     updatedAt?: DateTimeFilter<"Tenant"> | Date | string
-    brevoApiKey?: StringNullableFilter<"Tenant"> | string | null
-    brevoSenderEmail?: StringNullableFilter<"Tenant"> | string | null
-    brevoSenderName?: StringNullableFilter<"Tenant"> | string | null
-    labsmobileApiKey?: StringNullableFilter<"Tenant"> | string | null
-    labsmobileUser?: StringNullableFilter<"Tenant"> | string | null
-    labsmobileUrl?: StringNullableFilter<"Tenant"> | string | null
-    labsmobileSenderId?: StringNullableFilter<"Tenant"> | string | null
-    users?: UserListRelationFilter
+    integrations?: JsonNullableFilter<"Tenant">
+    sessionSettings?: JsonNullableFilter<"Tenant">
+    branding?: JsonNullableFilter<"Tenant">
+    dashboardUrls?: JsonNullableFilter<"Tenant">
     applications?: ApplicationListRelationFilter
+    users?: UserListRelationFilter
+    sessions?: UserSessionListRelationFilter
   }, "id" | "slug">
 
   export type TenantOrderByWithAggregationInput = {
@@ -8448,13 +9960,10 @@ export namespace Prisma {
     slug?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    brevoApiKey?: SortOrderInput | SortOrder
-    brevoSenderEmail?: SortOrderInput | SortOrder
-    brevoSenderName?: SortOrderInput | SortOrder
-    labsmobileApiKey?: SortOrderInput | SortOrder
-    labsmobileUser?: SortOrderInput | SortOrder
-    labsmobileUrl?: SortOrderInput | SortOrder
-    labsmobileSenderId?: SortOrderInput | SortOrder
+    integrations?: SortOrderInput | SortOrder
+    sessionSettings?: SortOrderInput | SortOrder
+    branding?: SortOrderInput | SortOrder
+    dashboardUrls?: SortOrderInput | SortOrder
     _count?: TenantCountOrderByAggregateInput
     _max?: TenantMaxOrderByAggregateInput
     _min?: TenantMinOrderByAggregateInput
@@ -8469,13 +9978,10 @@ export namespace Prisma {
     slug?: StringWithAggregatesFilter<"Tenant"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Tenant"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Tenant"> | Date | string
-    brevoApiKey?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
-    brevoSenderEmail?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
-    brevoSenderName?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
-    labsmobileApiKey?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
-    labsmobileUser?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
-    labsmobileUrl?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
-    labsmobileSenderId?: StringNullableWithAggregatesFilter<"Tenant"> | string | null
+    integrations?: JsonNullableWithAggregatesFilter<"Tenant">
+    sessionSettings?: JsonNullableWithAggregatesFilter<"Tenant">
+    branding?: JsonNullableWithAggregatesFilter<"Tenant">
+    dashboardUrls?: JsonNullableWithAggregatesFilter<"Tenant">
   }
 
   export type ApplicationWhereInput = {
@@ -8484,6 +9990,7 @@ export namespace Prisma {
     NOT?: ApplicationWhereInput | ApplicationWhereInput[]
     id?: StringFilter<"Application"> | string
     name?: StringFilter<"Application"> | string
+    description?: StringNullableFilter<"Application"> | string | null
     clientId?: StringFilter<"Application"> | string
     clientSecret?: StringNullableFilter<"Application"> | string | null
     tenantId?: StringFilter<"Application"> | string
@@ -8491,13 +9998,16 @@ export namespace Prisma {
     postLogoutRedirectUris?: StringNullableListFilter<"Application">
     corsOrigins?: StringNullableListFilter<"Application">
     authMethods?: JsonNullableFilter<"Application">
-    brevoApiKey?: StringNullableFilter<"Application"> | string | null
-    brevoSenderEmail?: StringNullableFilter<"Application"> | string | null
-    brevoSenderName?: StringNullableFilter<"Application"> | string | null
-    labsmobileApiKey?: StringNullableFilter<"Application"> | string | null
-    labsmobileUser?: StringNullableFilter<"Application"> | string | null
-    labsmobileUrl?: StringNullableFilter<"Application"> | string | null
-    labsmobileSenderId?: StringNullableFilter<"Application"> | string | null
+    logo?: StringNullableFilter<"Application"> | string | null
+    primaryColor?: StringNullableFilter<"Application"> | string | null
+    alwaysIssueRefreshToken?: BoolFilter<"Application"> | boolean
+    rotateRefreshToken?: BoolFilter<"Application"> | boolean
+    refreshTokenTtl?: IntFilter<"Application"> | number
+    backchannelLogoutUri?: StringNullableFilter<"Application"> | string | null
+    isSessionRequired?: BoolFilter<"Application"> | boolean
+    integrations?: JsonNullableFilter<"Application">
+    customData?: JsonNullableFilter<"Application">
+    branding?: JsonNullableFilter<"Application">
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
@@ -8506,6 +10016,7 @@ export namespace Prisma {
   export type ApplicationOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    description?: SortOrderInput | SortOrder
     clientId?: SortOrder
     clientSecret?: SortOrderInput | SortOrder
     tenantId?: SortOrder
@@ -8513,13 +10024,16 @@ export namespace Prisma {
     postLogoutRedirectUris?: SortOrder
     corsOrigins?: SortOrder
     authMethods?: SortOrderInput | SortOrder
-    brevoApiKey?: SortOrderInput | SortOrder
-    brevoSenderEmail?: SortOrderInput | SortOrder
-    brevoSenderName?: SortOrderInput | SortOrder
-    labsmobileApiKey?: SortOrderInput | SortOrder
-    labsmobileUser?: SortOrderInput | SortOrder
-    labsmobileUrl?: SortOrderInput | SortOrder
-    labsmobileSenderId?: SortOrderInput | SortOrder
+    logo?: SortOrderInput | SortOrder
+    primaryColor?: SortOrderInput | SortOrder
+    alwaysIssueRefreshToken?: SortOrder
+    rotateRefreshToken?: SortOrder
+    refreshTokenTtl?: SortOrder
+    backchannelLogoutUri?: SortOrderInput | SortOrder
+    isSessionRequired?: SortOrder
+    integrations?: SortOrderInput | SortOrder
+    customData?: SortOrderInput | SortOrder
+    branding?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     tenant?: TenantOrderByWithRelationInput
@@ -8532,19 +10046,23 @@ export namespace Prisma {
     OR?: ApplicationWhereInput[]
     NOT?: ApplicationWhereInput | ApplicationWhereInput[]
     name?: StringFilter<"Application"> | string
+    description?: StringNullableFilter<"Application"> | string | null
     clientSecret?: StringNullableFilter<"Application"> | string | null
     tenantId?: StringFilter<"Application"> | string
     redirectUris?: StringNullableListFilter<"Application">
     postLogoutRedirectUris?: StringNullableListFilter<"Application">
     corsOrigins?: StringNullableListFilter<"Application">
     authMethods?: JsonNullableFilter<"Application">
-    brevoApiKey?: StringNullableFilter<"Application"> | string | null
-    brevoSenderEmail?: StringNullableFilter<"Application"> | string | null
-    brevoSenderName?: StringNullableFilter<"Application"> | string | null
-    labsmobileApiKey?: StringNullableFilter<"Application"> | string | null
-    labsmobileUser?: StringNullableFilter<"Application"> | string | null
-    labsmobileUrl?: StringNullableFilter<"Application"> | string | null
-    labsmobileSenderId?: StringNullableFilter<"Application"> | string | null
+    logo?: StringNullableFilter<"Application"> | string | null
+    primaryColor?: StringNullableFilter<"Application"> | string | null
+    alwaysIssueRefreshToken?: BoolFilter<"Application"> | boolean
+    rotateRefreshToken?: BoolFilter<"Application"> | boolean
+    refreshTokenTtl?: IntFilter<"Application"> | number
+    backchannelLogoutUri?: StringNullableFilter<"Application"> | string | null
+    isSessionRequired?: BoolFilter<"Application"> | boolean
+    integrations?: JsonNullableFilter<"Application">
+    customData?: JsonNullableFilter<"Application">
+    branding?: JsonNullableFilter<"Application">
     createdAt?: DateTimeFilter<"Application"> | Date | string
     updatedAt?: DateTimeFilter<"Application"> | Date | string
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
@@ -8553,6 +10071,7 @@ export namespace Prisma {
   export type ApplicationOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    description?: SortOrderInput | SortOrder
     clientId?: SortOrder
     clientSecret?: SortOrderInput | SortOrder
     tenantId?: SortOrder
@@ -8560,18 +10079,23 @@ export namespace Prisma {
     postLogoutRedirectUris?: SortOrder
     corsOrigins?: SortOrder
     authMethods?: SortOrderInput | SortOrder
-    brevoApiKey?: SortOrderInput | SortOrder
-    brevoSenderEmail?: SortOrderInput | SortOrder
-    brevoSenderName?: SortOrderInput | SortOrder
-    labsmobileApiKey?: SortOrderInput | SortOrder
-    labsmobileUser?: SortOrderInput | SortOrder
-    labsmobileUrl?: SortOrderInput | SortOrder
-    labsmobileSenderId?: SortOrderInput | SortOrder
+    logo?: SortOrderInput | SortOrder
+    primaryColor?: SortOrderInput | SortOrder
+    alwaysIssueRefreshToken?: SortOrder
+    rotateRefreshToken?: SortOrder
+    refreshTokenTtl?: SortOrder
+    backchannelLogoutUri?: SortOrderInput | SortOrder
+    isSessionRequired?: SortOrder
+    integrations?: SortOrderInput | SortOrder
+    customData?: SortOrderInput | SortOrder
+    branding?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ApplicationCountOrderByAggregateInput
+    _avg?: ApplicationAvgOrderByAggregateInput
     _max?: ApplicationMaxOrderByAggregateInput
     _min?: ApplicationMinOrderByAggregateInput
+    _sum?: ApplicationSumOrderByAggregateInput
   }
 
   export type ApplicationScalarWhereWithAggregatesInput = {
@@ -8580,6 +10104,7 @@ export namespace Prisma {
     NOT?: ApplicationScalarWhereWithAggregatesInput | ApplicationScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Application"> | string
     name?: StringWithAggregatesFilter<"Application"> | string
+    description?: StringNullableWithAggregatesFilter<"Application"> | string | null
     clientId?: StringWithAggregatesFilter<"Application"> | string
     clientSecret?: StringNullableWithAggregatesFilter<"Application"> | string | null
     tenantId?: StringWithAggregatesFilter<"Application"> | string
@@ -8587,13 +10112,16 @@ export namespace Prisma {
     postLogoutRedirectUris?: StringNullableListFilter<"Application">
     corsOrigins?: StringNullableListFilter<"Application">
     authMethods?: JsonNullableWithAggregatesFilter<"Application">
-    brevoApiKey?: StringNullableWithAggregatesFilter<"Application"> | string | null
-    brevoSenderEmail?: StringNullableWithAggregatesFilter<"Application"> | string | null
-    brevoSenderName?: StringNullableWithAggregatesFilter<"Application"> | string | null
-    labsmobileApiKey?: StringNullableWithAggregatesFilter<"Application"> | string | null
-    labsmobileUser?: StringNullableWithAggregatesFilter<"Application"> | string | null
-    labsmobileUrl?: StringNullableWithAggregatesFilter<"Application"> | string | null
-    labsmobileSenderId?: StringNullableWithAggregatesFilter<"Application"> | string | null
+    logo?: StringNullableWithAggregatesFilter<"Application"> | string | null
+    primaryColor?: StringNullableWithAggregatesFilter<"Application"> | string | null
+    alwaysIssueRefreshToken?: BoolWithAggregatesFilter<"Application"> | boolean
+    rotateRefreshToken?: BoolWithAggregatesFilter<"Application"> | boolean
+    refreshTokenTtl?: IntWithAggregatesFilter<"Application"> | number
+    backchannelLogoutUri?: StringNullableWithAggregatesFilter<"Application"> | string | null
+    isSessionRequired?: BoolWithAggregatesFilter<"Application"> | boolean
+    integrations?: JsonNullableWithAggregatesFilter<"Application">
+    customData?: JsonNullableWithAggregatesFilter<"Application">
+    branding?: JsonNullableWithAggregatesFilter<"Application">
     createdAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
   }
@@ -8607,17 +10135,22 @@ export namespace Prisma {
     lastName?: StringNullableFilter<"User"> | string | null
     primaryEmail?: StringNullableFilter<"User"> | string | null
     emailVerified?: BoolFilter<"User"> | boolean
+    phone?: StringNullableFilter<"User"> | string | null
     phoneNumber?: StringNullableFilter<"User"> | string | null
     phoneVerified?: BoolFilter<"User"> | boolean
+    walletAddress?: StringNullableFilter<"User"> | string | null
     passwordHash?: StringNullableFilter<"User"> | string | null
+    role?: StringFilter<"User"> | string
     avatar?: StringNullableFilter<"User"> | string | null
     customData?: JsonNullableFilter<"User">
     tenantId?: StringNullableFilter<"User"> | string | null
+    deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
-    identities?: UserIdentityListRelationFilter
     refreshTokens?: RefreshTokenListRelationFilter
+    identities?: UserIdentityListRelationFilter
+    sessions?: UserSessionListRelationFilter
+    tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
   }
 
   export type UserOrderByWithRelationInput = {
@@ -8626,40 +10159,50 @@ export namespace Prisma {
     lastName?: SortOrderInput | SortOrder
     primaryEmail?: SortOrderInput | SortOrder
     emailVerified?: SortOrder
+    phone?: SortOrderInput | SortOrder
     phoneNumber?: SortOrderInput | SortOrder
     phoneVerified?: SortOrder
+    walletAddress?: SortOrderInput | SortOrder
     passwordHash?: SortOrderInput | SortOrder
+    role?: SortOrder
     avatar?: SortOrderInput | SortOrder
     customData?: SortOrderInput | SortOrder
     tenantId?: SortOrderInput | SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    tenant?: TenantOrderByWithRelationInput
-    identities?: UserIdentityOrderByRelationAggregateInput
     refreshTokens?: RefreshTokenOrderByRelationAggregateInput
+    identities?: UserIdentityOrderByRelationAggregateInput
+    sessions?: UserSessionOrderByRelationAggregateInput
+    tenant?: TenantOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    primaryEmail?: string
-    phoneNumber?: string
+    walletAddress?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     firstName?: StringNullableFilter<"User"> | string | null
     lastName?: StringNullableFilter<"User"> | string | null
+    primaryEmail?: StringNullableFilter<"User"> | string | null
     emailVerified?: BoolFilter<"User"> | boolean
+    phone?: StringNullableFilter<"User"> | string | null
+    phoneNumber?: StringNullableFilter<"User"> | string | null
     phoneVerified?: BoolFilter<"User"> | boolean
     passwordHash?: StringNullableFilter<"User"> | string | null
+    role?: StringFilter<"User"> | string
     avatar?: StringNullableFilter<"User"> | string | null
     customData?: JsonNullableFilter<"User">
     tenantId?: StringNullableFilter<"User"> | string | null
+    deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
-    identities?: UserIdentityListRelationFilter
     refreshTokens?: RefreshTokenListRelationFilter
-  }, "id" | "primaryEmail" | "phoneNumber">
+    identities?: UserIdentityListRelationFilter
+    sessions?: UserSessionListRelationFilter
+    tenant?: XOR<TenantNullableScalarRelationFilter, TenantWhereInput> | null
+  }, "id" | "walletAddress">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
@@ -8667,12 +10210,16 @@ export namespace Prisma {
     lastName?: SortOrderInput | SortOrder
     primaryEmail?: SortOrderInput | SortOrder
     emailVerified?: SortOrder
+    phone?: SortOrderInput | SortOrder
     phoneNumber?: SortOrderInput | SortOrder
     phoneVerified?: SortOrder
+    walletAddress?: SortOrderInput | SortOrder
     passwordHash?: SortOrderInput | SortOrder
+    role?: SortOrder
     avatar?: SortOrderInput | SortOrder
     customData?: SortOrderInput | SortOrder
     tenantId?: SortOrderInput | SortOrder
+    deletedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -8689,12 +10236,16 @@ export namespace Prisma {
     lastName?: StringNullableWithAggregatesFilter<"User"> | string | null
     primaryEmail?: StringNullableWithAggregatesFilter<"User"> | string | null
     emailVerified?: BoolWithAggregatesFilter<"User"> | boolean
+    phone?: StringNullableWithAggregatesFilter<"User"> | string | null
     phoneNumber?: StringNullableWithAggregatesFilter<"User"> | string | null
     phoneVerified?: BoolWithAggregatesFilter<"User"> | boolean
+    walletAddress?: StringNullableWithAggregatesFilter<"User"> | string | null
     passwordHash?: StringNullableWithAggregatesFilter<"User"> | string | null
+    role?: StringWithAggregatesFilter<"User"> | string
     avatar?: StringNullableWithAggregatesFilter<"User"> | string | null
     customData?: JsonNullableWithAggregatesFilter<"User">
     tenantId?: StringNullableWithAggregatesFilter<"User"> | string | null
+    deletedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -8760,29 +10311,116 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"UserIdentity"> | Date | string
   }
 
+  export type UserSessionWhereInput = {
+    AND?: UserSessionWhereInput | UserSessionWhereInput[]
+    OR?: UserSessionWhereInput[]
+    NOT?: UserSessionWhereInput | UserSessionWhereInput[]
+    id?: StringFilter<"UserSession"> | string
+    userId?: StringFilter<"UserSession"> | string
+    tenantId?: StringFilter<"UserSession"> | string
+    sid?: StringFilter<"UserSession"> | string
+    userAgent?: StringNullableFilter<"UserSession"> | string | null
+    ipAddress?: StringNullableFilter<"UserSession"> | string | null
+    lastActive?: DateTimeFilter<"UserSession"> | Date | string
+    expiresAt?: DateTimeFilter<"UserSession"> | Date | string
+    createdAt?: DateTimeFilter<"UserSession"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    refreshTokens?: RefreshTokenListRelationFilter
+  }
+
+  export type UserSessionOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tenantId?: SortOrder
+    sid?: SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    ipAddress?: SortOrderInput | SortOrder
+    lastActive?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    tenant?: TenantOrderByWithRelationInput
+    refreshTokens?: RefreshTokenOrderByRelationAggregateInput
+  }
+
+  export type UserSessionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    sid?: string
+    AND?: UserSessionWhereInput | UserSessionWhereInput[]
+    OR?: UserSessionWhereInput[]
+    NOT?: UserSessionWhereInput | UserSessionWhereInput[]
+    userId?: StringFilter<"UserSession"> | string
+    tenantId?: StringFilter<"UserSession"> | string
+    userAgent?: StringNullableFilter<"UserSession"> | string | null
+    ipAddress?: StringNullableFilter<"UserSession"> | string | null
+    lastActive?: DateTimeFilter<"UserSession"> | Date | string
+    expiresAt?: DateTimeFilter<"UserSession"> | Date | string
+    createdAt?: DateTimeFilter<"UserSession"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
+    refreshTokens?: RefreshTokenListRelationFilter
+  }, "id" | "sid">
+
+  export type UserSessionOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tenantId?: SortOrder
+    sid?: SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    ipAddress?: SortOrderInput | SortOrder
+    lastActive?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    _count?: UserSessionCountOrderByAggregateInput
+    _max?: UserSessionMaxOrderByAggregateInput
+    _min?: UserSessionMinOrderByAggregateInput
+  }
+
+  export type UserSessionScalarWhereWithAggregatesInput = {
+    AND?: UserSessionScalarWhereWithAggregatesInput | UserSessionScalarWhereWithAggregatesInput[]
+    OR?: UserSessionScalarWhereWithAggregatesInput[]
+    NOT?: UserSessionScalarWhereWithAggregatesInput | UserSessionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"UserSession"> | string
+    userId?: StringWithAggregatesFilter<"UserSession"> | string
+    tenantId?: StringWithAggregatesFilter<"UserSession"> | string
+    sid?: StringWithAggregatesFilter<"UserSession"> | string
+    userAgent?: StringNullableWithAggregatesFilter<"UserSession"> | string | null
+    ipAddress?: StringNullableWithAggregatesFilter<"UserSession"> | string | null
+    lastActive?: DateTimeWithAggregatesFilter<"UserSession"> | Date | string
+    expiresAt?: DateTimeWithAggregatesFilter<"UserSession"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"UserSession"> | Date | string
+  }
+
   export type RefreshTokenWhereInput = {
     AND?: RefreshTokenWhereInput | RefreshTokenWhereInput[]
     OR?: RefreshTokenWhereInput[]
     NOT?: RefreshTokenWhereInput | RefreshTokenWhereInput[]
     id?: StringFilter<"RefreshToken"> | string
     userId?: StringFilter<"RefreshToken"> | string
+    clientId?: StringNullableFilter<"RefreshToken"> | string | null
+    sessionId?: StringNullableFilter<"RefreshToken"> | string | null
     tokenHash?: StringFilter<"RefreshToken"> | string
     resource?: StringNullableFilter<"RefreshToken"> | string | null
     scopes?: StringNullableListFilter<"RefreshToken">
     expiresAt?: DateTimeFilter<"RefreshToken"> | Date | string
     createdAt?: DateTimeFilter<"RefreshToken"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    session?: XOR<UserSessionNullableScalarRelationFilter, UserSessionWhereInput> | null
   }
 
   export type RefreshTokenOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
+    clientId?: SortOrderInput | SortOrder
+    sessionId?: SortOrderInput | SortOrder
     tokenHash?: SortOrder
     resource?: SortOrderInput | SortOrder
     scopes?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
     user?: UserOrderByWithRelationInput
+    session?: UserSessionOrderByWithRelationInput
   }
 
   export type RefreshTokenWhereUniqueInput = Prisma.AtLeast<{
@@ -8792,16 +10430,21 @@ export namespace Prisma {
     OR?: RefreshTokenWhereInput[]
     NOT?: RefreshTokenWhereInput | RefreshTokenWhereInput[]
     userId?: StringFilter<"RefreshToken"> | string
+    clientId?: StringNullableFilter<"RefreshToken"> | string | null
+    sessionId?: StringNullableFilter<"RefreshToken"> | string | null
     resource?: StringNullableFilter<"RefreshToken"> | string | null
     scopes?: StringNullableListFilter<"RefreshToken">
     expiresAt?: DateTimeFilter<"RefreshToken"> | Date | string
     createdAt?: DateTimeFilter<"RefreshToken"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    session?: XOR<UserSessionNullableScalarRelationFilter, UserSessionWhereInput> | null
   }, "id" | "tokenHash">
 
   export type RefreshTokenOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
+    clientId?: SortOrderInput | SortOrder
+    sessionId?: SortOrderInput | SortOrder
     tokenHash?: SortOrder
     resource?: SortOrderInput | SortOrder
     scopes?: SortOrder
@@ -8818,6 +10461,8 @@ export namespace Prisma {
     NOT?: RefreshTokenScalarWhereWithAggregatesInput | RefreshTokenScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"RefreshToken"> | string
     userId?: StringWithAggregatesFilter<"RefreshToken"> | string
+    clientId?: StringNullableWithAggregatesFilter<"RefreshToken"> | string | null
+    sessionId?: StringNullableWithAggregatesFilter<"RefreshToken"> | string | null
     tokenHash?: StringWithAggregatesFilter<"RefreshToken"> | string
     resource?: StringNullableWithAggregatesFilter<"RefreshToken"> | string | null
     scopes?: StringNullableListFilter<"RefreshToken">
@@ -8830,6 +10475,7 @@ export namespace Prisma {
     OR?: InteractionWhereInput[]
     NOT?: InteractionWhereInput | InteractionWhereInput[]
     id?: StringFilter<"Interaction"> | string
+    type?: StringFilter<"Interaction"> | string
     details?: JsonFilter<"Interaction">
     expiresAt?: DateTimeFilter<"Interaction"> | Date | string
     createdAt?: DateTimeFilter<"Interaction"> | Date | string
@@ -8837,6 +10483,7 @@ export namespace Prisma {
 
   export type InteractionOrderByWithRelationInput = {
     id?: SortOrder
+    type?: SortOrder
     details?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
@@ -8847,6 +10494,7 @@ export namespace Prisma {
     AND?: InteractionWhereInput | InteractionWhereInput[]
     OR?: InteractionWhereInput[]
     NOT?: InteractionWhereInput | InteractionWhereInput[]
+    type?: StringFilter<"Interaction"> | string
     details?: JsonFilter<"Interaction">
     expiresAt?: DateTimeFilter<"Interaction"> | Date | string
     createdAt?: DateTimeFilter<"Interaction"> | Date | string
@@ -8854,6 +10502,7 @@ export namespace Prisma {
 
   export type InteractionOrderByWithAggregationInput = {
     id?: SortOrder
+    type?: SortOrder
     details?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
@@ -8867,6 +10516,7 @@ export namespace Prisma {
     OR?: InteractionScalarWhereWithAggregatesInput[]
     NOT?: InteractionScalarWhereWithAggregatesInput | InteractionScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Interaction"> | string
+    type?: StringWithAggregatesFilter<"Interaction"> | string
     details?: JsonWithAggregatesFilter<"Interaction">
     expiresAt?: DateTimeWithAggregatesFilter<"Interaction"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"Interaction"> | Date | string
@@ -8878,15 +10528,13 @@ export namespace Prisma {
     slug: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    brevoApiKey?: string | null
-    brevoSenderEmail?: string | null
-    brevoSenderName?: string | null
-    labsmobileApiKey?: string | null
-    labsmobileUser?: string | null
-    labsmobileUrl?: string | null
-    labsmobileSenderId?: string | null
-    users?: UserCreateNestedManyWithoutTenantInput
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
     applications?: ApplicationCreateNestedManyWithoutTenantInput
+    users?: UserCreateNestedManyWithoutTenantInput
+    sessions?: UserSessionCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateInput = {
@@ -8895,15 +10543,13 @@ export namespace Prisma {
     slug: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    brevoApiKey?: string | null
-    brevoSenderEmail?: string | null
-    brevoSenderName?: string | null
-    labsmobileApiKey?: string | null
-    labsmobileUser?: string | null
-    labsmobileUrl?: string | null
-    labsmobileSenderId?: string | null
-    users?: UserUncheckedCreateNestedManyWithoutTenantInput
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
     applications?: ApplicationUncheckedCreateNestedManyWithoutTenantInput
+    users?: UserUncheckedCreateNestedManyWithoutTenantInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUpdateInput = {
@@ -8912,15 +10558,13 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
-    users?: UserUpdateManyWithoutTenantNestedInput
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
     applications?: ApplicationUpdateManyWithoutTenantNestedInput
+    users?: UserUpdateManyWithoutTenantNestedInput
+    sessions?: UserSessionUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateInput = {
@@ -8929,15 +10573,13 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
-    users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
     applications?: ApplicationUncheckedUpdateManyWithoutTenantNestedInput
+    users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantCreateManyInput = {
@@ -8946,13 +10588,10 @@ export namespace Prisma {
     slug: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    brevoApiKey?: string | null
-    brevoSenderEmail?: string | null
-    brevoSenderName?: string | null
-    labsmobileApiKey?: string | null
-    labsmobileUser?: string | null
-    labsmobileUrl?: string | null
-    labsmobileSenderId?: string | null
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type TenantUpdateManyMutationInput = {
@@ -8961,13 +10600,10 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type TenantUncheckedUpdateManyInput = {
@@ -8976,31 +10612,32 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
   }
 
   export type ApplicationCreateInput = {
     id?: string
     name: string
+    description?: string | null
     clientId?: string
     clientSecret?: string | null
     redirectUris?: ApplicationCreateredirectUrisInput | string[]
     postLogoutRedirectUris?: ApplicationCreatepostLogoutRedirectUrisInput | string[]
     corsOrigins?: ApplicationCreatecorsOriginsInput | string[]
     authMethods?: NullableJsonNullValueInput | InputJsonValue
-    brevoApiKey?: string | null
-    brevoSenderEmail?: string | null
-    brevoSenderName?: string | null
-    labsmobileApiKey?: string | null
-    labsmobileUser?: string | null
-    labsmobileUrl?: string | null
-    labsmobileSenderId?: string | null
+    logo?: string | null
+    primaryColor?: string | null
+    alwaysIssueRefreshToken?: boolean
+    rotateRefreshToken?: boolean
+    refreshTokenTtl?: number
+    backchannelLogoutUri?: string | null
+    isSessionRequired?: boolean
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     tenant: TenantCreateNestedOneWithoutApplicationsInput
@@ -9009,6 +10646,7 @@ export namespace Prisma {
   export type ApplicationUncheckedCreateInput = {
     id?: string
     name: string
+    description?: string | null
     clientId?: string
     clientSecret?: string | null
     tenantId: string
@@ -9016,13 +10654,16 @@ export namespace Prisma {
     postLogoutRedirectUris?: ApplicationCreatepostLogoutRedirectUrisInput | string[]
     corsOrigins?: ApplicationCreatecorsOriginsInput | string[]
     authMethods?: NullableJsonNullValueInput | InputJsonValue
-    brevoApiKey?: string | null
-    brevoSenderEmail?: string | null
-    brevoSenderName?: string | null
-    labsmobileApiKey?: string | null
-    labsmobileUser?: string | null
-    labsmobileUrl?: string | null
-    labsmobileSenderId?: string | null
+    logo?: string | null
+    primaryColor?: string | null
+    alwaysIssueRefreshToken?: boolean
+    rotateRefreshToken?: boolean
+    refreshTokenTtl?: number
+    backchannelLogoutUri?: string | null
+    isSessionRequired?: boolean
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -9030,19 +10671,23 @@ export namespace Prisma {
   export type ApplicationUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     clientId?: StringFieldUpdateOperationsInput | string
     clientSecret?: NullableStringFieldUpdateOperationsInput | string | null
     redirectUris?: ApplicationUpdateredirectUrisInput | string[]
     postLogoutRedirectUris?: ApplicationUpdatepostLogoutRedirectUrisInput | string[]
     corsOrigins?: ApplicationUpdatecorsOriginsInput | string[]
     authMethods?: NullableJsonNullValueInput | InputJsonValue
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    alwaysIssueRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    rotateRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    refreshTokenTtl?: IntFieldUpdateOperationsInput | number
+    backchannelLogoutUri?: NullableStringFieldUpdateOperationsInput | string | null
+    isSessionRequired?: BoolFieldUpdateOperationsInput | boolean
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tenant?: TenantUpdateOneRequiredWithoutApplicationsNestedInput
@@ -9051,6 +10696,7 @@ export namespace Prisma {
   export type ApplicationUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     clientId?: StringFieldUpdateOperationsInput | string
     clientSecret?: NullableStringFieldUpdateOperationsInput | string | null
     tenantId?: StringFieldUpdateOperationsInput | string
@@ -9058,13 +10704,16 @@ export namespace Prisma {
     postLogoutRedirectUris?: ApplicationUpdatepostLogoutRedirectUrisInput | string[]
     corsOrigins?: ApplicationUpdatecorsOriginsInput | string[]
     authMethods?: NullableJsonNullValueInput | InputJsonValue
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    alwaysIssueRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    rotateRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    refreshTokenTtl?: IntFieldUpdateOperationsInput | number
+    backchannelLogoutUri?: NullableStringFieldUpdateOperationsInput | string | null
+    isSessionRequired?: BoolFieldUpdateOperationsInput | boolean
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9072,6 +10721,7 @@ export namespace Prisma {
   export type ApplicationCreateManyInput = {
     id?: string
     name: string
+    description?: string | null
     clientId?: string
     clientSecret?: string | null
     tenantId: string
@@ -9079,13 +10729,16 @@ export namespace Prisma {
     postLogoutRedirectUris?: ApplicationCreatepostLogoutRedirectUrisInput | string[]
     corsOrigins?: ApplicationCreatecorsOriginsInput | string[]
     authMethods?: NullableJsonNullValueInput | InputJsonValue
-    brevoApiKey?: string | null
-    brevoSenderEmail?: string | null
-    brevoSenderName?: string | null
-    labsmobileApiKey?: string | null
-    labsmobileUser?: string | null
-    labsmobileUrl?: string | null
-    labsmobileSenderId?: string | null
+    logo?: string | null
+    primaryColor?: string | null
+    alwaysIssueRefreshToken?: boolean
+    rotateRefreshToken?: boolean
+    refreshTokenTtl?: number
+    backchannelLogoutUri?: string | null
+    isSessionRequired?: boolean
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -9093,19 +10746,23 @@ export namespace Prisma {
   export type ApplicationUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     clientId?: StringFieldUpdateOperationsInput | string
     clientSecret?: NullableStringFieldUpdateOperationsInput | string | null
     redirectUris?: ApplicationUpdateredirectUrisInput | string[]
     postLogoutRedirectUris?: ApplicationUpdatepostLogoutRedirectUrisInput | string[]
     corsOrigins?: ApplicationUpdatecorsOriginsInput | string[]
     authMethods?: NullableJsonNullValueInput | InputJsonValue
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    alwaysIssueRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    rotateRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    refreshTokenTtl?: IntFieldUpdateOperationsInput | number
+    backchannelLogoutUri?: NullableStringFieldUpdateOperationsInput | string | null
+    isSessionRequired?: BoolFieldUpdateOperationsInput | boolean
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9113,6 +10770,7 @@ export namespace Prisma {
   export type ApplicationUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     clientId?: StringFieldUpdateOperationsInput | string
     clientSecret?: NullableStringFieldUpdateOperationsInput | string | null
     tenantId?: StringFieldUpdateOperationsInput | string
@@ -9120,13 +10778,16 @@ export namespace Prisma {
     postLogoutRedirectUris?: ApplicationUpdatepostLogoutRedirectUrisInput | string[]
     corsOrigins?: ApplicationUpdatecorsOriginsInput | string[]
     authMethods?: NullableJsonNullValueInput | InputJsonValue
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    alwaysIssueRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    rotateRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    refreshTokenTtl?: IntFieldUpdateOperationsInput | number
+    backchannelLogoutUri?: NullableStringFieldUpdateOperationsInput | string | null
+    isSessionRequired?: BoolFieldUpdateOperationsInput | boolean
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9137,16 +10798,21 @@ export namespace Prisma {
     lastName?: string | null
     primaryEmail?: string | null
     emailVerified?: boolean
+    phone?: string | null
     phoneNumber?: string | null
     phoneVerified?: boolean
+    walletAddress?: string | null
     passwordHash?: string | null
+    role?: string
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    tenant?: TenantCreateNestedOneWithoutUsersInput
-    identities?: UserIdentityCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
+    identities?: UserIdentityCreateNestedManyWithoutUserInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -9155,16 +10821,21 @@ export namespace Prisma {
     lastName?: string | null
     primaryEmail?: string | null
     emailVerified?: boolean
+    phone?: string | null
     phoneNumber?: string | null
     phoneVerified?: boolean
+    walletAddress?: string | null
     passwordHash?: string | null
+    role?: string
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: string | null
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    identities?: UserIdentityUncheckedCreateNestedManyWithoutUserInput
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+    identities?: UserIdentityUncheckedCreateNestedManyWithoutUserInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -9173,16 +10844,21 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     primaryEmail?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    tenant?: TenantUpdateOneWithoutUsersNestedInput
-    identities?: UserIdentityUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
+    identities?: UserIdentityUpdateManyWithoutUserNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -9191,16 +10867,21 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     primaryEmail?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    identities?: UserIdentityUncheckedUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+    identities?: UserIdentityUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -9209,12 +10890,16 @@ export namespace Prisma {
     lastName?: string | null
     primaryEmail?: string | null
     emailVerified?: boolean
+    phone?: string | null
     phoneNumber?: string | null
     phoneVerified?: boolean
+    walletAddress?: string | null
     passwordHash?: string | null
+    role?: string
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: string | null
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -9225,11 +10910,15 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     primaryEmail?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9240,12 +10929,16 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     primaryEmail?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9312,19 +11005,109 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type UserSessionCreateInput = {
+    id?: string
+    sid: string
+    userAgent?: string | null
+    ipAddress?: string | null
+    lastActive?: Date | string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutSessionsInput
+    tenant: TenantCreateNestedOneWithoutSessionsInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutSessionInput
+  }
+
+  export type UserSessionUncheckedCreateInput = {
+    id?: string
+    userId: string
+    tenantId: string
+    sid: string
+    userAgent?: string | null
+    ipAddress?: string | null
+    lastActive?: Date | string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutSessionInput
+  }
+
+  export type UserSessionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sid?: StringFieldUpdateOperationsInput | string
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSessionsNestedInput
+    tenant?: TenantUpdateOneRequiredWithoutSessionsNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutSessionNestedInput
+  }
+
+  export type UserSessionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    sid?: StringFieldUpdateOperationsInput | string
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutSessionNestedInput
+  }
+
+  export type UserSessionCreateManyInput = {
+    id?: string
+    userId: string
+    tenantId: string
+    sid: string
+    userAgent?: string | null
+    ipAddress?: string | null
+    lastActive?: Date | string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type UserSessionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sid?: StringFieldUpdateOperationsInput | string
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserSessionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    sid?: StringFieldUpdateOperationsInput | string
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type RefreshTokenCreateInput = {
     id?: string
+    clientId?: string | null
     tokenHash: string
     resource?: string | null
     scopes?: RefreshTokenCreatescopesInput | string[]
     expiresAt: Date | string
     createdAt?: Date | string
     user: UserCreateNestedOneWithoutRefreshTokensInput
+    session?: UserSessionCreateNestedOneWithoutRefreshTokensInput
   }
 
   export type RefreshTokenUncheckedCreateInput = {
     id?: string
     userId: string
+    clientId?: string | null
+    sessionId?: string | null
     tokenHash: string
     resource?: string | null
     scopes?: RefreshTokenCreatescopesInput | string[]
@@ -9334,17 +11117,21 @@ export namespace Prisma {
 
   export type RefreshTokenUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
     tokenHash?: StringFieldUpdateOperationsInput | string
     resource?: NullableStringFieldUpdateOperationsInput | string | null
     scopes?: RefreshTokenUpdatescopesInput | string[]
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutRefreshTokensNestedInput
+    session?: UserSessionUpdateOneWithoutRefreshTokensNestedInput
   }
 
   export type RefreshTokenUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: NullableStringFieldUpdateOperationsInput | string | null
     tokenHash?: StringFieldUpdateOperationsInput | string
     resource?: NullableStringFieldUpdateOperationsInput | string | null
     scopes?: RefreshTokenUpdatescopesInput | string[]
@@ -9355,6 +11142,8 @@ export namespace Prisma {
   export type RefreshTokenCreateManyInput = {
     id?: string
     userId: string
+    clientId?: string | null
+    sessionId?: string | null
     tokenHash: string
     resource?: string | null
     scopes?: RefreshTokenCreatescopesInput | string[]
@@ -9364,6 +11153,7 @@ export namespace Prisma {
 
   export type RefreshTokenUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
     tokenHash?: StringFieldUpdateOperationsInput | string
     resource?: NullableStringFieldUpdateOperationsInput | string | null
     scopes?: RefreshTokenUpdatescopesInput | string[]
@@ -9374,6 +11164,8 @@ export namespace Prisma {
   export type RefreshTokenUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: NullableStringFieldUpdateOperationsInput | string | null
     tokenHash?: StringFieldUpdateOperationsInput | string
     resource?: NullableStringFieldUpdateOperationsInput | string | null
     scopes?: RefreshTokenUpdatescopesInput | string[]
@@ -9383,6 +11175,7 @@ export namespace Prisma {
 
   export type InteractionCreateInput = {
     id?: string
+    type?: string
     details: JsonNullValueInput | InputJsonValue
     expiresAt: Date | string
     createdAt?: Date | string
@@ -9390,6 +11183,7 @@ export namespace Prisma {
 
   export type InteractionUncheckedCreateInput = {
     id?: string
+    type?: string
     details: JsonNullValueInput | InputJsonValue
     expiresAt: Date | string
     createdAt?: Date | string
@@ -9397,6 +11191,7 @@ export namespace Prisma {
 
   export type InteractionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     details?: JsonNullValueInput | InputJsonValue
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9404,6 +11199,7 @@ export namespace Prisma {
 
   export type InteractionUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     details?: JsonNullValueInput | InputJsonValue
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9411,6 +11207,7 @@ export namespace Prisma {
 
   export type InteractionCreateManyInput = {
     id?: string
+    type?: string
     details: JsonNullValueInput | InputJsonValue
     expiresAt: Date | string
     createdAt?: Date | string
@@ -9418,6 +11215,7 @@ export namespace Prisma {
 
   export type InteractionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     details?: JsonNullValueInput | InputJsonValue
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9425,6 +11223,7 @@ export namespace Prisma {
 
   export type InteractionUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
     details?: JsonNullValueInput | InputJsonValue
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9455,26 +11254,28 @@ export namespace Prisma {
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type UserListRelationFilter = {
-    every?: UserWhereInput
-    some?: UserWhereInput
-    none?: UserWhereInput
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type ApplicationListRelationFilter = {
@@ -9483,16 +11284,32 @@ export namespace Prisma {
     none?: ApplicationWhereInput
   }
 
+  export type UserListRelationFilter = {
+    every?: UserWhereInput
+    some?: UserWhereInput
+    none?: UserWhereInput
+  }
+
+  export type UserSessionListRelationFilter = {
+    every?: UserSessionWhereInput
+    some?: UserSessionWhereInput
+    none?: UserSessionWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
+  }
+
+  export type ApplicationOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type UserOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type ApplicationOrderByRelationAggregateInput = {
+  export type UserSessionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -9502,13 +11319,10 @@ export namespace Prisma {
     slug?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    brevoApiKey?: SortOrder
-    brevoSenderEmail?: SortOrder
-    brevoSenderName?: SortOrder
-    labsmobileApiKey?: SortOrder
-    labsmobileUser?: SortOrder
-    labsmobileUrl?: SortOrder
-    labsmobileSenderId?: SortOrder
+    integrations?: SortOrder
+    sessionSettings?: SortOrder
+    branding?: SortOrder
+    dashboardUrls?: SortOrder
   }
 
   export type TenantMaxOrderByAggregateInput = {
@@ -9517,13 +11331,6 @@ export namespace Prisma {
     slug?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    brevoApiKey?: SortOrder
-    brevoSenderEmail?: SortOrder
-    brevoSenderName?: SortOrder
-    labsmobileApiKey?: SortOrder
-    labsmobileUser?: SortOrder
-    labsmobileUrl?: SortOrder
-    labsmobileSenderId?: SortOrder
   }
 
   export type TenantMinOrderByAggregateInput = {
@@ -9532,13 +11339,6 @@ export namespace Prisma {
     slug?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    brevoApiKey?: SortOrder
-    brevoSenderEmail?: SortOrder
-    brevoSenderName?: SortOrder
-    labsmobileApiKey?: SortOrder
-    labsmobileUser?: SortOrder
-    labsmobileUrl?: SortOrder
-    labsmobileSenderId?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -9572,115 +11372,6 @@ export namespace Prisma {
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type StringNullableListFilter<$PrismaModel = never> = {
-    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    has?: string | StringFieldRefInput<$PrismaModel> | null
-    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
-    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
-    isEmpty?: boolean
-  }
-  export type JsonNullableFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
-
-  export type TenantScalarRelationFilter = {
-    is?: TenantWhereInput
-    isNot?: TenantWhereInput
-  }
-
-  export type ApplicationCountOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    clientId?: SortOrder
-    clientSecret?: SortOrder
-    tenantId?: SortOrder
-    redirectUris?: SortOrder
-    postLogoutRedirectUris?: SortOrder
-    corsOrigins?: SortOrder
-    authMethods?: SortOrder
-    brevoApiKey?: SortOrder
-    brevoSenderEmail?: SortOrder
-    brevoSenderName?: SortOrder
-    labsmobileApiKey?: SortOrder
-    labsmobileUser?: SortOrder
-    labsmobileUrl?: SortOrder
-    labsmobileSenderId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type ApplicationMaxOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    clientId?: SortOrder
-    clientSecret?: SortOrder
-    tenantId?: SortOrder
-    brevoApiKey?: SortOrder
-    brevoSenderEmail?: SortOrder
-    brevoSenderName?: SortOrder
-    labsmobileApiKey?: SortOrder
-    labsmobileUser?: SortOrder
-    labsmobileUrl?: SortOrder
-    labsmobileSenderId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type ApplicationMinOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    clientId?: SortOrder
-    clientSecret?: SortOrder
-    tenantId?: SortOrder
-    brevoApiKey?: SortOrder
-    brevoSenderEmail?: SortOrder
-    brevoSenderName?: SortOrder
-    labsmobileApiKey?: SortOrder
-    labsmobileUser?: SortOrder
-    labsmobileUrl?: SortOrder
-    labsmobileSenderId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
   export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
@@ -9708,20 +11399,170 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type TenantNullableScalarRelationFilter = {
-    is?: TenantWhereInput | null
-    isNot?: TenantWhereInput | null
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type UserIdentityListRelationFilter = {
-    every?: UserIdentityWhereInput
-    some?: UserIdentityWhereInput
-    none?: UserIdentityWhereInput
+  export type TenantScalarRelationFilter = {
+    is?: TenantWhereInput
+    isNot?: TenantWhereInput
+  }
+
+  export type ApplicationCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    clientId?: SortOrder
+    clientSecret?: SortOrder
+    tenantId?: SortOrder
+    redirectUris?: SortOrder
+    postLogoutRedirectUris?: SortOrder
+    corsOrigins?: SortOrder
+    authMethods?: SortOrder
+    logo?: SortOrder
+    primaryColor?: SortOrder
+    alwaysIssueRefreshToken?: SortOrder
+    rotateRefreshToken?: SortOrder
+    refreshTokenTtl?: SortOrder
+    backchannelLogoutUri?: SortOrder
+    isSessionRequired?: SortOrder
+    integrations?: SortOrder
+    customData?: SortOrder
+    branding?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ApplicationAvgOrderByAggregateInput = {
+    refreshTokenTtl?: SortOrder
+  }
+
+  export type ApplicationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    clientId?: SortOrder
+    clientSecret?: SortOrder
+    tenantId?: SortOrder
+    logo?: SortOrder
+    primaryColor?: SortOrder
+    alwaysIssueRefreshToken?: SortOrder
+    rotateRefreshToken?: SortOrder
+    refreshTokenTtl?: SortOrder
+    backchannelLogoutUri?: SortOrder
+    isSessionRequired?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ApplicationMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    clientId?: SortOrder
+    clientSecret?: SortOrder
+    tenantId?: SortOrder
+    logo?: SortOrder
+    primaryColor?: SortOrder
+    alwaysIssueRefreshToken?: SortOrder
+    rotateRefreshToken?: SortOrder
+    refreshTokenTtl?: SortOrder
+    backchannelLogoutUri?: SortOrder
+    isSessionRequired?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ApplicationSumOrderByAggregateInput = {
+    refreshTokenTtl?: SortOrder
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type RefreshTokenListRelationFilter = {
@@ -9730,11 +11571,22 @@ export namespace Prisma {
     none?: RefreshTokenWhereInput
   }
 
-  export type UserIdentityOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type UserIdentityListRelationFilter = {
+    every?: UserIdentityWhereInput
+    some?: UserIdentityWhereInput
+    none?: UserIdentityWhereInput
+  }
+
+  export type TenantNullableScalarRelationFilter = {
+    is?: TenantWhereInput | null
+    isNot?: TenantWhereInput | null
   }
 
   export type RefreshTokenOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UserIdentityOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -9744,12 +11596,16 @@ export namespace Prisma {
     lastName?: SortOrder
     primaryEmail?: SortOrder
     emailVerified?: SortOrder
+    phone?: SortOrder
     phoneNumber?: SortOrder
     phoneVerified?: SortOrder
+    walletAddress?: SortOrder
     passwordHash?: SortOrder
+    role?: SortOrder
     avatar?: SortOrder
     customData?: SortOrder
     tenantId?: SortOrder
+    deletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -9760,11 +11616,15 @@ export namespace Prisma {
     lastName?: SortOrder
     primaryEmail?: SortOrder
     emailVerified?: SortOrder
+    phone?: SortOrder
     phoneNumber?: SortOrder
     phoneVerified?: SortOrder
+    walletAddress?: SortOrder
     passwordHash?: SortOrder
+    role?: SortOrder
     avatar?: SortOrder
     tenantId?: SortOrder
+    deletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -9775,21 +11635,31 @@ export namespace Prisma {
     lastName?: SortOrder
     primaryEmail?: SortOrder
     emailVerified?: SortOrder
+    phone?: SortOrder
     phoneNumber?: SortOrder
     phoneVerified?: SortOrder
+    walletAddress?: SortOrder
     passwordHash?: SortOrder
+    role?: SortOrder
     avatar?: SortOrder
     tenantId?: SortOrder
+    deletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type UserScalarRelationFilter = {
@@ -9827,9 +11697,52 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type UserSessionCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tenantId?: SortOrder
+    sid?: SortOrder
+    userAgent?: SortOrder
+    ipAddress?: SortOrder
+    lastActive?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type UserSessionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tenantId?: SortOrder
+    sid?: SortOrder
+    userAgent?: SortOrder
+    ipAddress?: SortOrder
+    lastActive?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type UserSessionMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    tenantId?: SortOrder
+    sid?: SortOrder
+    userAgent?: SortOrder
+    ipAddress?: SortOrder
+    lastActive?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type UserSessionNullableScalarRelationFilter = {
+    is?: UserSessionWhereInput | null
+    isNot?: UserSessionWhereInput | null
+  }
+
   export type RefreshTokenCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    clientId?: SortOrder
+    sessionId?: SortOrder
     tokenHash?: SortOrder
     resource?: SortOrder
     scopes?: SortOrder
@@ -9840,6 +11753,8 @@ export namespace Prisma {
   export type RefreshTokenMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    clientId?: SortOrder
+    sessionId?: SortOrder
     tokenHash?: SortOrder
     resource?: SortOrder
     expiresAt?: SortOrder
@@ -9849,6 +11764,8 @@ export namespace Prisma {
   export type RefreshTokenMinOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    clientId?: SortOrder
+    sessionId?: SortOrder
     tokenHash?: SortOrder
     resource?: SortOrder
     expiresAt?: SortOrder
@@ -9880,6 +11797,7 @@ export namespace Prisma {
 
   export type InteractionCountOrderByAggregateInput = {
     id?: SortOrder
+    type?: SortOrder
     details?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
@@ -9887,12 +11805,14 @@ export namespace Prisma {
 
   export type InteractionMaxOrderByAggregateInput = {
     id?: SortOrder
+    type?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
   }
 
   export type InteractionMinOrderByAggregateInput = {
     id?: SortOrder
+    type?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
   }
@@ -9923,6 +11843,13 @@ export namespace Prisma {
     _max?: NestedJsonFilter<$PrismaModel>
   }
 
+  export type ApplicationCreateNestedManyWithoutTenantInput = {
+    create?: XOR<ApplicationCreateWithoutTenantInput, ApplicationUncheckedCreateWithoutTenantInput> | ApplicationCreateWithoutTenantInput[] | ApplicationUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: ApplicationCreateOrConnectWithoutTenantInput | ApplicationCreateOrConnectWithoutTenantInput[]
+    createMany?: ApplicationCreateManyTenantInputEnvelope
+    connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+  }
+
   export type UserCreateNestedManyWithoutTenantInput = {
     create?: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput> | UserCreateWithoutTenantInput[] | UserUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: UserCreateOrConnectWithoutTenantInput | UserCreateOrConnectWithoutTenantInput[]
@@ -9930,7 +11857,14 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
-  export type ApplicationCreateNestedManyWithoutTenantInput = {
+  export type UserSessionCreateNestedManyWithoutTenantInput = {
+    create?: XOR<UserSessionCreateWithoutTenantInput, UserSessionUncheckedCreateWithoutTenantInput> | UserSessionCreateWithoutTenantInput[] | UserSessionUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: UserSessionCreateOrConnectWithoutTenantInput | UserSessionCreateOrConnectWithoutTenantInput[]
+    createMany?: UserSessionCreateManyTenantInputEnvelope
+    connect?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+  }
+
+  export type ApplicationUncheckedCreateNestedManyWithoutTenantInput = {
     create?: XOR<ApplicationCreateWithoutTenantInput, ApplicationUncheckedCreateWithoutTenantInput> | ApplicationCreateWithoutTenantInput[] | ApplicationUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: ApplicationCreateOrConnectWithoutTenantInput | ApplicationCreateOrConnectWithoutTenantInput[]
     createMany?: ApplicationCreateManyTenantInputEnvelope
@@ -9944,11 +11878,11 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
-  export type ApplicationUncheckedCreateNestedManyWithoutTenantInput = {
-    create?: XOR<ApplicationCreateWithoutTenantInput, ApplicationUncheckedCreateWithoutTenantInput> | ApplicationCreateWithoutTenantInput[] | ApplicationUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: ApplicationCreateOrConnectWithoutTenantInput | ApplicationCreateOrConnectWithoutTenantInput[]
-    createMany?: ApplicationCreateManyTenantInputEnvelope
-    connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+  export type UserSessionUncheckedCreateNestedManyWithoutTenantInput = {
+    create?: XOR<UserSessionCreateWithoutTenantInput, UserSessionUncheckedCreateWithoutTenantInput> | UserSessionCreateWithoutTenantInput[] | UserSessionUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: UserSessionCreateOrConnectWithoutTenantInput | UserSessionCreateOrConnectWithoutTenantInput[]
+    createMany?: UserSessionCreateManyTenantInputEnvelope
+    connect?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -9959,8 +11893,18 @@ export namespace Prisma {
     set?: Date | string
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
+  export type ApplicationUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<ApplicationCreateWithoutTenantInput, ApplicationUncheckedCreateWithoutTenantInput> | ApplicationCreateWithoutTenantInput[] | ApplicationUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: ApplicationCreateOrConnectWithoutTenantInput | ApplicationCreateOrConnectWithoutTenantInput[]
+    upsert?: ApplicationUpsertWithWhereUniqueWithoutTenantInput | ApplicationUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: ApplicationCreateManyTenantInputEnvelope
+    set?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+    disconnect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+    delete?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+    connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
+    update?: ApplicationUpdateWithWhereUniqueWithoutTenantInput | ApplicationUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: ApplicationUpdateManyWithWhereWithoutTenantInput | ApplicationUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
   }
 
   export type UserUpdateManyWithoutTenantNestedInput = {
@@ -9977,7 +11921,21 @@ export namespace Prisma {
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
-  export type ApplicationUpdateManyWithoutTenantNestedInput = {
+  export type UserSessionUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<UserSessionCreateWithoutTenantInput, UserSessionUncheckedCreateWithoutTenantInput> | UserSessionCreateWithoutTenantInput[] | UserSessionUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: UserSessionCreateOrConnectWithoutTenantInput | UserSessionCreateOrConnectWithoutTenantInput[]
+    upsert?: UserSessionUpsertWithWhereUniqueWithoutTenantInput | UserSessionUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: UserSessionCreateManyTenantInputEnvelope
+    set?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    disconnect?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    delete?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    connect?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    update?: UserSessionUpdateWithWhereUniqueWithoutTenantInput | UserSessionUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: UserSessionUpdateManyWithWhereWithoutTenantInput | UserSessionUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: UserSessionScalarWhereInput | UserSessionScalarWhereInput[]
+  }
+
+  export type ApplicationUncheckedUpdateManyWithoutTenantNestedInput = {
     create?: XOR<ApplicationCreateWithoutTenantInput, ApplicationUncheckedCreateWithoutTenantInput> | ApplicationCreateWithoutTenantInput[] | ApplicationUncheckedCreateWithoutTenantInput[]
     connectOrCreate?: ApplicationCreateOrConnectWithoutTenantInput | ApplicationCreateOrConnectWithoutTenantInput[]
     upsert?: ApplicationUpsertWithWhereUniqueWithoutTenantInput | ApplicationUpsertWithWhereUniqueWithoutTenantInput[]
@@ -10005,18 +11963,18 @@ export namespace Prisma {
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
-  export type ApplicationUncheckedUpdateManyWithoutTenantNestedInput = {
-    create?: XOR<ApplicationCreateWithoutTenantInput, ApplicationUncheckedCreateWithoutTenantInput> | ApplicationCreateWithoutTenantInput[] | ApplicationUncheckedCreateWithoutTenantInput[]
-    connectOrCreate?: ApplicationCreateOrConnectWithoutTenantInput | ApplicationCreateOrConnectWithoutTenantInput[]
-    upsert?: ApplicationUpsertWithWhereUniqueWithoutTenantInput | ApplicationUpsertWithWhereUniqueWithoutTenantInput[]
-    createMany?: ApplicationCreateManyTenantInputEnvelope
-    set?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
-    disconnect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
-    delete?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
-    connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
-    update?: ApplicationUpdateWithWhereUniqueWithoutTenantInput | ApplicationUpdateWithWhereUniqueWithoutTenantInput[]
-    updateMany?: ApplicationUpdateManyWithWhereWithoutTenantInput | ApplicationUpdateManyWithWhereWithoutTenantInput[]
-    deleteMany?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
+  export type UserSessionUncheckedUpdateManyWithoutTenantNestedInput = {
+    create?: XOR<UserSessionCreateWithoutTenantInput, UserSessionUncheckedCreateWithoutTenantInput> | UserSessionCreateWithoutTenantInput[] | UserSessionUncheckedCreateWithoutTenantInput[]
+    connectOrCreate?: UserSessionCreateOrConnectWithoutTenantInput | UserSessionCreateOrConnectWithoutTenantInput[]
+    upsert?: UserSessionUpsertWithWhereUniqueWithoutTenantInput | UserSessionUpsertWithWhereUniqueWithoutTenantInput[]
+    createMany?: UserSessionCreateManyTenantInputEnvelope
+    set?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    disconnect?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    delete?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    connect?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    update?: UserSessionUpdateWithWhereUniqueWithoutTenantInput | UserSessionUpdateWithWhereUniqueWithoutTenantInput[]
+    updateMany?: UserSessionUpdateManyWithWhereWithoutTenantInput | UserSessionUpdateManyWithWhereWithoutTenantInput[]
+    deleteMany?: UserSessionScalarWhereInput | UserSessionScalarWhereInput[]
   }
 
   export type ApplicationCreateredirectUrisInput = {
@@ -10037,6 +11995,10 @@ export namespace Prisma {
     connect?: TenantWhereUniqueInput
   }
 
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type ApplicationUpdateredirectUrisInput = {
     set?: string[]
     push?: string | string[]
@@ -10052,6 +12014,18 @@ export namespace Prisma {
     push?: string | string[]
   }
 
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type TenantUpdateOneRequiredWithoutApplicationsNestedInput = {
     create?: XOR<TenantCreateWithoutApplicationsInput, TenantUncheckedCreateWithoutApplicationsInput>
     connectOrCreate?: TenantCreateOrConnectWithoutApplicationsInput
@@ -10060,10 +12034,11 @@ export namespace Prisma {
     update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutApplicationsInput, TenantUpdateWithoutApplicationsInput>, TenantUncheckedUpdateWithoutApplicationsInput>
   }
 
-  export type TenantCreateNestedOneWithoutUsersInput = {
-    create?: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
-    connectOrCreate?: TenantCreateOrConnectWithoutUsersInput
-    connect?: TenantWhereUniqueInput
+  export type RefreshTokenCreateNestedManyWithoutUserInput = {
+    create?: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput> | RefreshTokenCreateWithoutUserInput[] | RefreshTokenUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RefreshTokenCreateOrConnectWithoutUserInput | RefreshTokenCreateOrConnectWithoutUserInput[]
+    createMany?: RefreshTokenCreateManyUserInputEnvelope
+    connect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
   }
 
   export type UserIdentityCreateNestedManyWithoutUserInput = {
@@ -10073,7 +12048,20 @@ export namespace Prisma {
     connect?: UserIdentityWhereUniqueInput | UserIdentityWhereUniqueInput[]
   }
 
-  export type RefreshTokenCreateNestedManyWithoutUserInput = {
+  export type UserSessionCreateNestedManyWithoutUserInput = {
+    create?: XOR<UserSessionCreateWithoutUserInput, UserSessionUncheckedCreateWithoutUserInput> | UserSessionCreateWithoutUserInput[] | UserSessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserSessionCreateOrConnectWithoutUserInput | UserSessionCreateOrConnectWithoutUserInput[]
+    createMany?: UserSessionCreateManyUserInputEnvelope
+    connect?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+  }
+
+  export type TenantCreateNestedOneWithoutUsersInput = {
+    create?: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutUsersInput
+    connect?: TenantWhereUniqueInput
+  }
+
+  export type RefreshTokenUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput> | RefreshTokenCreateWithoutUserInput[] | RefreshTokenUncheckedCreateWithoutUserInput[]
     connectOrCreate?: RefreshTokenCreateOrConnectWithoutUserInput | RefreshTokenCreateOrConnectWithoutUserInput[]
     createMany?: RefreshTokenCreateManyUserInputEnvelope
@@ -10087,25 +12075,29 @@ export namespace Prisma {
     connect?: UserIdentityWhereUniqueInput | UserIdentityWhereUniqueInput[]
   }
 
-  export type RefreshTokenUncheckedCreateNestedManyWithoutUserInput = {
+  export type UserSessionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<UserSessionCreateWithoutUserInput, UserSessionUncheckedCreateWithoutUserInput> | UserSessionCreateWithoutUserInput[] | UserSessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserSessionCreateOrConnectWithoutUserInput | UserSessionCreateOrConnectWithoutUserInput[]
+    createMany?: UserSessionCreateManyUserInputEnvelope
+    connect?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type RefreshTokenUpdateManyWithoutUserNestedInput = {
     create?: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput> | RefreshTokenCreateWithoutUserInput[] | RefreshTokenUncheckedCreateWithoutUserInput[]
     connectOrCreate?: RefreshTokenCreateOrConnectWithoutUserInput | RefreshTokenCreateOrConnectWithoutUserInput[]
+    upsert?: RefreshTokenUpsertWithWhereUniqueWithoutUserInput | RefreshTokenUpsertWithWhereUniqueWithoutUserInput[]
     createMany?: RefreshTokenCreateManyUserInputEnvelope
+    set?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    disconnect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    delete?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
     connect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
-  }
-
-  export type TenantUpdateOneWithoutUsersNestedInput = {
-    create?: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
-    connectOrCreate?: TenantCreateOrConnectWithoutUsersInput
-    upsert?: TenantUpsertWithoutUsersInput
-    disconnect?: TenantWhereInput | boolean
-    delete?: TenantWhereInput | boolean
-    connect?: TenantWhereUniqueInput
-    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutUsersInput, TenantUpdateWithoutUsersInput>, TenantUncheckedUpdateWithoutUsersInput>
+    update?: RefreshTokenUpdateWithWhereUniqueWithoutUserInput | RefreshTokenUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: RefreshTokenUpdateManyWithWhereWithoutUserInput | RefreshTokenUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
   }
 
   export type UserIdentityUpdateManyWithoutUserNestedInput = {
@@ -10122,7 +12114,31 @@ export namespace Prisma {
     deleteMany?: UserIdentityScalarWhereInput | UserIdentityScalarWhereInput[]
   }
 
-  export type RefreshTokenUpdateManyWithoutUserNestedInput = {
+  export type UserSessionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<UserSessionCreateWithoutUserInput, UserSessionUncheckedCreateWithoutUserInput> | UserSessionCreateWithoutUserInput[] | UserSessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserSessionCreateOrConnectWithoutUserInput | UserSessionCreateOrConnectWithoutUserInput[]
+    upsert?: UserSessionUpsertWithWhereUniqueWithoutUserInput | UserSessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: UserSessionCreateManyUserInputEnvelope
+    set?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    disconnect?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    delete?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    connect?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    update?: UserSessionUpdateWithWhereUniqueWithoutUserInput | UserSessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: UserSessionUpdateManyWithWhereWithoutUserInput | UserSessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: UserSessionScalarWhereInput | UserSessionScalarWhereInput[]
+  }
+
+  export type TenantUpdateOneWithoutUsersNestedInput = {
+    create?: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutUsersInput
+    upsert?: TenantUpsertWithoutUsersInput
+    disconnect?: TenantWhereInput | boolean
+    delete?: TenantWhereInput | boolean
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutUsersInput, TenantUpdateWithoutUsersInput>, TenantUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type RefreshTokenUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput> | RefreshTokenCreateWithoutUserInput[] | RefreshTokenUncheckedCreateWithoutUserInput[]
     connectOrCreate?: RefreshTokenCreateOrConnectWithoutUserInput | RefreshTokenCreateOrConnectWithoutUserInput[]
     upsert?: RefreshTokenUpsertWithWhereUniqueWithoutUserInput | RefreshTokenUpsertWithWhereUniqueWithoutUserInput[]
@@ -10150,18 +12166,18 @@ export namespace Prisma {
     deleteMany?: UserIdentityScalarWhereInput | UserIdentityScalarWhereInput[]
   }
 
-  export type RefreshTokenUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput> | RefreshTokenCreateWithoutUserInput[] | RefreshTokenUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: RefreshTokenCreateOrConnectWithoutUserInput | RefreshTokenCreateOrConnectWithoutUserInput[]
-    upsert?: RefreshTokenUpsertWithWhereUniqueWithoutUserInput | RefreshTokenUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: RefreshTokenCreateManyUserInputEnvelope
-    set?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
-    disconnect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
-    delete?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
-    connect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
-    update?: RefreshTokenUpdateWithWhereUniqueWithoutUserInput | RefreshTokenUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: RefreshTokenUpdateManyWithWhereWithoutUserInput | RefreshTokenUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
+  export type UserSessionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<UserSessionCreateWithoutUserInput, UserSessionUncheckedCreateWithoutUserInput> | UserSessionCreateWithoutUserInput[] | UserSessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: UserSessionCreateOrConnectWithoutUserInput | UserSessionCreateOrConnectWithoutUserInput[]
+    upsert?: UserSessionUpsertWithWhereUniqueWithoutUserInput | UserSessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: UserSessionCreateManyUserInputEnvelope
+    set?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    disconnect?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    delete?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    connect?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+    update?: UserSessionUpdateWithWhereUniqueWithoutUserInput | UserSessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: UserSessionUpdateManyWithWhereWithoutUserInput | UserSessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: UserSessionScalarWhereInput | UserSessionScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutIdentitiesInput = {
@@ -10178,6 +12194,76 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutIdentitiesInput, UserUpdateWithoutIdentitiesInput>, UserUncheckedUpdateWithoutIdentitiesInput>
   }
 
+  export type UserCreateNestedOneWithoutSessionsInput = {
+    create?: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSessionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type TenantCreateNestedOneWithoutSessionsInput = {
+    create?: XOR<TenantCreateWithoutSessionsInput, TenantUncheckedCreateWithoutSessionsInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutSessionsInput
+    connect?: TenantWhereUniqueInput
+  }
+
+  export type RefreshTokenCreateNestedManyWithoutSessionInput = {
+    create?: XOR<RefreshTokenCreateWithoutSessionInput, RefreshTokenUncheckedCreateWithoutSessionInput> | RefreshTokenCreateWithoutSessionInput[] | RefreshTokenUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: RefreshTokenCreateOrConnectWithoutSessionInput | RefreshTokenCreateOrConnectWithoutSessionInput[]
+    createMany?: RefreshTokenCreateManySessionInputEnvelope
+    connect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+  }
+
+  export type RefreshTokenUncheckedCreateNestedManyWithoutSessionInput = {
+    create?: XOR<RefreshTokenCreateWithoutSessionInput, RefreshTokenUncheckedCreateWithoutSessionInput> | RefreshTokenCreateWithoutSessionInput[] | RefreshTokenUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: RefreshTokenCreateOrConnectWithoutSessionInput | RefreshTokenCreateOrConnectWithoutSessionInput[]
+    createMany?: RefreshTokenCreateManySessionInputEnvelope
+    connect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneRequiredWithoutSessionsNestedInput = {
+    create?: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSessionsInput
+    upsert?: UserUpsertWithoutSessionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSessionsInput, UserUpdateWithoutSessionsInput>, UserUncheckedUpdateWithoutSessionsInput>
+  }
+
+  export type TenantUpdateOneRequiredWithoutSessionsNestedInput = {
+    create?: XOR<TenantCreateWithoutSessionsInput, TenantUncheckedCreateWithoutSessionsInput>
+    connectOrCreate?: TenantCreateOrConnectWithoutSessionsInput
+    upsert?: TenantUpsertWithoutSessionsInput
+    connect?: TenantWhereUniqueInput
+    update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutSessionsInput, TenantUpdateWithoutSessionsInput>, TenantUncheckedUpdateWithoutSessionsInput>
+  }
+
+  export type RefreshTokenUpdateManyWithoutSessionNestedInput = {
+    create?: XOR<RefreshTokenCreateWithoutSessionInput, RefreshTokenUncheckedCreateWithoutSessionInput> | RefreshTokenCreateWithoutSessionInput[] | RefreshTokenUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: RefreshTokenCreateOrConnectWithoutSessionInput | RefreshTokenCreateOrConnectWithoutSessionInput[]
+    upsert?: RefreshTokenUpsertWithWhereUniqueWithoutSessionInput | RefreshTokenUpsertWithWhereUniqueWithoutSessionInput[]
+    createMany?: RefreshTokenCreateManySessionInputEnvelope
+    set?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    disconnect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    delete?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    connect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    update?: RefreshTokenUpdateWithWhereUniqueWithoutSessionInput | RefreshTokenUpdateWithWhereUniqueWithoutSessionInput[]
+    updateMany?: RefreshTokenUpdateManyWithWhereWithoutSessionInput | RefreshTokenUpdateManyWithWhereWithoutSessionInput[]
+    deleteMany?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
+  }
+
+  export type RefreshTokenUncheckedUpdateManyWithoutSessionNestedInput = {
+    create?: XOR<RefreshTokenCreateWithoutSessionInput, RefreshTokenUncheckedCreateWithoutSessionInput> | RefreshTokenCreateWithoutSessionInput[] | RefreshTokenUncheckedCreateWithoutSessionInput[]
+    connectOrCreate?: RefreshTokenCreateOrConnectWithoutSessionInput | RefreshTokenCreateOrConnectWithoutSessionInput[]
+    upsert?: RefreshTokenUpsertWithWhereUniqueWithoutSessionInput | RefreshTokenUpsertWithWhereUniqueWithoutSessionInput[]
+    createMany?: RefreshTokenCreateManySessionInputEnvelope
+    set?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    disconnect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    delete?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    connect?: RefreshTokenWhereUniqueInput | RefreshTokenWhereUniqueInput[]
+    update?: RefreshTokenUpdateWithWhereUniqueWithoutSessionInput | RefreshTokenUpdateWithWhereUniqueWithoutSessionInput[]
+    updateMany?: RefreshTokenUpdateManyWithWhereWithoutSessionInput | RefreshTokenUpdateManyWithWhereWithoutSessionInput[]
+    deleteMany?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
+  }
+
   export type RefreshTokenCreatescopesInput = {
     set: string[]
   }
@@ -10186,6 +12272,12 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutRefreshTokensInput, UserUncheckedCreateWithoutRefreshTokensInput>
     connectOrCreate?: UserCreateOrConnectWithoutRefreshTokensInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type UserSessionCreateNestedOneWithoutRefreshTokensInput = {
+    create?: XOR<UserSessionCreateWithoutRefreshTokensInput, UserSessionUncheckedCreateWithoutRefreshTokensInput>
+    connectOrCreate?: UserSessionCreateOrConnectWithoutRefreshTokensInput
+    connect?: UserSessionWhereUniqueInput
   }
 
   export type RefreshTokenUpdatescopesInput = {
@@ -10199,6 +12291,16 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutRefreshTokensInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRefreshTokensInput, UserUpdateWithoutRefreshTokensInput>, UserUncheckedUpdateWithoutRefreshTokensInput>
+  }
+
+  export type UserSessionUpdateOneWithoutRefreshTokensNestedInput = {
+    create?: XOR<UserSessionCreateWithoutRefreshTokensInput, UserSessionUncheckedCreateWithoutRefreshTokensInput>
+    connectOrCreate?: UserSessionCreateOrConnectWithoutRefreshTokensInput
+    upsert?: UserSessionUpsertWithoutRefreshTokensInput
+    disconnect?: UserSessionWhereInput | boolean
+    delete?: UserSessionWhereInput | boolean
+    connect?: UserSessionWhereUniqueInput
+    update?: XOR<XOR<UserSessionUpdateToOneWithWhereWithoutRefreshTokensInput, UserSessionUpdateWithoutRefreshTokensInput>, UserSessionUncheckedUpdateWithoutRefreshTokensInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -10224,20 +12326,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -10282,23 +12370,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
   export type NestedIntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -10333,9 +12404,40 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -10344,6 +12446,58 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
   export type NestedJsonFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -10369,66 +12523,26 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type UserCreateWithoutTenantInput = {
-    id?: string
-    firstName?: string | null
-    lastName?: string | null
-    primaryEmail?: string | null
-    emailVerified?: boolean
-    phoneNumber?: string | null
-    phoneVerified?: boolean
-    passwordHash?: string | null
-    avatar?: string | null
-    customData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    identities?: UserIdentityCreateNestedManyWithoutUserInput
-    refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutTenantInput = {
-    id?: string
-    firstName?: string | null
-    lastName?: string | null
-    primaryEmail?: string | null
-    emailVerified?: boolean
-    phoneNumber?: string | null
-    phoneVerified?: boolean
-    passwordHash?: string | null
-    avatar?: string | null
-    customData?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    identities?: UserIdentityUncheckedCreateNestedManyWithoutUserInput
-    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutTenantInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput>
-  }
-
-  export type UserCreateManyTenantInputEnvelope = {
-    data: UserCreateManyTenantInput | UserCreateManyTenantInput[]
-    skipDuplicates?: boolean
-  }
-
   export type ApplicationCreateWithoutTenantInput = {
     id?: string
     name: string
+    description?: string | null
     clientId?: string
     clientSecret?: string | null
     redirectUris?: ApplicationCreateredirectUrisInput | string[]
     postLogoutRedirectUris?: ApplicationCreatepostLogoutRedirectUrisInput | string[]
     corsOrigins?: ApplicationCreatecorsOriginsInput | string[]
     authMethods?: NullableJsonNullValueInput | InputJsonValue
-    brevoApiKey?: string | null
-    brevoSenderEmail?: string | null
-    brevoSenderName?: string | null
-    labsmobileApiKey?: string | null
-    labsmobileUser?: string | null
-    labsmobileUrl?: string | null
-    labsmobileSenderId?: string | null
+    logo?: string | null
+    primaryColor?: string | null
+    alwaysIssueRefreshToken?: boolean
+    rotateRefreshToken?: boolean
+    refreshTokenTtl?: number
+    backchannelLogoutUri?: string | null
+    isSessionRequired?: boolean
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -10436,19 +12550,23 @@ export namespace Prisma {
   export type ApplicationUncheckedCreateWithoutTenantInput = {
     id?: string
     name: string
+    description?: string | null
     clientId?: string
     clientSecret?: string | null
     redirectUris?: ApplicationCreateredirectUrisInput | string[]
     postLogoutRedirectUris?: ApplicationCreatepostLogoutRedirectUrisInput | string[]
     corsOrigins?: ApplicationCreatecorsOriginsInput | string[]
     authMethods?: NullableJsonNullValueInput | InputJsonValue
-    brevoApiKey?: string | null
-    brevoSenderEmail?: string | null
-    brevoSenderName?: string | null
-    labsmobileApiKey?: string | null
-    labsmobileUser?: string | null
-    labsmobileUrl?: string | null
-    labsmobileSenderId?: string | null
+    logo?: string | null
+    primaryColor?: string | null
+    alwaysIssueRefreshToken?: boolean
+    rotateRefreshToken?: boolean
+    refreshTokenTtl?: number
+    backchannelLogoutUri?: string | null
+    isSessionRequired?: boolean
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -10461,6 +12579,138 @@ export namespace Prisma {
   export type ApplicationCreateManyTenantInputEnvelope = {
     data: ApplicationCreateManyTenantInput | ApplicationCreateManyTenantInput[]
     skipDuplicates?: boolean
+  }
+
+  export type UserCreateWithoutTenantInput = {
+    id?: string
+    firstName?: string | null
+    lastName?: string | null
+    primaryEmail?: string | null
+    emailVerified?: boolean
+    phone?: string | null
+    phoneNumber?: string | null
+    phoneVerified?: boolean
+    walletAddress?: string | null
+    passwordHash?: string | null
+    role?: string
+    avatar?: string | null
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
+    identities?: UserIdentityCreateNestedManyWithoutUserInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutTenantInput = {
+    id?: string
+    firstName?: string | null
+    lastName?: string | null
+    primaryEmail?: string | null
+    emailVerified?: boolean
+    phone?: string | null
+    phoneNumber?: string | null
+    phoneVerified?: boolean
+    walletAddress?: string | null
+    passwordHash?: string | null
+    role?: string
+    avatar?: string | null
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+    identities?: UserIdentityUncheckedCreateNestedManyWithoutUserInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutTenantInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTenantInput, UserUncheckedCreateWithoutTenantInput>
+  }
+
+  export type UserCreateManyTenantInputEnvelope = {
+    data: UserCreateManyTenantInput | UserCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserSessionCreateWithoutTenantInput = {
+    id?: string
+    sid: string
+    userAgent?: string | null
+    ipAddress?: string | null
+    lastActive?: Date | string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutSessionsInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutSessionInput
+  }
+
+  export type UserSessionUncheckedCreateWithoutTenantInput = {
+    id?: string
+    userId: string
+    sid: string
+    userAgent?: string | null
+    ipAddress?: string | null
+    lastActive?: Date | string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutSessionInput
+  }
+
+  export type UserSessionCreateOrConnectWithoutTenantInput = {
+    where: UserSessionWhereUniqueInput
+    create: XOR<UserSessionCreateWithoutTenantInput, UserSessionUncheckedCreateWithoutTenantInput>
+  }
+
+  export type UserSessionCreateManyTenantInputEnvelope = {
+    data: UserSessionCreateManyTenantInput | UserSessionCreateManyTenantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ApplicationUpsertWithWhereUniqueWithoutTenantInput = {
+    where: ApplicationWhereUniqueInput
+    update: XOR<ApplicationUpdateWithoutTenantInput, ApplicationUncheckedUpdateWithoutTenantInput>
+    create: XOR<ApplicationCreateWithoutTenantInput, ApplicationUncheckedCreateWithoutTenantInput>
+  }
+
+  export type ApplicationUpdateWithWhereUniqueWithoutTenantInput = {
+    where: ApplicationWhereUniqueInput
+    data: XOR<ApplicationUpdateWithoutTenantInput, ApplicationUncheckedUpdateWithoutTenantInput>
+  }
+
+  export type ApplicationUpdateManyWithWhereWithoutTenantInput = {
+    where: ApplicationScalarWhereInput
+    data: XOR<ApplicationUpdateManyMutationInput, ApplicationUncheckedUpdateManyWithoutTenantInput>
+  }
+
+  export type ApplicationScalarWhereInput = {
+    AND?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
+    OR?: ApplicationScalarWhereInput[]
+    NOT?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
+    id?: StringFilter<"Application"> | string
+    name?: StringFilter<"Application"> | string
+    description?: StringNullableFilter<"Application"> | string | null
+    clientId?: StringFilter<"Application"> | string
+    clientSecret?: StringNullableFilter<"Application"> | string | null
+    tenantId?: StringFilter<"Application"> | string
+    redirectUris?: StringNullableListFilter<"Application">
+    postLogoutRedirectUris?: StringNullableListFilter<"Application">
+    corsOrigins?: StringNullableListFilter<"Application">
+    authMethods?: JsonNullableFilter<"Application">
+    logo?: StringNullableFilter<"Application"> | string | null
+    primaryColor?: StringNullableFilter<"Application"> | string | null
+    alwaysIssueRefreshToken?: BoolFilter<"Application"> | boolean
+    rotateRefreshToken?: BoolFilter<"Application"> | boolean
+    refreshTokenTtl?: IntFilter<"Application"> | number
+    backchannelLogoutUri?: StringNullableFilter<"Application"> | string | null
+    isSessionRequired?: BoolFilter<"Application"> | boolean
+    integrations?: JsonNullableFilter<"Application">
+    customData?: JsonNullableFilter<"Application">
+    branding?: JsonNullableFilter<"Application">
+    createdAt?: DateTimeFilter<"Application"> | Date | string
+    updatedAt?: DateTimeFilter<"Application"> | Date | string
   }
 
   export type UserUpsertWithWhereUniqueWithoutTenantInput = {
@@ -10488,54 +12738,49 @@ export namespace Prisma {
     lastName?: StringNullableFilter<"User"> | string | null
     primaryEmail?: StringNullableFilter<"User"> | string | null
     emailVerified?: BoolFilter<"User"> | boolean
+    phone?: StringNullableFilter<"User"> | string | null
     phoneNumber?: StringNullableFilter<"User"> | string | null
     phoneVerified?: BoolFilter<"User"> | boolean
+    walletAddress?: StringNullableFilter<"User"> | string | null
     passwordHash?: StringNullableFilter<"User"> | string | null
+    role?: StringFilter<"User"> | string
     avatar?: StringNullableFilter<"User"> | string | null
     customData?: JsonNullableFilter<"User">
     tenantId?: StringNullableFilter<"User"> | string | null
+    deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
   }
 
-  export type ApplicationUpsertWithWhereUniqueWithoutTenantInput = {
-    where: ApplicationWhereUniqueInput
-    update: XOR<ApplicationUpdateWithoutTenantInput, ApplicationUncheckedUpdateWithoutTenantInput>
-    create: XOR<ApplicationCreateWithoutTenantInput, ApplicationUncheckedCreateWithoutTenantInput>
+  export type UserSessionUpsertWithWhereUniqueWithoutTenantInput = {
+    where: UserSessionWhereUniqueInput
+    update: XOR<UserSessionUpdateWithoutTenantInput, UserSessionUncheckedUpdateWithoutTenantInput>
+    create: XOR<UserSessionCreateWithoutTenantInput, UserSessionUncheckedCreateWithoutTenantInput>
   }
 
-  export type ApplicationUpdateWithWhereUniqueWithoutTenantInput = {
-    where: ApplicationWhereUniqueInput
-    data: XOR<ApplicationUpdateWithoutTenantInput, ApplicationUncheckedUpdateWithoutTenantInput>
+  export type UserSessionUpdateWithWhereUniqueWithoutTenantInput = {
+    where: UserSessionWhereUniqueInput
+    data: XOR<UserSessionUpdateWithoutTenantInput, UserSessionUncheckedUpdateWithoutTenantInput>
   }
 
-  export type ApplicationUpdateManyWithWhereWithoutTenantInput = {
-    where: ApplicationScalarWhereInput
-    data: XOR<ApplicationUpdateManyMutationInput, ApplicationUncheckedUpdateManyWithoutTenantInput>
+  export type UserSessionUpdateManyWithWhereWithoutTenantInput = {
+    where: UserSessionScalarWhereInput
+    data: XOR<UserSessionUpdateManyMutationInput, UserSessionUncheckedUpdateManyWithoutTenantInput>
   }
 
-  export type ApplicationScalarWhereInput = {
-    AND?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
-    OR?: ApplicationScalarWhereInput[]
-    NOT?: ApplicationScalarWhereInput | ApplicationScalarWhereInput[]
-    id?: StringFilter<"Application"> | string
-    name?: StringFilter<"Application"> | string
-    clientId?: StringFilter<"Application"> | string
-    clientSecret?: StringNullableFilter<"Application"> | string | null
-    tenantId?: StringFilter<"Application"> | string
-    redirectUris?: StringNullableListFilter<"Application">
-    postLogoutRedirectUris?: StringNullableListFilter<"Application">
-    corsOrigins?: StringNullableListFilter<"Application">
-    authMethods?: JsonNullableFilter<"Application">
-    brevoApiKey?: StringNullableFilter<"Application"> | string | null
-    brevoSenderEmail?: StringNullableFilter<"Application"> | string | null
-    brevoSenderName?: StringNullableFilter<"Application"> | string | null
-    labsmobileApiKey?: StringNullableFilter<"Application"> | string | null
-    labsmobileUser?: StringNullableFilter<"Application"> | string | null
-    labsmobileUrl?: StringNullableFilter<"Application"> | string | null
-    labsmobileSenderId?: StringNullableFilter<"Application"> | string | null
-    createdAt?: DateTimeFilter<"Application"> | Date | string
-    updatedAt?: DateTimeFilter<"Application"> | Date | string
+  export type UserSessionScalarWhereInput = {
+    AND?: UserSessionScalarWhereInput | UserSessionScalarWhereInput[]
+    OR?: UserSessionScalarWhereInput[]
+    NOT?: UserSessionScalarWhereInput | UserSessionScalarWhereInput[]
+    id?: StringFilter<"UserSession"> | string
+    userId?: StringFilter<"UserSession"> | string
+    tenantId?: StringFilter<"UserSession"> | string
+    sid?: StringFilter<"UserSession"> | string
+    userAgent?: StringNullableFilter<"UserSession"> | string | null
+    ipAddress?: StringNullableFilter<"UserSession"> | string | null
+    lastActive?: DateTimeFilter<"UserSession"> | Date | string
+    expiresAt?: DateTimeFilter<"UserSession"> | Date | string
+    createdAt?: DateTimeFilter<"UserSession"> | Date | string
   }
 
   export type TenantCreateWithoutApplicationsInput = {
@@ -10544,14 +12789,12 @@ export namespace Prisma {
     slug: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    brevoApiKey?: string | null
-    brevoSenderEmail?: string | null
-    brevoSenderName?: string | null
-    labsmobileApiKey?: string | null
-    labsmobileUser?: string | null
-    labsmobileUrl?: string | null
-    labsmobileSenderId?: string | null
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
     users?: UserCreateNestedManyWithoutTenantInput
+    sessions?: UserSessionCreateNestedManyWithoutTenantInput
   }
 
   export type TenantUncheckedCreateWithoutApplicationsInput = {
@@ -10560,14 +12803,12 @@ export namespace Prisma {
     slug: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    brevoApiKey?: string | null
-    brevoSenderEmail?: string | null
-    brevoSenderName?: string | null
-    labsmobileApiKey?: string | null
-    labsmobileUser?: string | null
-    labsmobileUrl?: string | null
-    labsmobileSenderId?: string | null
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
     users?: UserUncheckedCreateNestedManyWithoutTenantInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutTenantInput
   }
 
   export type TenantCreateOrConnectWithoutApplicationsInput = {
@@ -10592,14 +12833,12 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
     users?: UserUpdateManyWithoutTenantNestedInput
+    sessions?: UserSessionUpdateManyWithoutTenantNestedInput
   }
 
   export type TenantUncheckedUpdateWithoutApplicationsInput = {
@@ -10608,51 +12847,44 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
     users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutTenantNestedInput
   }
 
-  export type TenantCreateWithoutUsersInput = {
+  export type RefreshTokenCreateWithoutUserInput = {
     id?: string
-    name: string
-    slug: string
+    clientId?: string | null
+    tokenHash: string
+    resource?: string | null
+    scopes?: RefreshTokenCreatescopesInput | string[]
+    expiresAt: Date | string
     createdAt?: Date | string
-    updatedAt?: Date | string
-    brevoApiKey?: string | null
-    brevoSenderEmail?: string | null
-    brevoSenderName?: string | null
-    labsmobileApiKey?: string | null
-    labsmobileUser?: string | null
-    labsmobileUrl?: string | null
-    labsmobileSenderId?: string | null
-    applications?: ApplicationCreateNestedManyWithoutTenantInput
+    session?: UserSessionCreateNestedOneWithoutRefreshTokensInput
   }
 
-  export type TenantUncheckedCreateWithoutUsersInput = {
+  export type RefreshTokenUncheckedCreateWithoutUserInput = {
     id?: string
-    name: string
-    slug: string
+    clientId?: string | null
+    sessionId?: string | null
+    tokenHash: string
+    resource?: string | null
+    scopes?: RefreshTokenCreatescopesInput | string[]
+    expiresAt: Date | string
     createdAt?: Date | string
-    updatedAt?: Date | string
-    brevoApiKey?: string | null
-    brevoSenderEmail?: string | null
-    brevoSenderName?: string | null
-    labsmobileApiKey?: string | null
-    labsmobileUser?: string | null
-    labsmobileUrl?: string | null
-    labsmobileSenderId?: string | null
-    applications?: ApplicationUncheckedCreateNestedManyWithoutTenantInput
   }
 
-  export type TenantCreateOrConnectWithoutUsersInput = {
-    where: TenantWhereUniqueInput
-    create: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
+  export type RefreshTokenCreateOrConnectWithoutUserInput = {
+    where: RefreshTokenWhereUniqueInput
+    create: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput>
+  }
+
+  export type RefreshTokenCreateManyUserInputEnvelope = {
+    data: RefreshTokenCreateManyUserInput | RefreshTokenCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type UserIdentityCreateWithoutUserInput = {
@@ -10681,75 +12913,102 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type RefreshTokenCreateWithoutUserInput = {
+  export type UserSessionCreateWithoutUserInput = {
     id?: string
-    tokenHash: string
-    resource?: string | null
-    scopes?: RefreshTokenCreatescopesInput | string[]
+    sid: string
+    userAgent?: string | null
+    ipAddress?: string | null
+    lastActive?: Date | string
     expiresAt: Date | string
     createdAt?: Date | string
+    tenant: TenantCreateNestedOneWithoutSessionsInput
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutSessionInput
   }
 
-  export type RefreshTokenUncheckedCreateWithoutUserInput = {
+  export type UserSessionUncheckedCreateWithoutUserInput = {
     id?: string
-    tokenHash: string
-    resource?: string | null
-    scopes?: RefreshTokenCreatescopesInput | string[]
+    tenantId: string
+    sid: string
+    userAgent?: string | null
+    ipAddress?: string | null
+    lastActive?: Date | string
     expiresAt: Date | string
     createdAt?: Date | string
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutSessionInput
   }
 
-  export type RefreshTokenCreateOrConnectWithoutUserInput = {
-    where: RefreshTokenWhereUniqueInput
-    create: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput>
+  export type UserSessionCreateOrConnectWithoutUserInput = {
+    where: UserSessionWhereUniqueInput
+    create: XOR<UserSessionCreateWithoutUserInput, UserSessionUncheckedCreateWithoutUserInput>
   }
 
-  export type RefreshTokenCreateManyUserInputEnvelope = {
-    data: RefreshTokenCreateManyUserInput | RefreshTokenCreateManyUserInput[]
+  export type UserSessionCreateManyUserInputEnvelope = {
+    data: UserSessionCreateManyUserInput | UserSessionCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
-  export type TenantUpsertWithoutUsersInput = {
-    update: XOR<TenantUpdateWithoutUsersInput, TenantUncheckedUpdateWithoutUsersInput>
+  export type TenantCreateWithoutUsersInput = {
+    id?: string
+    name: string
+    slug: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
+    applications?: ApplicationCreateNestedManyWithoutTenantInput
+    sessions?: UserSessionCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutUsersInput = {
+    id?: string
+    name: string
+    slug: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
+    applications?: ApplicationUncheckedCreateNestedManyWithoutTenantInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutUsersInput = {
+    where: TenantWhereUniqueInput
     create: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
-    where?: TenantWhereInput
   }
 
-  export type TenantUpdateToOneWithWhereWithoutUsersInput = {
-    where?: TenantWhereInput
-    data: XOR<TenantUpdateWithoutUsersInput, TenantUncheckedUpdateWithoutUsersInput>
+  export type RefreshTokenUpsertWithWhereUniqueWithoutUserInput = {
+    where: RefreshTokenWhereUniqueInput
+    update: XOR<RefreshTokenUpdateWithoutUserInput, RefreshTokenUncheckedUpdateWithoutUserInput>
+    create: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput>
   }
 
-  export type TenantUpdateWithoutUsersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
-    applications?: ApplicationUpdateManyWithoutTenantNestedInput
+  export type RefreshTokenUpdateWithWhereUniqueWithoutUserInput = {
+    where: RefreshTokenWhereUniqueInput
+    data: XOR<RefreshTokenUpdateWithoutUserInput, RefreshTokenUncheckedUpdateWithoutUserInput>
   }
 
-  export type TenantUncheckedUpdateWithoutUsersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
-    applications?: ApplicationUncheckedUpdateManyWithoutTenantNestedInput
+  export type RefreshTokenUpdateManyWithWhereWithoutUserInput = {
+    where: RefreshTokenScalarWhereInput
+    data: XOR<RefreshTokenUpdateManyMutationInput, RefreshTokenUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type RefreshTokenScalarWhereInput = {
+    AND?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
+    OR?: RefreshTokenScalarWhereInput[]
+    NOT?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
+    id?: StringFilter<"RefreshToken"> | string
+    userId?: StringFilter<"RefreshToken"> | string
+    clientId?: StringNullableFilter<"RefreshToken"> | string | null
+    sessionId?: StringNullableFilter<"RefreshToken"> | string | null
+    tokenHash?: StringFilter<"RefreshToken"> | string
+    resource?: StringNullableFilter<"RefreshToken"> | string | null
+    scopes?: StringNullableListFilter<"RefreshToken">
+    expiresAt?: DateTimeFilter<"RefreshToken"> | Date | string
+    createdAt?: DateTimeFilter<"RefreshToken"> | Date | string
   }
 
   export type UserIdentityUpsertWithWhereUniqueWithoutUserInput = {
@@ -10780,33 +13039,59 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"UserIdentity"> | Date | string
   }
 
-  export type RefreshTokenUpsertWithWhereUniqueWithoutUserInput = {
-    where: RefreshTokenWhereUniqueInput
-    update: XOR<RefreshTokenUpdateWithoutUserInput, RefreshTokenUncheckedUpdateWithoutUserInput>
-    create: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput>
+  export type UserSessionUpsertWithWhereUniqueWithoutUserInput = {
+    where: UserSessionWhereUniqueInput
+    update: XOR<UserSessionUpdateWithoutUserInput, UserSessionUncheckedUpdateWithoutUserInput>
+    create: XOR<UserSessionCreateWithoutUserInput, UserSessionUncheckedCreateWithoutUserInput>
   }
 
-  export type RefreshTokenUpdateWithWhereUniqueWithoutUserInput = {
-    where: RefreshTokenWhereUniqueInput
-    data: XOR<RefreshTokenUpdateWithoutUserInput, RefreshTokenUncheckedUpdateWithoutUserInput>
+  export type UserSessionUpdateWithWhereUniqueWithoutUserInput = {
+    where: UserSessionWhereUniqueInput
+    data: XOR<UserSessionUpdateWithoutUserInput, UserSessionUncheckedUpdateWithoutUserInput>
   }
 
-  export type RefreshTokenUpdateManyWithWhereWithoutUserInput = {
-    where: RefreshTokenScalarWhereInput
-    data: XOR<RefreshTokenUpdateManyMutationInput, RefreshTokenUncheckedUpdateManyWithoutUserInput>
+  export type UserSessionUpdateManyWithWhereWithoutUserInput = {
+    where: UserSessionScalarWhereInput
+    data: XOR<UserSessionUpdateManyMutationInput, UserSessionUncheckedUpdateManyWithoutUserInput>
   }
 
-  export type RefreshTokenScalarWhereInput = {
-    AND?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
-    OR?: RefreshTokenScalarWhereInput[]
-    NOT?: RefreshTokenScalarWhereInput | RefreshTokenScalarWhereInput[]
-    id?: StringFilter<"RefreshToken"> | string
-    userId?: StringFilter<"RefreshToken"> | string
-    tokenHash?: StringFilter<"RefreshToken"> | string
-    resource?: StringNullableFilter<"RefreshToken"> | string | null
-    scopes?: StringNullableListFilter<"RefreshToken">
-    expiresAt?: DateTimeFilter<"RefreshToken"> | Date | string
-    createdAt?: DateTimeFilter<"RefreshToken"> | Date | string
+  export type TenantUpsertWithoutUsersInput = {
+    update: XOR<TenantUpdateWithoutUsersInput, TenantUncheckedUpdateWithoutUsersInput>
+    create: XOR<TenantCreateWithoutUsersInput, TenantUncheckedCreateWithoutUsersInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutUsersInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutUsersInput, TenantUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type TenantUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
+    applications?: ApplicationUpdateManyWithoutTenantNestedInput
+    sessions?: UserSessionUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
+    applications?: ApplicationUncheckedUpdateManyWithoutTenantNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutTenantNestedInput
   }
 
   export type UserCreateWithoutIdentitiesInput = {
@@ -10815,15 +13100,20 @@ export namespace Prisma {
     lastName?: string | null
     primaryEmail?: string | null
     emailVerified?: boolean
+    phone?: string | null
     phoneNumber?: string | null
     phoneVerified?: boolean
+    walletAddress?: string | null
     passwordHash?: string | null
+    role?: string
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    tenant?: TenantCreateNestedOneWithoutUsersInput
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutIdentitiesInput = {
@@ -10832,15 +13122,20 @@ export namespace Prisma {
     lastName?: string | null
     primaryEmail?: string | null
     emailVerified?: boolean
+    phone?: string | null
     phoneNumber?: string | null
     phoneVerified?: boolean
+    walletAddress?: string | null
     passwordHash?: string | null
+    role?: string
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: string | null
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutIdentitiesInput = {
@@ -10865,15 +13160,20 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     primaryEmail?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    tenant?: TenantUpdateOneWithoutUsersNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutIdentitiesInput = {
@@ -10882,15 +13182,244 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     primaryEmail?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutSessionsInput = {
+    id?: string
+    firstName?: string | null
+    lastName?: string | null
+    primaryEmail?: string | null
+    emailVerified?: boolean
+    phone?: string | null
+    phoneNumber?: string | null
+    phoneVerified?: boolean
+    walletAddress?: string | null
+    passwordHash?: string | null
+    role?: string
+    avatar?: string | null
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
+    identities?: UserIdentityCreateNestedManyWithoutUserInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
+  }
+
+  export type UserUncheckedCreateWithoutSessionsInput = {
+    id?: string
+    firstName?: string | null
+    lastName?: string | null
+    primaryEmail?: string | null
+    emailVerified?: boolean
+    phone?: string | null
+    phoneNumber?: string | null
+    phoneVerified?: boolean
+    walletAddress?: string | null
+    passwordHash?: string | null
+    role?: string
+    avatar?: string | null
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    tenantId?: string | null
+    deletedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+    identities?: UserIdentityUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutSessionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
+  }
+
+  export type TenantCreateWithoutSessionsInput = {
+    id?: string
+    name: string
+    slug: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
+    applications?: ApplicationCreateNestedManyWithoutTenantInput
+    users?: UserCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantUncheckedCreateWithoutSessionsInput = {
+    id?: string
+    name: string
+    slug: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
+    applications?: ApplicationUncheckedCreateNestedManyWithoutTenantInput
+    users?: UserUncheckedCreateNestedManyWithoutTenantInput
+  }
+
+  export type TenantCreateOrConnectWithoutSessionsInput = {
+    where: TenantWhereUniqueInput
+    create: XOR<TenantCreateWithoutSessionsInput, TenantUncheckedCreateWithoutSessionsInput>
+  }
+
+  export type RefreshTokenCreateWithoutSessionInput = {
+    id?: string
+    clientId?: string | null
+    tokenHash: string
+    resource?: string | null
+    scopes?: RefreshTokenCreatescopesInput | string[]
+    expiresAt: Date | string
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutRefreshTokensInput
+  }
+
+  export type RefreshTokenUncheckedCreateWithoutSessionInput = {
+    id?: string
+    userId: string
+    clientId?: string | null
+    tokenHash: string
+    resource?: string | null
+    scopes?: RefreshTokenCreatescopesInput | string[]
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type RefreshTokenCreateOrConnectWithoutSessionInput = {
+    where: RefreshTokenWhereUniqueInput
+    create: XOR<RefreshTokenCreateWithoutSessionInput, RefreshTokenUncheckedCreateWithoutSessionInput>
+  }
+
+  export type RefreshTokenCreateManySessionInputEnvelope = {
+    data: RefreshTokenCreateManySessionInput | RefreshTokenCreateManySessionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutSessionsInput = {
+    update: XOR<UserUpdateWithoutSessionsInput, UserUncheckedUpdateWithoutSessionsInput>
+    create: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSessionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSessionsInput, UserUncheckedUpdateWithoutSessionsInput>
+  }
+
+  export type UserUpdateWithoutSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
+    identities?: UserIdentityUpdateManyWithoutUserNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+    identities?: UserIdentityUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type TenantUpsertWithoutSessionsInput = {
+    update: XOR<TenantUpdateWithoutSessionsInput, TenantUncheckedUpdateWithoutSessionsInput>
+    create: XOR<TenantCreateWithoutSessionsInput, TenantUncheckedCreateWithoutSessionsInput>
+    where?: TenantWhereInput
+  }
+
+  export type TenantUpdateToOneWithWhereWithoutSessionsInput = {
+    where?: TenantWhereInput
+    data: XOR<TenantUpdateWithoutSessionsInput, TenantUncheckedUpdateWithoutSessionsInput>
+  }
+
+  export type TenantUpdateWithoutSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
+    applications?: ApplicationUpdateManyWithoutTenantNestedInput
+    users?: UserUpdateManyWithoutTenantNestedInput
+  }
+
+  export type TenantUncheckedUpdateWithoutSessionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    sessionSettings?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    dashboardUrls?: NullableJsonNullValueInput | InputJsonValue
+    applications?: ApplicationUncheckedUpdateManyWithoutTenantNestedInput
+    users?: UserUncheckedUpdateManyWithoutTenantNestedInput
+  }
+
+  export type RefreshTokenUpsertWithWhereUniqueWithoutSessionInput = {
+    where: RefreshTokenWhereUniqueInput
+    update: XOR<RefreshTokenUpdateWithoutSessionInput, RefreshTokenUncheckedUpdateWithoutSessionInput>
+    create: XOR<RefreshTokenCreateWithoutSessionInput, RefreshTokenUncheckedCreateWithoutSessionInput>
+  }
+
+  export type RefreshTokenUpdateWithWhereUniqueWithoutSessionInput = {
+    where: RefreshTokenWhereUniqueInput
+    data: XOR<RefreshTokenUpdateWithoutSessionInput, RefreshTokenUncheckedUpdateWithoutSessionInput>
+  }
+
+  export type RefreshTokenUpdateManyWithWhereWithoutSessionInput = {
+    where: RefreshTokenScalarWhereInput
+    data: XOR<RefreshTokenUpdateManyMutationInput, RefreshTokenUncheckedUpdateManyWithoutSessionInput>
   }
 
   export type UserCreateWithoutRefreshTokensInput = {
@@ -10899,15 +13428,20 @@ export namespace Prisma {
     lastName?: string | null
     primaryEmail?: string | null
     emailVerified?: boolean
+    phone?: string | null
     phoneNumber?: string | null
     phoneVerified?: boolean
+    walletAddress?: string | null
     passwordHash?: string | null
+    role?: string
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    tenant?: TenantCreateNestedOneWithoutUsersInput
     identities?: UserIdentityCreateNestedManyWithoutUserInput
+    sessions?: UserSessionCreateNestedManyWithoutUserInput
+    tenant?: TenantCreateNestedOneWithoutUsersInput
   }
 
   export type UserUncheckedCreateWithoutRefreshTokensInput = {
@@ -10916,20 +13450,54 @@ export namespace Prisma {
     lastName?: string | null
     primaryEmail?: string | null
     emailVerified?: boolean
+    phone?: string | null
     phoneNumber?: string | null
     phoneVerified?: boolean
+    walletAddress?: string | null
     passwordHash?: string | null
+    role?: string
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: string | null
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     identities?: UserIdentityUncheckedCreateNestedManyWithoutUserInput
+    sessions?: UserSessionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRefreshTokensInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutRefreshTokensInput, UserUncheckedCreateWithoutRefreshTokensInput>
+  }
+
+  export type UserSessionCreateWithoutRefreshTokensInput = {
+    id?: string
+    sid: string
+    userAgent?: string | null
+    ipAddress?: string | null
+    lastActive?: Date | string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutSessionsInput
+    tenant: TenantCreateNestedOneWithoutSessionsInput
+  }
+
+  export type UserSessionUncheckedCreateWithoutRefreshTokensInput = {
+    id?: string
+    userId: string
+    tenantId: string
+    sid: string
+    userAgent?: string | null
+    ipAddress?: string | null
+    lastActive?: Date | string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type UserSessionCreateOrConnectWithoutRefreshTokensInput = {
+    where: UserSessionWhereUniqueInput
+    create: XOR<UserSessionCreateWithoutRefreshTokensInput, UserSessionUncheckedCreateWithoutRefreshTokensInput>
   }
 
   export type UserUpsertWithoutRefreshTokensInput = {
@@ -10949,15 +13517,20 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     primaryEmail?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    tenant?: TenantUpdateOneWithoutUsersNestedInput
     identities?: UserIdentityUpdateManyWithoutUserNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
+    tenant?: TenantUpdateOneWithoutUsersNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRefreshTokensInput = {
@@ -10966,15 +13539,79 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     primaryEmail?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     identities?: UserIdentityUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserSessionUpsertWithoutRefreshTokensInput = {
+    update: XOR<UserSessionUpdateWithoutRefreshTokensInput, UserSessionUncheckedUpdateWithoutRefreshTokensInput>
+    create: XOR<UserSessionCreateWithoutRefreshTokensInput, UserSessionUncheckedCreateWithoutRefreshTokensInput>
+    where?: UserSessionWhereInput
+  }
+
+  export type UserSessionUpdateToOneWithWhereWithoutRefreshTokensInput = {
+    where?: UserSessionWhereInput
+    data: XOR<UserSessionUpdateWithoutRefreshTokensInput, UserSessionUncheckedUpdateWithoutRefreshTokensInput>
+  }
+
+  export type UserSessionUpdateWithoutRefreshTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sid?: StringFieldUpdateOperationsInput | string
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSessionsNestedInput
+    tenant?: TenantUpdateOneRequiredWithoutSessionsNestedInput
+  }
+
+  export type UserSessionUncheckedUpdateWithoutRefreshTokensInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    sid?: StringFieldUpdateOperationsInput | string
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApplicationCreateManyTenantInput = {
+    id?: string
+    name: string
+    description?: string | null
+    clientId?: string
+    clientSecret?: string | null
+    redirectUris?: ApplicationCreateredirectUrisInput | string[]
+    postLogoutRedirectUris?: ApplicationCreatepostLogoutRedirectUrisInput | string[]
+    corsOrigins?: ApplicationCreatecorsOriginsInput | string[]
+    authMethods?: NullableJsonNullValueInput | InputJsonValue
+    logo?: string | null
+    primaryColor?: string | null
+    alwaysIssueRefreshToken?: boolean
+    rotateRefreshToken?: boolean
+    refreshTokenTtl?: number
+    backchannelLogoutUri?: string | null
+    isSessionRequired?: boolean
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type UserCreateManyTenantInput = {
@@ -10983,33 +13620,100 @@ export namespace Prisma {
     lastName?: string | null
     primaryEmail?: string | null
     emailVerified?: boolean
+    phone?: string | null
     phoneNumber?: string | null
     phoneVerified?: boolean
+    walletAddress?: string | null
     passwordHash?: string | null
+    role?: string
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type ApplicationCreateManyTenantInput = {
+  export type UserSessionCreateManyTenantInput = {
     id?: string
-    name: string
-    clientId?: string
-    clientSecret?: string | null
-    redirectUris?: ApplicationCreateredirectUrisInput | string[]
-    postLogoutRedirectUris?: ApplicationCreatepostLogoutRedirectUrisInput | string[]
-    corsOrigins?: ApplicationCreatecorsOriginsInput | string[]
-    authMethods?: NullableJsonNullValueInput | InputJsonValue
-    brevoApiKey?: string | null
-    brevoSenderEmail?: string | null
-    brevoSenderName?: string | null
-    labsmobileApiKey?: string | null
-    labsmobileUser?: string | null
-    labsmobileUrl?: string | null
-    labsmobileSenderId?: string | null
+    userId: string
+    sid: string
+    userAgent?: string | null
+    ipAddress?: string | null
+    lastActive?: Date | string
+    expiresAt: Date | string
     createdAt?: Date | string
-    updatedAt?: Date | string
+  }
+
+  export type ApplicationUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
+    clientSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    redirectUris?: ApplicationUpdateredirectUrisInput | string[]
+    postLogoutRedirectUris?: ApplicationUpdatepostLogoutRedirectUrisInput | string[]
+    corsOrigins?: ApplicationUpdatecorsOriginsInput | string[]
+    authMethods?: NullableJsonNullValueInput | InputJsonValue
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    alwaysIssueRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    rotateRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    refreshTokenTtl?: IntFieldUpdateOperationsInput | number
+    backchannelLogoutUri?: NullableStringFieldUpdateOperationsInput | string | null
+    isSessionRequired?: BoolFieldUpdateOperationsInput | boolean
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApplicationUncheckedUpdateWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
+    clientSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    redirectUris?: ApplicationUpdateredirectUrisInput | string[]
+    postLogoutRedirectUris?: ApplicationUpdatepostLogoutRedirectUrisInput | string[]
+    corsOrigins?: ApplicationUpdatecorsOriginsInput | string[]
+    authMethods?: NullableJsonNullValueInput | InputJsonValue
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    alwaysIssueRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    rotateRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    refreshTokenTtl?: IntFieldUpdateOperationsInput | number
+    backchannelLogoutUri?: NullableStringFieldUpdateOperationsInput | string | null
+    isSessionRequired?: BoolFieldUpdateOperationsInput | boolean
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ApplicationUncheckedUpdateManyWithoutTenantInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
+    clientSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    redirectUris?: ApplicationUpdateredirectUrisInput | string[]
+    postLogoutRedirectUris?: ApplicationUpdatepostLogoutRedirectUrisInput | string[]
+    corsOrigins?: ApplicationUpdatecorsOriginsInput | string[]
+    authMethods?: NullableJsonNullValueInput | InputJsonValue
+    logo?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColor?: NullableStringFieldUpdateOperationsInput | string | null
+    alwaysIssueRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    rotateRefreshToken?: BoolFieldUpdateOperationsInput | boolean
+    refreshTokenTtl?: IntFieldUpdateOperationsInput | number
+    backchannelLogoutUri?: NullableStringFieldUpdateOperationsInput | string | null
+    isSessionRequired?: BoolFieldUpdateOperationsInput | boolean
+    integrations?: NullableJsonNullValueInput | InputJsonValue
+    customData?: NullableJsonNullValueInput | InputJsonValue
+    branding?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserUpdateWithoutTenantInput = {
@@ -11018,15 +13722,20 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     primaryEmail?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    identities?: UserIdentityUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
+    identities?: UserIdentityUpdateManyWithoutUserNestedInput
+    sessions?: UserSessionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTenantInput = {
@@ -11035,15 +13744,20 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     primaryEmail?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    identities?: UserIdentityUncheckedUpdateManyWithoutUserNestedInput
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+    identities?: UserIdentityUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: UserSessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutTenantInput = {
@@ -11052,73 +13766,63 @@ export namespace Prisma {
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
     primaryEmail?: NullableStringFieldUpdateOperationsInput | string | null
     emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ApplicationUpdateWithoutTenantInput = {
+  export type UserSessionUpdateWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    clientId?: StringFieldUpdateOperationsInput | string
-    clientSecret?: NullableStringFieldUpdateOperationsInput | string | null
-    redirectUris?: ApplicationUpdateredirectUrisInput | string[]
-    postLogoutRedirectUris?: ApplicationUpdatepostLogoutRedirectUrisInput | string[]
-    corsOrigins?: ApplicationUpdatecorsOriginsInput | string[]
-    authMethods?: NullableJsonNullValueInput | InputJsonValue
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    sid?: StringFieldUpdateOperationsInput | string
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSessionsNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutSessionNestedInput
   }
 
-  export type ApplicationUncheckedUpdateWithoutTenantInput = {
+  export type UserSessionUncheckedUpdateWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    clientId?: StringFieldUpdateOperationsInput | string
-    clientSecret?: NullableStringFieldUpdateOperationsInput | string | null
-    redirectUris?: ApplicationUpdateredirectUrisInput | string[]
-    postLogoutRedirectUris?: ApplicationUpdatepostLogoutRedirectUrisInput | string[]
-    corsOrigins?: ApplicationUpdatecorsOriginsInput | string[]
-    authMethods?: NullableJsonNullValueInput | InputJsonValue
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
+    sid?: StringFieldUpdateOperationsInput | string
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutSessionNestedInput
   }
 
-  export type ApplicationUncheckedUpdateManyWithoutTenantInput = {
+  export type UserSessionUncheckedUpdateManyWithoutTenantInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    clientId?: StringFieldUpdateOperationsInput | string
-    clientSecret?: NullableStringFieldUpdateOperationsInput | string | null
-    redirectUris?: ApplicationUpdateredirectUrisInput | string[]
-    postLogoutRedirectUris?: ApplicationUpdatepostLogoutRedirectUrisInput | string[]
-    corsOrigins?: ApplicationUpdatecorsOriginsInput | string[]
-    authMethods?: NullableJsonNullValueInput | InputJsonValue
-    brevoApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    brevoSenderName?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileApiKey?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUser?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    labsmobileSenderId?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
+    sid?: StringFieldUpdateOperationsInput | string
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RefreshTokenCreateManyUserInput = {
+    id?: string
+    clientId?: string | null
+    sessionId?: string | null
+    tokenHash: string
+    resource?: string | null
+    scopes?: RefreshTokenCreatescopesInput | string[]
+    expiresAt: Date | string
+    createdAt?: Date | string
   }
 
   export type UserIdentityCreateManyUserInput = {
@@ -11129,13 +13833,48 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
-  export type RefreshTokenCreateManyUserInput = {
+  export type UserSessionCreateManyUserInput = {
     id?: string
-    tokenHash: string
-    resource?: string | null
-    scopes?: RefreshTokenCreatescopesInput | string[]
+    tenantId: string
+    sid: string
+    userAgent?: string | null
+    ipAddress?: string | null
+    lastActive?: Date | string
     expiresAt: Date | string
     createdAt?: Date | string
+  }
+
+  export type RefreshTokenUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    resource?: NullableStringFieldUpdateOperationsInput | string | null
+    scopes?: RefreshTokenUpdatescopesInput | string[]
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    session?: UserSessionUpdateOneWithoutRefreshTokensNestedInput
+  }
+
+  export type RefreshTokenUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    resource?: NullableStringFieldUpdateOperationsInput | string | null
+    scopes?: RefreshTokenUpdatescopesInput | string[]
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RefreshTokenUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    resource?: NullableStringFieldUpdateOperationsInput | string | null
+    scopes?: RefreshTokenUpdatescopesInput | string[]
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserIdentityUpdateWithoutUserInput = {
@@ -11162,8 +13901,67 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type RefreshTokenUpdateWithoutUserInput = {
+  export type UserSessionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    sid?: StringFieldUpdateOperationsInput | string
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tenant?: TenantUpdateOneRequiredWithoutSessionsNestedInput
+    refreshTokens?: RefreshTokenUpdateManyWithoutSessionNestedInput
+  }
+
+  export type UserSessionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    sid?: StringFieldUpdateOperationsInput | string
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutSessionNestedInput
+  }
+
+  export type UserSessionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    tenantId?: StringFieldUpdateOperationsInput | string
+    sid?: StringFieldUpdateOperationsInput | string
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    ipAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    lastActive?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RefreshTokenCreateManySessionInput = {
+    id?: string
+    userId: string
+    clientId?: string | null
+    tokenHash: string
+    resource?: string | null
+    scopes?: RefreshTokenCreatescopesInput | string[]
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type RefreshTokenUpdateWithoutSessionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    tokenHash?: StringFieldUpdateOperationsInput | string
+    resource?: NullableStringFieldUpdateOperationsInput | string | null
+    scopes?: RefreshTokenUpdatescopesInput | string[]
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutRefreshTokensNestedInput
+  }
+
+  export type RefreshTokenUncheckedUpdateWithoutSessionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
     tokenHash?: StringFieldUpdateOperationsInput | string
     resource?: NullableStringFieldUpdateOperationsInput | string | null
     scopes?: RefreshTokenUpdatescopesInput | string[]
@@ -11171,17 +13969,10 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type RefreshTokenUncheckedUpdateWithoutUserInput = {
+  export type RefreshTokenUncheckedUpdateManyWithoutSessionInput = {
     id?: StringFieldUpdateOperationsInput | string
-    tokenHash?: StringFieldUpdateOperationsInput | string
-    resource?: NullableStringFieldUpdateOperationsInput | string | null
-    scopes?: RefreshTokenUpdatescopesInput | string[]
-    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type RefreshTokenUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
     tokenHash?: StringFieldUpdateOperationsInput | string
     resource?: NullableStringFieldUpdateOperationsInput | string | null
     scopes?: RefreshTokenUpdatescopesInput | string[]

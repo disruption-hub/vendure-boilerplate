@@ -9,17 +9,23 @@ export function useAutoCountryCode(defaultValue: string = '+1') {
     useEffect(() => {
         const detectCountry = async () => {
             try {
-                const response = await fetch('https://ip-api.com/json');
-                const data = await response.json();
+                // Progressive enhancement: detect country via a public HTTPS GeoIP endpoint.
+                const response = await fetch('https://ipapi.co/json/', {
+                    signal: AbortSignal.timeout(2000) // 2s timeout
+                });
 
-                if (data && data.countryCode) {
-                    const matchedCountry = countries.find(c => c.country === data.countryCode);
-                    if (matchedCountry) {
-                        setCountryCode(matchedCountry.code);
+                if (response.ok) {
+                    const data = await response.json();
+                    const iso2 = (data?.country_code || data?.countryCode || data?.country || '').toString().trim().toUpperCase();
+                    if (iso2) {
+                        const matchedCountry = countries.find(c => c.country === iso2);
+                        if (matchedCountry) {
+                            setCountryCode(matchedCountry.code);
+                        }
                     }
                 }
             } catch (error) {
-                console.error('Failed to detect country:', error);
+                // Silently fail - this is a progressive enhancement
             }
         };
 

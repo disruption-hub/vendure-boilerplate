@@ -31,3 +31,7 @@ export async function login(email: string, password: string) {
 export async function getProfile(token: string) {
     return zkeyClient.getProfile(token);
 }
+
+export async function unlinkWallet(token: string) {
+    return zkeyClient.unlinkWallet(token);
+}

@@ -131,9 +131,9 @@ export async function placeOrder(paymentMethodCode: string) {
     const orderCode = result.data.addPaymentToOrder.code;
 
     // Update the cart tag to immediately invalidate cached cart data
-    revalidateTag('cart');
-    revalidateTag('active-order');
-    revalidateTag('orders');
+    revalidateTag('cart', { expire: 0 });
+    revalidateTag('active-order', { expire: 0 });
+    revalidateTag('orders', { expire: 0 });
 
     redirect(`/order-confirmation/${orderCode}`);
 }

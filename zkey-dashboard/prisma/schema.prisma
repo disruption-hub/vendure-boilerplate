@@ -7,104 +7,157 @@ datasource db {
   provider = "postgresql"
 }
 
-// OIDC-inspired User Model
-// OIDC-inspired User Model
 model Tenant {
   id           String        @id @default(cuid())
   name         String
   slug         String        @unique
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  brevoApiKey       String?
-  brevoSenderEmail  String?
-  brevoSenderName   String?
-  labsmobileApiKey   String?
-  labsmobileUser     String?
-  labsmobileUrl      String?
-  labsmobileSenderId String?
-  users        User[]
+  
+  // Consolidated Integration Configurations
+  // Hierarchy: Application > Tenant > System Default
+  integrations Json?         @default("{}")
+
+  // SSO & Session Settings
+  sessionSettings Json?      @default("{\"ssoEnabled\": true, \"sessionTtl\": 1440}")
+
+  // Branding Settings
+  branding        Json?      @default("{}")
+
+  // Dashboard Settings
+  // Stores environment-specific URLs: { "development": "...", "production": "..." }
+  dashboardUrls   Json?      @default("{}")
+
   applications Application[]
+  users        User[]
+  sessions     UserSession[]
 
   @@map("tenants")
 }
 
 model Application {
-  id           String   @id @default(cuid())
-  name         String
-  clientId     String   @unique @default(uuid())
-  clientSecret String?
-  tenantId     String
-  tenant       Tenant   @relation(fields: [tenantId], references: [id])
-  redirectUris String[]
+  id                     String   @id @default(cuid())
+  name                   String
+  description            String?
+  clientId               String   @unique @default(uuid())
+  clientSecret           String?
+  tenantId               String
+  redirectUris           String[]
   postLogoutRedirectUris String[]
-  corsOrigins  String[]
-  authMethods  Json?    @default("{\"password\": true, \"otp\": false, \"wallet\": false}")
-  brevoApiKey       String?
-  brevoSenderEmail  String?
-  brevoSenderName   String?
-  labsmobileApiKey   String?
-  labsmobileUser     String?
-  labsmobileUrl      String?
-  labsmobileSenderId String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  corsOrigins            String[]
+  authMethods            Json?    @default("{\"password\": true, \"emailOtp\": false, \"smsOtp\": false, \"wallet\": false}")
+  
+  // Branding
+  logo                   String?
+  primaryColor           String?
+
+  // Refresh Token Settings
+  alwaysIssueRefreshToken Boolean @default(false)
+  rotateRefreshToken      Boolean @default(false)
+  refreshTokenTtl         Int     @default(14)
+
+  // Backchannel Logout
+  backchannelLogoutUri    String?
+  isSessionRequired       Boolean @default(false)
+
+  // Custom Data & Integrations
+  // Overrides Tenant-level integrations if present
+  integrations            Json?   @default("{}")
+  customData              Json?   @default("{}")
+  branding                Json?   @default("{}")
+
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  tenant                 Tenant   @relation(fields: [tenantId], references: [id])
 
   @@map("applications")
 }
 
 model User {
-  id              String         @id @default(cuid())
-  firstName       String?
-  lastName        String?
-  primaryEmail    String?        @unique
-  emailVerified   Boolean        @default(false)
-  phoneNumber     String?        @unique
-  phoneVerified   Boolean        @default(false)
-  passwordHash    String?
-  avatar          String?
-  customData      Json?
-  tenantId        String?
-  tenant          Tenant?        @relation(fields: [tenantId], references: [id])
-  identities      UserIdentity[]
-  refreshTokens   RefreshToken[]
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id             String         @id @default(cuid())
+  firstName      String?
+  lastName       String?
+  primaryEmail   String?
+  emailVerified  Boolean        @default(false)
+  phone          String?
+  phoneNumber    String?
+  phoneVerified  Boolean        @default(false)
+  walletAddress  String?        @unique
+  passwordHash   String?
+  role           String         @default("user")
+  avatar         String?
+  customData     Json?
+  tenantId       String?
+  deletedAt      DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  
+  refreshTokens  RefreshToken[]
+  identities     UserIdentity[]
+  sessions       UserSession[]
+  tenant         Tenant?        @relation(fields: [tenantId], references: [id])
 
+  // Tenant-aware uniqueness constraints - REMOVED for Unverified Phishing Protection
+  // @@unique([primaryEmail, tenantId])
+  // @@unique([phone, tenantId])
+  // @@unique([phoneNumber, tenantId])
   @@map("users")
 }
 
 model UserIdentity {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id])
-  provider     String   // e.g., "google", "github"
-  providerId   String   // The ID from the provider
-  profileResult Json?   // Raw profile data
-  createdAt    DateTime @default(now())
+  id            String   @id @default(cuid())
+  userId        String
+  provider      String   // 'local', 'google', 'wallet', 'apple', etc.
+  providerId    String   // The unique ID from the provider (email for local, address for wallet)
+  profileResult Json?    // Any extra metadata from the social provider
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id])
 
   @@unique([provider, providerId])
   @@map("user_identities")
 }
 
+model UserSession {
+  id            String   @id @default(cuid())
+  userId        String
+  tenantId      String
+  sid           String   @unique // Session ID as required by OIDC backchannel logout
+  userAgent     String?
+  ipAddress     String?
+  lastActive    DateTime @default(now())
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+  
+  user          User     @relation(fields: [userId], references: [id])
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+  refreshTokens RefreshToken[]
+
+  @@map("user_sessions")
+}
+
 model RefreshToken {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  tokenHash   String   @unique
-  resource    String?
-  scopes      String[]
-  expiresAt   DateTime
-  createdAt   DateTime @default(now())
+  id            String   @id @default(cuid())
+  userId        String
+  clientId      String?
+  sessionId     String?  // Linked to UserSession for unified logout
+  tokenHash     String   @unique
+  resource      String?
+  scopes        String[]
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+  
+  user          User     @relation(fields: [userId], references: [id])
+  session       UserSession? @relation(fields: [sessionId], references: [id])
 
   @@map("refresh_tokens")
 }
 
-// For OIDC Interaction (Login Flow State)
 model Interaction {
-  id          String   @id @default(cuid())
-  details     Json
-  expiresAt   DateTime
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  type      String   @default("login") // 'login', 'consent', 'registration'
+  details   Json
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 
   @@map("interactions")
 }

@@ -20,7 +20,8 @@ async function verifySync() {
                 email: testEmail,
                 firstName: testFirstName,
                 lastName: testLastName,
-                phone: testPhone
+                phone: testPhone,
+                clientId: CLIENT_ID
             })
         });
 

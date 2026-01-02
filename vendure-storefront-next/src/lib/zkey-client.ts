@@ -4,6 +4,7 @@
  */
 
 const ZKEY_BASE_URL = process.env.NEXT_PUBLIC_ZKEY_URL || 'http://localhost:3002';
+const ZKEY_CLIENT_ID = process.env.NEXT_PUBLIC_ZKEY_CLIENT_ID;
 
 export interface ZKeyTokens {
     accessToken: string;
@@ -18,6 +19,7 @@ export interface ZKeyUser {
     emailVerified: boolean;
     phoneNumber: string | null;
     phoneVerified: boolean;
+    walletAddress?: string | null;
     avatar: string | null;
 }
 
@@ -28,6 +30,13 @@ export class ZKeyClient {
         this.baseUrl = baseUrl;
     }
 
+    private getClientId() {
+        if (!ZKEY_CLIENT_ID) {
+            throw new Error('NEXT_PUBLIC_ZKEY_CLIENT_ID is required');
+        }
+        return ZKEY_CLIENT_ID;
+    }
+
     /**
      * Register a new user
      */
@@ -35,7 +44,7 @@ export class ZKeyClient {
         const response = await fetch(`${this.baseUrl}/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, firstName, lastName, phone, password }),
+            body: JSON.stringify({ email, firstName, lastName, phone, password, clientId: this.getClientId() }),
         });
 
         if (!response.ok) {
@@ -53,7 +62,7 @@ export class ZKeyClient {
         const response = await fetch(`${this.baseUrl}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ email, password, clientId: this.getClientId() }),
         });
 
         if (!response.ok) {
@@ -79,6 +88,20 @@ export class ZKeyClient {
         return response.json();
     }
 
+    async unlinkWallet(token: string): Promise<{ success: boolean }> {
+        const response = await fetch(`${this.baseUrl}/auth/wallet/unlink`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+        });
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => null);
+            throw new Error((data as any)?.message || 'Failed to unlink wallet');
+        }
+
+        return response.json();
+    }
+
     /**
      * Request OTP
      */
@@ -86,7 +109,7 @@ export class ZKeyClient {
         const response = await fetch(`${this.baseUrl}/auth/otp/request`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ identifier, type }),
+            body: JSON.stringify({ identifier, type, clientId: this.getClientId() }),
         });
         return response.json();
     }
@@ -113,7 +136,7 @@ export class ZKeyClient {
      * Get Wallet Nonce
      */
     async getWalletNonce(address: string): Promise<{ nonce: string }> {
-        const response = await fetch(`${this.baseUrl}/auth/wallet/nonce/${address}`);
+        const response = await fetch(`${this.baseUrl}/auth/nonce/${address}`);
         if (!response.ok) throw new Error('Failed to get nonce');
         return response.json();
     }

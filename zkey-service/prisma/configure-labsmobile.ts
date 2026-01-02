@@ -16,13 +16,18 @@ async function main() {
         return;
     }
 
+    const currentAppIntegrations = (application.integrations as any) || {};
+
     const updatedApplication = await prisma.application.update({
         where: { id: application.id },
         data: {
-            labsmobileApiKey: 'BqVcFI39Ca2J8wKlT2l9vaESEZLu28It',
-            labsmobileUrl: 'https://api.labsmobile.com/json/send',
-            labsmobileUser: 'alberto@matmax.world',
-            labsmobileSenderId: 'ZKey',
+            integrations: {
+                ...currentAppIntegrations,
+                labsmobileApiKey: 'BqVcFI39Ca2J8wKlT2l9vaESEZLu28It',
+                labsmobileUrl: 'https://api.labsmobile.com/json/send',
+                labsmobileUser: 'alberto@matmax.world',
+                labsmobileSenderId: 'ZKey',
+            },
         },
     });
 
@@ -30,15 +35,22 @@ async function main() {
 
     // Also update the tenant if it exists and has no credentials
     if (application.tenantId) {
-        await prisma.tenant.update({
-            where: { id: application.tenantId },
-            data: {
-                labsmobileApiKey: 'BqVcFI39Ca2J8wKlT2l9vaESEZLu28It',
-                labsmobileUrl: 'https://api.labsmobile.com/json/send',
-                labsmobileUser: 'alberto@matmax.world',
-                labsmobileSenderId: 'ZKey',
-            },
-        });
+        const tenant = await prisma.tenant.findUnique({ where: { id: application.tenantId } });
+        if (tenant) {
+            const currentTenantIntegrations = (tenant.integrations as any) || {};
+            await prisma.tenant.update({
+                where: { id: application.tenantId },
+                data: {
+                    integrations: {
+                        ...currentTenantIntegrations,
+                        labsmobileApiKey: 'BqVcFI39Ca2J8wKlT2l9vaESEZLu28It',
+                        labsmobileUrl: 'https://api.labsmobile.com/json/send',
+                        labsmobileUser: 'alberto@matmax.world',
+                        labsmobileSenderId: 'ZKey',
+                    },
+                },
+            });
+        }
         console.log('LabsMobile configured for tenant.');
     }
 

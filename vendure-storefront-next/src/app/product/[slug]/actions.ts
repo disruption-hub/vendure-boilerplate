@@ -15,8 +15,8 @@ export async function addToCart(variantId: string, quantity: number = 1) {
 
     if (result.data.addItemToOrder.__typename === 'Order') {
       // Revalidate cart data across all pages
-      revalidateTag('cart');
-      revalidateTag('active-order');
+      revalidateTag('cart', { expire: 0 });
+      revalidateTag('active-order', { expire: 0 });
       return { success: true, order: result.data.addItemToOrder };
     } else {
       return { success: false, error: result.data.addItemToOrder.message };

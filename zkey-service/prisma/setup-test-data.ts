@@ -28,14 +28,18 @@ async function main() {
             update: {
                 redirectUris: [
                     'http://localhost:3001/auth/callback',
-                    'https://vendure-storefront-next.vercel.app/auth/callback'
+                    'https://vendure-storefront-next.vercel.app/auth/callback',
+                    'https://vendure-boilerplate-vendure-storefront-next-ng0ykmsm3.vercel.app/auth/callback'
                 ],
                 corsOrigins: [
                     'http://localhost:3001',
                     'https://vendure-storefront-next.vercel.app',
+                    'https://vendure-boilerplate-vendure-storefront-next-ng0ykmsm3.vercel.app',
                     'https://zkey-dashboard.vercel.app',
                     'https://zkey-dashboard-kjhldoy4j-matmaxworlds-projects.vercel.app'
                 ],
+                clientSecret: null,
+                authMethods: { password: true, otp: true, wallet: true },
             },
             create: {
                 name: 'Default Storefront',

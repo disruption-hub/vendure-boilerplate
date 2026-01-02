@@ -16,6 +16,7 @@
     "start": "node run-migration.js && concurrently npm:start:*"
   },
   "dependencies": {
+    "@nestjs/graphql": "^13.2.3",
     "@sendgrid/mail": "^8.1.4",
     "@vendure/admin-ui-plugin": "^3.5.0",
     "@vendure/asset-server-plugin": "3.5.0",

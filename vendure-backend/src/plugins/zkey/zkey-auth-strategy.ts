@@ -51,6 +51,8 @@ export class ZKeyAuthenticationStrategy implements AuthenticationStrategy<ZKeyAu
             const zkeyUser = await response.json();
             Logger.info(`[ZKey] Decoded user id: ${zkeyUser.id} (${zkeyUser.primaryEmail || zkeyUser.email})`, 'ZKeyAuthenticationStrategy');
 
+            const walletAddress = zkeyUser.walletAddress || null;
+
             // Use email as the unique identifier
             const email = zkeyUser.email || zkeyUser.primaryEmail;
             if (!email) {
@@ -78,12 +80,19 @@ export class ZKeyAuthenticationStrategy implements AuthenticationStrategy<ZKeyAu
             if (customer) {
                 Logger.info(`[ZKey] Syncing customer details for ${customer.emailAddress}`, 'ZKeyAuthenticationStrategy');
                 try {
-                    await this.customerService.update(ctx, {
+                    const updateInput: any = {
                         id: customer.id,
                         firstName: zkeyUser.firstName || customer.firstName,
                         lastName: zkeyUser.lastName || customer.lastName,
                         phoneNumber: zkeyUser.phoneNumber || customer.phoneNumber,
-                    });
+                    };
+
+                    updateInput.customFields = {
+                        walletAddress: walletAddress,
+                        logtoUserId: zkeyUser.id,
+                    };
+
+                    await this.customerService.update(ctx, updateInput);
                     Logger.info(`[ZKey] Customer sync successful`, 'ZKeyAuthenticationStrategy');
                 } catch (syncError: any) {
                     Logger.error(`[ZKey] Customer sync failed: ${syncError.message}`, 'ZKeyAuthenticationStrategy');

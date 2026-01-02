@@ -1,46 +1,143 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import * as crypto from "node:crypto";
+
+function processFormDataUrls(formData: FormData, key: string): string[] {
+    const raw = formData.getAll(key);
+    // If only one entry, it might be comma separated (from simple forms)
+    if (raw.length === 1 && (raw[0] as string).includes(',')) {
+        return (raw[0] as string).split(',').map(s => s.trim()).filter(Boolean);
+    }
+    // Otherwise return all separate entries (from dynamic forms)
+    return raw.map(s => (s as string).trim()).filter(Boolean);
+}
 
 export async function updateApplication(id: string, formData: FormData) {
     const name = formData.get("name") as string;
     const tenantId = formData.get("tenantId") as string;
-    const corsOriginsStr = formData.getAll("corsOrigins");
-    const redirectUrisStr = formData.getAll("redirectUris");
-    const postLogoutRedirectUrisStr = formData.getAll("postLogoutRedirectUris");
+
+    const corsOrigins = processFormDataUrls(formData, "corsOrigins");
+    const redirectUris = processFormDataUrls(formData, "redirectUris");
+    const postLogoutRedirectUris = processFormDataUrls(formData, "postLogoutRedirectUris");
 
     if (!name || !tenantId) {
         throw new Error("Name and Tenant are required");
     }
 
-    const corsOrigins = corsOriginsStr.map(s => (s as string).trim()).filter(Boolean);
-    const redirectUris = redirectUrisStr.map(s => (s as string).trim()).filter(Boolean);
-    const postLogoutRedirectUris = postLogoutRedirectUrisStr.map(s => (s as string).trim()).filter(Boolean);
-
     // Extract auth methods
-    const authMethods = {
+    const authMethodsBase = {
         password: formData.get("auth_password") === "on",
-        otp: formData.get("auth_otp") === "on",
+        emailOtp: formData.get("auth_emailOtp") === "on",
+        smsOtp: formData.get("auth_smsOtp") === "on",
         wallet: formData.get("auth_wallet") === "on",
     };
+
+    const rawRegistrationOtp = (formData.get('registrationOtp') as string | null) || 'both';
+    let registrationOtp: 'both' | 'email' | 'sms' = rawRegistrationOtp === 'email' || rawRegistrationOtp === 'sms' || rawRegistrationOtp === 'both'
+        ? (rawRegistrationOtp as any)
+        : 'both';
+
+    if (authMethodsBase.emailOtp && !authMethodsBase.smsOtp) registrationOtp = 'email';
+    if (!authMethodsBase.emailOtp && authMethodsBase.smsOtp) registrationOtp = 'sms';
+    if (!authMethodsBase.emailOtp && !authMethodsBase.smsOtp) registrationOtp = 'email';
+
+    const authMethods = { ...authMethodsBase, registrationOtp };
+
+    if (!Object.values(authMethodsBase).some(Boolean)) {
+        throw new Error("At least one authentication method must be enabled");
+    }
+
+
+
+    // Custom Data handling
+    let customData = {};
+    try {
+        const customDataStr = formData.get("customData") as string;
+        if (customDataStr) {
+            customData = JSON.parse(customDataStr);
+        }
+    } catch (e) {
+        console.error("Failed to parse custom data JSON", e);
+    }
+
+    const existing = await prisma.application.findUnique({
+        where: { id },
+        select: { integrations: true },
+    });
+    const existingVendure = (existing?.integrations as any)?.vendure || {};
+
+    const vendureEnabled = formData.get('vendureEnabled') === 'on';
+    const vendureAdminApiUrl = ((formData.get('vendureAdminApiUrl') as string | null) ?? '').trim();
+    const vendureAuthTokenHeader = ((formData.get('vendureAuthTokenHeader') as string | null) ?? '').trim();
+    const vendureAdminApiToken = ((formData.get('vendureAdminApiToken') as string | null) ?? '').trim();
+    const vendureSuperadminUsername = ((formData.get('vendureSuperadminUsername') as string | null) ?? '').trim();
+    const vendureSuperadminPassword = ((formData.get('vendureSuperadminPassword') as string | null) ?? '').trim();
+
+    const vendure: any = {
+        enabled: vendureEnabled,
+        adminApiUrl: vendureAdminApiUrl || existingVendure.adminApiUrl || null,
+        authTokenHeader: vendureAuthTokenHeader || existingVendure.authTokenHeader || null,
+        adminApiToken: vendureAdminApiToken || existingVendure.adminApiToken || null,
+        superadminUsername: vendureSuperadminUsername || existingVendure.superadminUsername || null,
+        superadminPassword: vendureSuperadminPassword || existingVendure.superadminPassword || null,
+    };
+
+    if (vendureEnabled) {
+        if (!vendure.adminApiUrl) throw new Error('Vendure is enabled: Vendure Admin API URL is required');
+        const hasToken = !!vendure.adminApiToken;
+        const hasUserPass = !!vendure.superadminUsername && !!vendure.superadminPassword;
+        if (!hasToken && !hasUserPass) {
+            throw new Error('Vendure is enabled: provide either Admin API Token OR Superadmin Username + Password');
+        }
+    }
 
     try {
         await prisma.application.update({
             where: { id },
             data: {
                 name,
+                description: formData.get("description") as string || null,
                 tenantId,
                 corsOrigins,
                 redirectUris,
                 postLogoutRedirectUris,
                 authMethods,
-                brevoApiKey: formData.get("brevoApiKey") as string || null,
-                brevoSenderEmail: formData.get("brevoSenderEmail") as string || null,
-                brevoSenderName: formData.get("brevoSenderName") as string || null,
-                labsmobileApiKey: formData.get("labsmobileApiKey") as string || null,
-                labsmobileUser: formData.get("labsmobileUser") as string || null,
-                labsmobileUrl: formData.get("labsmobileUrl") as string || null,
-                labsmobileSenderId: formData.get("labsmobileSenderId") as string || null,
+
+                // Branding
+                logo: formData.get("logo") as string || null,
+                primaryColor: formData.get("primaryColor") as string || null,
+                branding: {
+                    logo: formData.get("logo") as string || null,
+                    primaryColor: formData.get("primaryColor") as string || null,
+                    backgroundColor: formData.get("backgroundColor") as string || null,
+                    loginTitle: formData.get("loginTitle") as string || null,
+                    loginSubtitle: formData.get("loginSubtitle") as string || null,
+                },
+
+                // Refresh Token
+                alwaysIssueRefreshToken: formData.get("alwaysIssueRefreshToken") === "on",
+                rotateRefreshToken: formData.get("rotateRefreshToken") === "on",
+                refreshTokenTtl: parseInt(formData.get("refreshTokenTtl") as string) || 14,
+
+                // Logout
+                backchannelLogoutUri: formData.get("backchannelLogoutUri") as string || null,
+                isSessionRequired: formData.get("isSessionRequired") === "on",
+
+                // Custom Data
+                customData,
+
+                integrations: {
+                    brevoApiKey: formData.get("brevoApiKey") as string || null,
+                    brevoSenderEmail: formData.get("brevoSenderEmail") as string || null,
+                    brevoSenderName: formData.get("brevoSenderName") as string || null,
+                    labsmobileApiKey: formData.get("labsmobileApiKey") as string || null,
+                    labsmobileUser: formData.get("labsmobileUser") as string || null,
+                    labsmobileUrl: formData.get("labsmobileUrl") as string || null,
+                    labsmobileSenderId: formData.get("labsmobileSenderId") as string || null,
+                    vendure,
+
+                },
             },
         });
     } catch (error) {
@@ -51,39 +148,104 @@ export async function updateApplication(id: string, formData: FormData) {
 export async function createApplication(formData: FormData) {
     const name = formData.get("name") as string;
     const tenantId = formData.get("tenantId") as string;
-    const corsOriginsStr = formData.getAll("corsOrigins");
-    const redirectUrisStr = formData.getAll("redirectUris");
-    const postLogoutRedirectUrisStr = formData.getAll("postLogoutRedirectUris");
+
+    const corsOrigins = processFormDataUrls(formData, "corsOrigins");
+    const redirectUris = processFormDataUrls(formData, "redirectUris");
+    const postLogoutRedirectUris = processFormDataUrls(formData, "postLogoutRedirectUris");
 
     if (!name || !tenantId) {
         throw new Error("Name and Tenant are required");
     }
 
-    const corsOrigins = corsOriginsStr.map(s => (s as string).trim()).filter(Boolean);
-    const redirectUris = redirectUrisStr.map(s => (s as string).trim()).filter(Boolean);
-    const postLogoutRedirectUris = postLogoutRedirectUrisStr.map(s => (s as string).trim()).filter(Boolean);
+    const vendureEnabled = formData.get('vendureEnabled') === 'on';
+    const vendureAdminApiUrl = ((formData.get('vendureAdminApiUrl') as string | null) ?? '').trim();
+    const vendureAuthTokenHeader = ((formData.get('vendureAuthTokenHeader') as string | null) ?? '').trim();
+    const vendureAdminApiToken = ((formData.get('vendureAdminApiToken') as string | null) ?? '').trim();
+    const vendureSuperadminUsername = ((formData.get('vendureSuperadminUsername') as string | null) ?? '').trim();
+    const vendureSuperadminPassword = ((formData.get('vendureSuperadminPassword') as string | null) ?? '').trim();
+
+    const vendure: any = {
+        enabled: vendureEnabled,
+        adminApiUrl: vendureAdminApiUrl || null,
+        authTokenHeader: vendureAuthTokenHeader || null,
+        adminApiToken: vendureAdminApiToken || null,
+        superadminUsername: vendureSuperadminUsername || null,
+        superadminPassword: vendureSuperadminPassword || null,
+    };
+
+    if (vendureEnabled) {
+        if (!vendure.adminApiUrl) throw new Error('Vendure is enabled: Vendure Admin API URL is required');
+        const hasToken = !!vendure.adminApiToken;
+        const hasUserPass = !!vendure.superadminUsername && !!vendure.superadminPassword;
+        if (!hasToken && !hasUserPass) {
+            throw new Error('Vendure is enabled: provide either Admin API Token OR Superadmin Username + Password');
+        }
+    }
+
+
 
     try {
         const application = await prisma.application.create({
             data: {
                 name,
+                description: formData.get("description") as string || null,
                 tenantId,
+                clientId: crypto.randomUUID(),
+                clientSecret: crypto.randomBytes(32).toString('hex'),
                 corsOrigins,
                 redirectUris,
                 postLogoutRedirectUris,
-                authMethods: { password: true, otp: false, wallet: false },
-                brevoApiKey: formData.get("brevoApiKey") as string || null,
-                brevoSenderEmail: formData.get("brevoSenderEmail") as string || null,
-                brevoSenderName: formData.get("brevoSenderName") as string || null,
-                labsmobileApiKey: formData.get("labsmobileApiKey") as string || null,
-                labsmobileUser: formData.get("labsmobileUser") as string || null,
-                labsmobileUrl: formData.get("labsmobileUrl") as string || null,
-                labsmobileSenderId: formData.get("labsmobileSenderId") as string || null,
+                authMethods: { password: true, emailOtp: false, smsOtp: false, wallet: false, registrationOtp: 'email' },
+
+                // Branding
+                logo: formData.get("logo") as string || null,
+                primaryColor: formData.get("primaryColor") as string || null,
+                branding: {
+                    logo: formData.get("logo") as string || null,
+                    primaryColor: formData.get("primaryColor") as string || null,
+                    backgroundColor: formData.get("backgroundColor") as string || null,
+                    loginTitle: formData.get("loginTitle") as string || null,
+                    loginSubtitle: formData.get("loginSubtitle") as string || null,
+                },
+
+                // Refresh Token
+                alwaysIssueRefreshToken: formData.get("alwaysIssueRefreshToken") === "on",
+                rotateRefreshToken: formData.get("rotateRefreshToken") === "on",
+                refreshTokenTtl: parseInt(formData.get("refreshTokenTtl") as string) || 14,
+
+                // Logout
+                backchannelLogoutUri: formData.get("backchannelLogoutUri") as string || null,
+                isSessionRequired: formData.get("isSessionRequired") === "on",
+
+                integrations: {
+                    brevoApiKey: formData.get("brevoApiKey") as string || null,
+                    brevoSenderEmail: formData.get("brevoSenderEmail") as string || null,
+                    brevoSenderName: formData.get("brevoSenderName") as string || null,
+                    labsmobileApiKey: formData.get("labsmobileApiKey") as string || null,
+                    labsmobileUser: formData.get("labsmobileUser") as string || null,
+                    labsmobileUrl: formData.get("labsmobileUrl") as string || null,
+                    labsmobileSenderId: formData.get("labsmobileSenderId") as string || null,
+                    vendure,
+
+                },
             },
         });
         return application;
     } catch (error) {
         throw new Error(`Failed to create application: ${error instanceof Error ? error.message : "Unknown error"}`);
+    }
+}
+
+export async function regenerateClientSecret(id: string) {
+    const newSecret = crypto.randomBytes(32).toString('hex');
+    try {
+        await prisma.application.update({
+            where: { id },
+            data: { clientSecret: newSecret }
+        });
+        return { success: true, secret: newSecret };
+    } catch (error) {
+        throw new Error("Failed to regenerate secret");
     }
 }
 

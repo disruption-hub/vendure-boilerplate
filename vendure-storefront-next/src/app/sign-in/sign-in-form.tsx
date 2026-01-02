@@ -330,7 +330,7 @@ export function SignInForm() {
                             <Button
                                 type="submit"
                                 disabled={isLoading || otp.length !== 6 || timer === 0}
-                                className="w-full h-14 bg-brand-gold hover:bg-brand-gold/90 text-brand-blue font-bold rounded-xl"
+                                className="w-full h-14 bg-brand-gold hover:bg-brand-gold/90 disabled:bg-brand-gold/40 disabled:text-brand-blue/80 disabled:opacity-100 text-brand-blue font-bold rounded-xl"
                             >
                                 {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Verify & Sign In'}
                             </Button>

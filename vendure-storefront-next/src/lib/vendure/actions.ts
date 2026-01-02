@@ -25,8 +25,8 @@ export async function getActiveCustomer() {
 }
 
 export async function revalidateAuth() {
-    revalidateTag('customer');
-    revalidateTag('orders');
+    revalidateTag('customer', { expire: 0 });
+    revalidateTag('orders', { expire: 0 });
 }
 
 export const getActiveChannel = getActiveChannelCached;

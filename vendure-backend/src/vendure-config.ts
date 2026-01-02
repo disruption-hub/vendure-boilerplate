@@ -3,6 +3,7 @@ import {
     DefaultJobQueuePlugin,
     DefaultSchedulerPlugin,
     DefaultSearchPlugin,
+    LanguageCode,
     VendureConfig,
 } from '@vendure/core';
 import { defaultEmailHandlers, EmailPlugin, EmailPluginDevModeOptions, EmailPluginOptions } from '@vendure/email-plugin';
@@ -12,7 +13,7 @@ import { StripePlugin } from '@vendure/payments-plugin/package/stripe';
 import 'dotenv/config';
 import path from 'path';
 import { LogtoAuthenticationStrategy } from './plugins/logto/logto-auth-strategy';
-import { ZKeyAuthenticationStrategy } from './plugins/zkey/zkey-auth-strategy';
+import { ZKeyPlugin } from './plugins/zkey/zkey.plugin';
 
 const isDev: Boolean = process.env.APP_ENV === 'dev';
 
@@ -74,7 +75,7 @@ export const config: VendureConfig = {
     authOptions: {
         tokenMethod: ['bearer', 'cookie'],
         shopAuthenticationStrategy: [
-            new ZKeyAuthenticationStrategy(),
+
             ...(process.env.LOGTO_ENDPOINT ? [new LogtoAuthenticationStrategy()] : []),
         ],
         superadminCredentials: {
@@ -109,10 +110,18 @@ export const config: VendureConfig = {
     customFields: {
         Customer: [
             {
+                name: 'walletAddress',
+                type: 'string',
+                unique: true,
+                nullable: true,
+                label: [{ languageCode: LanguageCode.en, value: 'Wallet Address' }],
+            },
+            {
                 name: 'logtoUserId',
                 type: 'string',
                 unique: true,
                 nullable: true,
+                label: [{ languageCode: LanguageCode.en, value: 'ZKey Internal ID' }],
             },
             {
                 name: 'logtoData',
@@ -122,6 +131,7 @@ export const config: VendureConfig = {
         ]
     },
     plugins: [
+        ZKeyPlugin,
         AssetServerPlugin.init({
             route: 'assets',
             assetUploadDir: process.env.ASSET_VOLUME_PATH || path.resolve(process.cwd(), 'static/assets'),
@@ -156,7 +166,8 @@ export const config: VendureConfig = {
         } as EmailPluginOptions | EmailPluginDevModeOptions),
         AdminUiPlugin.init({
             route: 'admin',
-            port: 3002,
+            // Avoid clashing with zkey-service (which uses 3002 in this repo)
+            port: 3004,
             adminUiConfig: {
                 apiHost: isDev ? undefined : `https://${process.env.PUBLIC_DOMAIN}`,
                 apiPort: isDev ? +(process.env.PORT || 3000) : undefined,

@@ -6,6 +6,8 @@ import { removeAuthToken, setAuthToken, setZKeyAuthToken } from '@/lib/auth';
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import * as zkey from '@/lib/zkey';
+import { authenticateWithZKey } from '@/lib/vendure/auth';
+import { revalidateAuth } from '@/lib/vendure/actions';
 
 export async function loginAction(prevState: { error?: string } | undefined, formData: FormData) {
     const username = formData.get('username') as string;
@@ -54,13 +56,20 @@ export async function requestOtpAction(identifier: string, type: 'email' | 'phon
 }
 
 export async function verifyOtpAction(identifier: string, code: string) {
-    const res = await zkey.verifyOtp(identifier, code);
-    if (res.accessToken) {
-        await setZKeyAuthToken(res.accessToken);
-        revalidatePath('/', 'layout');
-        return { success: true };
+    try {
+        const res = await zkey.verifyOtp(identifier, code);
+        if (res.accessToken) {
+            await setZKeyAuthToken(res.accessToken);
+            // Establish a Vendure customer session and create/sync the Customer via the ZKey auth strategy.
+            await authenticateWithZKey(res.accessToken);
+            await revalidateAuth();
+            revalidatePath('/', 'layout');
+            return { success: true };
+        }
+        return { success: false, error: 'Verification failed' };
+    } catch (e) {
+        return { success: false, error: e instanceof Error ? e.message : 'Verification failed' };
     }
-    return { success: false, error: res.message || 'Verification failed' };
 }
 
 export async function getWalletNonceAction(address: string) {
@@ -68,11 +77,17 @@ export async function getWalletNonceAction(address: string) {
 }
 
 export async function loginWithWalletAction(address: string, signature: string) {
-    const res = await zkey.loginWithWallet(address, signature);
-    if (res.accessToken) {
-        await setZKeyAuthToken(res.accessToken);
-        revalidatePath('/', 'layout');
-        return { success: true };
+    try {
+        const res = await zkey.loginWithWallet(address, signature);
+        if (res.accessToken) {
+            await setZKeyAuthToken(res.accessToken);
+            await authenticateWithZKey(res.accessToken);
+            await revalidateAuth();
+            revalidatePath('/', 'layout');
+            return { success: true };
+        }
+        return { success: false, error: 'Login failed' };
+    } catch (e) {
+        return { success: false, error: e instanceof Error ? e.message : 'Login failed' };
     }
-    return { success: false, error: res.message || 'Login failed' };
 }

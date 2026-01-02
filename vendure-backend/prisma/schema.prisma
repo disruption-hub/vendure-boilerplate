@@ -249,6 +249,9 @@ model customer {
   id                             Int                              @id(map: "PK_a7a13f4cacb744524e44dfdad32") @default(autoincrement())
   userId                         Int?                             @unique(map: "REL_3f62b42ed23958b120c235f74d")
   customFieldsStripecustomerid   String?                          @db.VarChar(255)
+  customFieldsLogtouserid        String?                          @unique(map: "UQ_847464ecf377c421b29a3f37943") @db.VarChar(255)
+  customFieldsLogtodata          String?                          @db.Text
+  customFieldsWalletaddress      String?                          @unique(map: "UQ_walletAddress") @db.VarChar(255)
   address                        address[]
   user                           user?                            @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_3f62b42ed23958b120c235f74df")
   customer_channels_channel      customer_channels_channel[]

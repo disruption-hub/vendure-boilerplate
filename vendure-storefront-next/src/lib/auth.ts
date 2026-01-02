@@ -52,6 +52,11 @@ export async function getAuthToken(): Promise<string | undefined> {
     return cookieStore.get(ZKEY_TOKEN_COOKIE)?.value;
 }
 
+export async function getZKeyAuthToken(): Promise<string | undefined> {
+    const cookieStore = await cookies();
+    return cookieStore.get(ZKEY_TOKEN_COOKIE)?.value;
+}
+
 export async function removeAuthToken() {
     const cookieStore = await cookies();
     cookieStore.delete(ZKEY_TOKEN_COOKIE);

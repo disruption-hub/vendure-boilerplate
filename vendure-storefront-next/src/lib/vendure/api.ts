@@ -2,6 +2,7 @@ import type { TadaDocumentNode } from 'gql.tada';
 import { print } from 'graphql';
 
 const VENDURE_API_URL = process.env.VENDURE_SHOP_API_URL || process.env.NEXT_PUBLIC_VENDURE_SHOP_API_URL || 'http://localhost:3000/shop-api';
+// Must match your Vendure Channel token (it is not always the same as the channel code/name).
 const VENDURE_CHANNEL_TOKEN = process.env.VENDURE_CHANNEL_TOKEN || process.env.NEXT_PUBLIC_VENDURE_CHANNEL_TOKEN || '__default_channel__';
 const VENDURE_AUTH_TOKEN_HEADER = process.env.VENDURE_AUTH_TOKEN_HEADER || 'vendure-auth-token';
 const VENDURE_CHANNEL_TOKEN_HEADER = process.env.VENDURE_CHANNEL_TOKEN_HEADER || 'vendure-token';
@@ -20,6 +21,12 @@ interface VendureRequestOptions {
 interface VendureResponse<T> {
     data?: T;
     errors?: Array<{ message: string;[key: string]: unknown }>;
+}
+
+function shouldAllowOfflineVendure() {
+    // Default: allow offline in dev to avoid crashing the app shell (Navbar, etc.)
+    // In production, you can opt-in via env var.
+    return process.env.VENDURE_API_ALLOW_OFFLINE === 'true' || process.env.NODE_ENV !== 'production';
 }
 
 /**
@@ -60,6 +67,8 @@ export async function query<TResult, TVariables>(
     }
 
     if (authToken) {
+        // Vendure bearer auth uses the vendure-auth-token header; some setups also accept Authorization.
+        headers[VENDURE_AUTH_TOKEN_HEADER] = authToken;
         headers['Authorization'] = `Bearer ${authToken}`;
     }
 
@@ -72,6 +81,7 @@ export async function query<TResult, TVariables>(
             ...fetchOptions,
             method: 'POST',
             headers,
+            credentials: fetchOptions?.credentials ?? 'include',
             body: JSON.stringify({
                 query: print(document),
                 variables: variables || {},
@@ -79,21 +89,17 @@ export async function query<TResult, TVariables>(
             ...(tags && { next: { tags } }),
         });
     } catch (e) {
-        // Handle connection errors (like ECONNREFUSED) gracefully during build
-        const isBuild = process.env.NEXT_PHASE === 'phase-production-build' ||
-            process.env.NODE_ENV === 'production' ||
-            process.env.CI === 'true';
-
-        if (isBuild) {
-            console.warn(`[Vendure API Build-time Fallback] Fetch failed to ${VENDURE_API_URL}. Reason: ${(e as Error).message}`);
+        if (shouldAllowOfflineVendure()) {
+            console.warn(`[Vendure API Offline Fallback] Fetch failed to ${VENDURE_API_URL}. Reason: ${(e as Error).message}`);
             return { data: {} as TResult };
         }
+
         throw e;
     }
 
     if (!response.ok) {
-        if (process.env.NEXT_PHASE === 'phase-production-build') {
-            console.warn(`[Vendure API] HTTP ${response.status} from ${VENDURE_API_URL} during build. Returning empty data.`);
+        if (shouldAllowOfflineVendure()) {
+            console.warn(`[Vendure API Offline Fallback] HTTP ${response.status} from ${VENDURE_API_URL}. Returning empty data.`);
             return { data: {} as TResult };
         }
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -102,10 +108,18 @@ export async function query<TResult, TVariables>(
     const result: VendureResponse<TResult> = await response.json();
 
     if (result.errors) {
+        if (shouldAllowOfflineVendure()) {
+            console.warn(`[Vendure API Offline Fallback] GraphQL errors: ${result.errors.map(e => e.message).join(', ')}`);
+            return { data: {} as TResult };
+        }
         throw new Error(result.errors.map(e => e.message).join(', '));
     }
 
     if (!result.data) {
+        if (shouldAllowOfflineVendure()) {
+            console.warn('[Vendure API Offline Fallback] No data returned. Returning empty data.');
+            return { data: {} as TResult };
+        }
         throw new Error('No data returned from Vendure API');
     }
 

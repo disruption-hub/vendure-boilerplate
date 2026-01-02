@@ -15,8 +15,8 @@ export async function removeFromCart(lineId: string) {
     if (res.token) {
         await setAuthToken(res.token);
     }
-    revalidateTag('cart');
-    revalidateTag('active-order');
+    revalidateTag('cart', { expire: 0 });
+    revalidateTag('active-order', { expire: 0 });
 }
 
 export async function adjustQuantity(lineId: string, quantity: number) {
@@ -24,8 +24,8 @@ export async function adjustQuantity(lineId: string, quantity: number) {
     if (res.token) {
         await setAuthToken(res.token);
     }
-    revalidateTag('cart');
-    revalidateTag('active-order');
+    revalidateTag('cart', { expire: 0 });
+    revalidateTag('active-order', { expire: 0 });
 }
 
 export async function applyPromotionCode(formData: FormData) {
@@ -36,8 +36,8 @@ export async function applyPromotionCode(formData: FormData) {
     if (res.token) {
         await setAuthToken(res.token);
     }
-    revalidateTag('cart');
-    revalidateTag('active-order');
+    revalidateTag('cart', { expire: 0 });
+    revalidateTag('active-order', { expire: 0 });
 }
 
 export async function removePromotionCode(formData: FormData) {
@@ -48,6 +48,6 @@ export async function removePromotionCode(formData: FormData) {
     if (res.token) {
         await setAuthToken(res.token);
     }
-    revalidateTag('cart');
-    revalidateTag('active-order');
+    revalidateTag('cart', { expire: 0 });
+    revalidateTag('active-order', { expire: 0 });
 }
