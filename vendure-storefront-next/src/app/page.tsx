@@ -8,16 +8,24 @@ export const metadata: Metadata = {
         absolute: `${SITE_NAME} - Premium Yoga Mats & Accessories`,
     },
     description:
-        "Discover our collection of premium yoga mats and accessories. Designed for comfort, stability, and sustainable practice.",
+        "Join the movement. Discover our collection of premium yoga mats and accessories. Designed for comfort, stability, and sustainable practice.",
     alternates: {
         canonical: buildCanonicalUrl("/"),
     },
     openGraph: {
         title: `${SITE_NAME} - Premium Yoga Mats & Accessories`,
         description:
-            "Discover our collection of premium yoga mats and accessories. Designed for comfort, stability, and sustainable practice.",
+            "Join the movement. Discover our collection of premium yoga mats and accessories. Designed for comfort, stability, and sustainable practice.",
         type: "website",
         url: SITE_URL,
+        images: [
+            {
+                url: "/matmax-yoga-hero.png",
+                width: 1200,
+                height: 630,
+                alt: "MatMax Yoga - Join the movement",
+            },
+        ]
     },
 };
 

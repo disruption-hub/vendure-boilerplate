@@ -14,6 +14,7 @@ import 'dotenv/config';
 import path from 'path';
 import { LogtoAuthenticationStrategy } from './plugins/logto/logto-auth-strategy';
 import { ZKeyPlugin } from './plugins/zkey/zkey.plugin';
+import { ProxyTrustPlugin } from './plugins/proxy-trust.plugin';
 
 const isDev: Boolean = process.env.APP_ENV === 'dev';
 
@@ -131,6 +132,7 @@ export const config: VendureConfig = {
         ]
     },
     plugins: [
+        ProxyTrustPlugin,
         ZKeyPlugin,
         AssetServerPlugin.init({
             route: 'assets',

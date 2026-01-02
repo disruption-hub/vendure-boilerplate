@@ -15,8 +15,7 @@ if (assetDir) {
 runMigrations(config)
     .then(() => bootstrap(config))
     .then(app => {
-        // Set trust proxy to true for Railway's proxy setup
-        app.getHttpAdapter().getInstance().set('trust proxy', 1);
+        // Proxy trust is now handled by ProxyTrustPlugin
     })
     .catch(err => {
         console.log(err);

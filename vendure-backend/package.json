@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@nestjs/apollo": "13.1.0",
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/core": "^11.0.1",
     "@nestjs/graphql": "13.1.0",
     "@sendgrid/mail": "^8.1.4",
     "@vendure/admin-ui-plugin": "^3.5.0",
