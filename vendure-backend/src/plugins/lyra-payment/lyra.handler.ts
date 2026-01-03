@@ -22,7 +22,7 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
         },
         endpoint: {
             type: 'string',
-            defaultValue: 'https://api.lyra.com/api-payment/V4/',
+            defaultValue: 'https://api.micuentaweb.pe/api-payment/V4/',
             label: [{ languageCode: LanguageCode.en, value: 'API Endpoint' }],
             description: [{ languageCode: LanguageCode.en, value: 'Lyra API endpoint URL' }]
         },

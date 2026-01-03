@@ -73,7 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {/* Lyra Payment Form CSS */}
                 <link
                     rel="stylesheet"
-                    href="https://api.lyra.com/static/js/krypton-client/V4.0/ext/neon-reset.min.css"
+                    href="https://static.lyra.com/static/js/krypton-client/V4.0/ext/neon-reset.min.css"
                 />
             </head>
             <body
@@ -90,7 +90,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
                 {/* Lyra Payment Form JS - loaded lazily for performance */}
                 <Script
-                    src="https://api.lyra.com/static/js/krypton-client/V4.0/ext/neon.js"
+                    src="https://static.lyra.com/static/js/krypton-client/V4.0/ext/neon.js"
                     strategy="lazyOnload"
                 />
             </body>

@@ -30,6 +30,10 @@ export default function LyraPayment({ orderCode, onSuccess }: LyraPaymentProps) 
 
             if (data?.addPaymentToOrder?.__typename === 'Order') {
                 const payments = data.addPaymentToOrder.payments;
+                if (!payments || payments.length === 0) {
+                    toast.error('No payment created');
+                    return;
+                }
                 const lastPayment = payments[payments.length - 1];
 
                 // Extract from metadata.public
@@ -41,7 +45,7 @@ export default function LyraPayment({ orderCode, onSuccess }: LyraPaymentProps) 
                     return;
                 }
 
-                const endpoint = "https://api.lyra.com"; // Change to PayZen endpoint if needed
+                const endpoint = "https://static.lyra.com"; // MiCuentaWeb uses static.lyra.com for scripts
 
                 // 2. Load the Lyra library
                 const { KR } = await KRGlue.loadLibrary(endpoint, publicKey);
