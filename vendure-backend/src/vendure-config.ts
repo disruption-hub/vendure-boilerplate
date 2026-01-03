@@ -72,25 +72,6 @@ export const config: VendureConfig = {
             ],
             credentials: true,
         },
-        middleware: [
-            {
-                route: '/payments/lyra-ipn',
-                handler: (req: any, res: any, next: any) => {
-                    // Store raw body for HMAC signature verification
-                    if (req.readable) {
-                        let data = '';
-                        req.setEncoding('utf8');
-                        req.on('data', (chunk: string) => { data += chunk; });
-                        req.on('end', () => {
-                            req.rawBody = data;
-                            next();
-                        });
-                    } else {
-                        next();
-                    }
-                },
-            },
-        ],
     },
     authOptions: {
         tokenMethod: ['bearer', 'cookie'],
