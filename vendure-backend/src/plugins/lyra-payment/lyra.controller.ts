@@ -112,12 +112,6 @@ export class LyraController {
                 // Fallback: If the payment was created but has no transaction ID yet (common with Lyra form tokens),
                 // find the 'Created' payment for this order.
                 payment = order.payments?.find(p => p.state === 'Created');
-
-                if (payment) {
-                    this.logger.log(`Found 'Created' payment ${payment.id} for order ${order.code}. Updating transactionId to ${transactionUuid}.`);
-                    payment.transactionId = transactionUuid;
-                    await this.connection.getRepository(ctx, 'Payment').save(payment);
-                }
             }
 
             if (!payment) {
@@ -125,8 +119,30 @@ export class LyraController {
                 return res.status(200).send('OK');
             }
 
+            // 4. Enrich Metadata
+            const mainTransaction = data?.transactions?.[0];
+            const cardDetails = mainTransaction?.transactionDetails?.cardDetails;
+
+            payment.metadata = {
+                ...(payment.metadata || {}),
+                lyra: {
+                    orderStatus: data.orderStatus,
+                    detailedStatus: mainTransaction?.detailedStatus,
+                    effectiveBrand: cardDetails?.effectiveBrand,
+                    pan: cardDetails?.pan,
+                    expiryMonth: cardDetails?.expiryMonth,
+                    expiryYear: cardDetails?.expiryYear,
+                    errorCode: mainTransaction?.errorCode || data.errorCode,
+                    errorMessage: mainTransaction?.errorMessage || data.errorMessage,
+                    transactionUuid: mainTransaction?.uuid,
+                }
+            };
+
+            payment.transactionId = transactionUuid;
+            await this.connection.getRepository(ctx, 'Payment').save(payment as any);
+
             if (data.orderStatus === 'PAID') {
-                this.logger.log(`Settling payment ${payment.id} for order ${order.code}`);
+                this.logger.log(`Settling payment ${payment.id} for order ${order.code} (${cardDetails?.effectiveBrand || 'unknown card'})`);
                 await this.orderService.settlePayment(ctx, payment.id);
             } else {
                 // For refused/cancelled/unpaid states, mark the payment declined so the order is not treated as paid.
