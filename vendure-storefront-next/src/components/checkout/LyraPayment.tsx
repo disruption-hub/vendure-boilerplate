@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { mutate } from '@/lib/vendure/api';
-import { AddLyraPaymentMutation } from '@/lib/vendure/mutations';
+import { AddLyraPaymentMutation, TransitionOrderToStateMutation } from '@/lib/vendure/mutations';
 
 interface LyraPaymentProps {
     orderCode: string;
@@ -21,7 +21,14 @@ export default function LyraPayment({ orderCode, onSuccess }: LyraPaymentProps) 
     const setupLyra = async () => {
         setLoading(true);
         try {
-            // 1. Call Vendure to generate the formToken
+            // 1. Transition order to ArrangingPayment if not already there
+            await mutate(
+                TransitionOrderToStateMutation,
+                { state: 'ArrangingPayment' },
+                { useAuthToken: true }
+            );
+
+            // 2. Call Vendure to generate the formToken
             const { data } = await mutate(
                 AddLyraPaymentMutation,
                 { input: { method: 'lyra-payment', metadata: {} } },

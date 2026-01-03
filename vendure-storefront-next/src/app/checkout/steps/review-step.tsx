@@ -1,26 +1,37 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Loader2, MapPin, Truck, CreditCard, Edit } from 'lucide-react';
 import { useCheckout } from '../checkout-provider';
 import { placeOrder as placeOrderAction } from '../actions';
 import { Price } from '@/components/commerce/price';
+import LyraPayment from '@/components/checkout/LyraPayment';
 
 interface ReviewStepProps {
   onEditStep: (step: 'shipping' | 'delivery' | 'payment') => void;
 }
 
 export default function ReviewStep({ onEditStep }: ReviewStepProps) {
+  const router = useRouter();
   const { order, paymentMethods, selectedPaymentMethodCode } = useCheckout();
   const [loading, setLoading] = useState(false);
+  const [showLyra, setShowLyra] = useState(false);
 
   const selectedPaymentMethod = paymentMethods.find(
     (method) => method.code === selectedPaymentMethodCode
   );
 
+  const isLyraPayment = selectedPaymentMethodCode === 'lyra-payment';
+
   const handlePlaceOrder = async () => {
     if (!selectedPaymentMethodCode) return;
+
+    if (isLyraPayment) {
+      setShowLyra(true);
+      return;
+    }
 
     setLoading(true);
     try {
@@ -34,6 +45,10 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
       console.error('Error placing order:', error);
       setLoading(false);
     }
+  };
+
+  const handleLyraSuccess = (orderCode: string) => {
+    router.push(`/order-confirmation/${orderCode}`);
   };
 
   return (
@@ -136,15 +151,24 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
         </div>
       </div>
 
-      <Button
-        onClick={handlePlaceOrder}
-        disabled={loading || !order.shippingAddress || !order.shippingLines?.length || !selectedPaymentMethodCode}
-        size="lg"
-        className="w-full"
-      >
-        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Place Order
-      </Button>
+      <div className="pt-4">
+        {showLyra && isLyraPayment ? (
+          <LyraPayment
+            orderCode={order.code}
+            onSuccess={handleLyraSuccess}
+          />
+        ) : (
+          <Button
+            onClick={handlePlaceOrder}
+            disabled={loading || !order.shippingAddress || !order.shippingLines?.length || !selectedPaymentMethodCode}
+            size="lg"
+            className="w-full"
+          >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isLyraPayment ? 'Proceed to Secure Payment' : 'Place Order'}
+          </Button>
+        )}
+      </div>
 
       {(!order.shippingAddress || !order.shippingLines?.length || !selectedPaymentMethodCode) && (
         <p className="text-sm text-destructive text-center">

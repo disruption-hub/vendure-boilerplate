@@ -1,5 +1,7 @@
-import { PaymentMethodHandler, LanguageCode, CreatePaymentResult, SettlePaymentResult, CreatePaymentErrorResult } from '@vendure/core';
+import { PaymentMethodHandler, LanguageCode, CreatePaymentResult, SettlePaymentResult, CreatePaymentErrorResult, Logger } from '@vendure/core';
 import axios from 'axios';
+
+const loggerCtx = 'LyraPaymentHandler';
 
 export const lyraPaymentHandler = new PaymentMethodHandler({
     code: 'lyra-payment',
@@ -20,6 +22,11 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
             label: [{ languageCode: LanguageCode.en, value: 'Public Key' }],
             description: [{ languageCode: LanguageCode.en, value: 'Your Lyra public key for frontend' }]
         },
+        hmacKey: {
+            type: 'string',
+            label: [{ languageCode: LanguageCode.en, value: 'HMAC Key' }],
+            description: [{ languageCode: LanguageCode.en, value: 'Your Lyra HMAC key for webhook verification' }]
+        },
         endpoint: {
             type: 'string',
             defaultValue: 'https://api.micuentaweb.pe/api-payment/V4/',
@@ -29,9 +36,25 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
     },
 
     createPayment: async (ctx, order, amount, args, metadata): Promise<CreatePaymentResult | CreatePaymentErrorResult> => {
+        const username = args.username || process.env.LYRA_SITE_ID;
+        const password = args.password || process.env.LYRA_PASSWORD;
+        const publicKey = args.publicKey || process.env.LYRA_PUBLIC_KEY;
+        const endpoint = args.endpoint || process.env.LYRA_ENDPOINT || 'https://api.micuentaweb.pe/api-payment/V4/';
+
+        if (!username || !password) {
+            Logger.error('Lyra credentials not configured', loggerCtx);
+            return {
+                amount: order.totalWithTax,
+                state: 'Declined' as const,
+                errorMessage: 'Lyra credentials not configured',
+            };
+        }
+
         try {
+            Logger.info(`Creating Lyra payment for order ${order.code} (amount: ${amount})`, loggerCtx);
+
             // Encode credentials for Basic Auth
-            const basicAuth = Buffer.from(`${args.username}:${args.password}`).toString('base64');
+            const basicAuth = Buffer.from(`${username}:${password}`).toString('base64');
 
             // Payload for Lyra V4 API
             const payload = {
@@ -53,7 +76,7 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
             };
 
             const response = await axios.post(
-                `${args.endpoint}Charge/CreatePayment`,
+                `${endpoint}Charge/CreatePayment`,
                 payload,
                 {
                     headers: {
@@ -63,9 +86,12 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
                 }
             );
 
+            Logger.debug(`Lyra API response: ${JSON.stringify(response.data)}`, loggerCtx);
+
             const answer = response.data.answer;
 
             if (response.data.status === 'SUCCESS') {
+                Logger.info(`Lyra payment created successfully: ${answer.uuid}`, loggerCtx);
                 return {
                     amount: order.totalWithTax,
                     state: 'Authorized' as const,
@@ -74,21 +100,23 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
                     metadata: {
                         public: {
                             formToken: answer.formToken,
-                            publicKey: args.publicKey,
+                            publicKey: publicKey,
                         }
                     },
                 };
             }
 
+            Logger.warn(`Lyra payment creation failed: ${response.data.status} - ${answer?.errorMessage || 'No error message'}`, loggerCtx);
             return {
                 amount: order.totalWithTax,
                 state: 'Declined' as const,
-                errorMessage: answer.errorMessage || 'Lyra payment creation failed',
+                errorMessage: answer?.errorMessage || 'Lyra payment creation failed',
             };
 
         } catch (e: any) {
             // Handle Axios errors safely
             const errorMsg = e.response?.data?.answer?.errorMessage || e.message;
+            Logger.error(`Lyra API error: ${errorMsg}`, loggerCtx, e.stack);
             return {
                 amount: order.totalWithTax,
                 state: 'Declined' as const,
