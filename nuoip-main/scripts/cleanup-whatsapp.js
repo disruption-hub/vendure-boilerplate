@@ -1,0 +1,23 @@
+const { PrismaClient } = require('@prisma/client')
+
+const prisma = new PrismaClient()
+
+async function cleanup() {
+    console.log('🔍 Deleting old WhatsApp contacts...\n')
+
+    const oldSessionId = 'session-1764575170092'
+
+    const result = await prisma.whatsAppContact.deleteMany({
+        where: { sessionId: oldSessionId }
+    })
+
+    console.log(`✅ Deleted ${result.count} old WhatsApp contacts`)
+    console.log('👉 Now hard refresh the page!')
+}
+
+cleanup()
+    .then(() => process.exit(0))
+    .catch((e) => {
+        console.error(e)
+        process.exit(1)
+    })

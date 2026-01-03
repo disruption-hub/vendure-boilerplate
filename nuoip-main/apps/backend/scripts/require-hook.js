@@ -1,0 +1,433 @@
+/**
+ * Runtime require hook to fix directory requires for shared packages
+ * This MUST be loaded with -r flag BEFORE any other modules
+ * 
+ * Hooks into Module._resolveFilename to intercept BEFORE tsconfig-paths
+ * 
+ * Usage: node -r ./scripts/require-hook.js dist/main.js
+ */
+const Module = require('module')
+const { existsSync } = require('fs')
+const { resolve, dirname, sep } = require('path')
+
+const MONOREPO_ROOT = resolve(__dirname, '..', '..', '..')
+const PACKAGES_ROOT = resolve(MONOREPO_ROOT, 'packages')
+const BACKEND_SRC_ROOT = resolve(__dirname, '..', 'src')
+const NEXTJS_SRC_ROOT = resolve(MONOREPO_ROOT, 'apps', 'nextjs', 'src')
+const SRC_ROOTS = [BACKEND_SRC_ROOT, NEXTJS_SRC_ROOT]
+const PRISMA_CLIENT_BASES = [
+  resolve(MONOREPO_ROOT, 'node_modules', '.prisma'),
+  resolve(MONOREPO_ROOT, 'apps', 'backend', 'node_modules', '.prisma'),
+]
+
+function normalizeRequest(request) {
+  return request.replace(/\\/g, '/')
+}
+
+function resolveIntoPackages(request) {
+  const normalized = normalizeRequest(request)
+  const packagesIndex = normalized.indexOf('packages/')
+
+  if (packagesIndex === -1) {
+    return null
+  }
+
+  const relativePath = normalized.slice(packagesIndex + 'packages/'.length)
+
+  if (!relativePath) {
+    return null
+  }
+
+  const basePath = resolve(PACKAGES_ROOT, relativePath)
+
+  const candidates = []
+
+  if (basePath.endsWith('.ts') || basePath.endsWith('.js')) {
+    candidates.push(basePath)
+  } else {
+    candidates.push(
+      resolve(basePath, 'index.ts'),
+      resolve(basePath, 'index.js'),
+      `${basePath}.ts`,
+      `${basePath}.js`,
+    )
+  }
+
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) {
+      return candidate
+    }
+  }
+
+  return null
+}
+
+function buildSrcCandidates(root, relativePath, hasExplicitExtension) {
+  const basePath = resolve(root, relativePath)
+  const candidates = []
+
+  if (hasExplicitExtension) {
+    candidates.push(basePath)
+  } else {
+    candidates.push(
+      `${basePath}.ts`,
+      `${basePath}.js`,
+      resolve(basePath, 'index.ts'),
+      resolve(basePath, 'index.js'),
+      basePath
+    )
+  }
+
+  return candidates
+}
+
+function resolveAtAlias(request) {
+  if (!request.startsWith('@')) {
+    return null
+  }
+
+  // Handle @ipnuo/* monorepo packages first
+  if (request.startsWith('@ipnuo/')) {
+    const packageName = request.replace('@ipnuo/', '')
+    const hasSubpath = packageName.includes('/')
+
+    if (hasSubpath) {
+      // e.g., @ipnuo/domain/something
+      const [pkgName, ...subpath] = packageName.split('/')
+      const packageRoot = resolve(PACKAGES_ROOT, pkgName, 'src')
+      const target = resolve(packageRoot, ...subpath)
+      const hasExplicitExtension = target.endsWith('.ts') || target.endsWith('.js')
+
+      const candidates = hasExplicitExtension ? [target] : [
+        `${target}.ts`,
+        `${target}.js`,
+        resolve(target, 'index.ts'),
+        resolve(target, 'index.js'),
+      ]
+
+      for (const candidate of candidates) {
+        if (existsSync(candidate)) {
+          return candidate
+        }
+      }
+    } else {
+      // e.g., @ipnuo/domain (resolve to index.ts)
+      const packageRoot = resolve(PACKAGES_ROOT, packageName, 'src')
+      const candidates = [
+        resolve(packageRoot, 'index.ts'),
+        resolve(packageRoot, 'index.js'),
+      ]
+
+      for (const candidate of candidates) {
+        if (existsSync(candidate)) {
+          return candidate
+        }
+      }
+    }
+
+    return null
+  }
+
+  let relativePath = request.slice(1)
+
+  if (relativePath.startsWith('/')) {
+    relativePath = relativePath.slice(1)
+  }
+
+  const hasExplicitExtension = relativePath.endsWith('.ts') || relativePath.endsWith('.js')
+
+  for (const root of SRC_ROOTS) {
+    const candidates = buildSrcCandidates(root, relativePath, hasExplicitExtension)
+
+    for (const candidate of candidates) {
+      if (candidate && existsSync(candidate)) {
+        return candidate
+      }
+    }
+  }
+
+  return null
+}
+
+function buildFileCandidates(basePath, hasExplicitExtension) {
+  const candidates = []
+
+  if (hasExplicitExtension) {
+    candidates.push(basePath)
+  } else {
+    candidates.push(
+      `${basePath}.ts`,
+      `${basePath}.js`,
+      resolve(basePath, 'index.ts'),
+      resolve(basePath, 'index.js'),
+      basePath
+    )
+  }
+
+  return candidates
+}
+
+function resolveFromSourceSibling(request, parent) {
+  // DISABLED: This function was redirecting dist/ requires to src/ files,
+  // which causes Node.js v20 to try loading .ts files as ESM modules,
+  // resulting in "SyntaxError: Invalid or unexpected token" on decorators.
+  // The dist/ files are already properly compiled by SWC.
+  return null
+}
+
+function resolvePrismaClient(request, parent) {
+  // Handle .prisma/client/default and similar paths
+  // @prisma/client looks for .prisma/client/default which is generated by prisma-client-js
+  // With prisma-client-js, the client is generated in node_modules/.prisma/client
+  // The actual location is packages/prisma/node_modules/.prisma/client
+  if (!request.startsWith('.prisma/')) {
+    return null
+  }
+
+  // Check if this is a request from @prisma/client
+  const isFromPrismaClient = parent && parent.filename && (
+    parent.filename.includes(`${sep}@prisma${sep}client`) ||
+    parent.filename.includes(`${sep}node_modules${sep}@prisma${sep}client`)
+  )
+
+  if (!isFromPrismaClient) {
+    return null
+  }
+
+  const relativePath = request.slice('.prisma/'.length)
+  // Remove 'client/' prefix if present (e.g., 'client/default' -> 'default')
+  const cleanPath = relativePath.startsWith('client/') ? relativePath.slice(7) : relativePath
+  const hasExplicitExtension = cleanPath.endsWith('.ts') || cleanPath.endsWith('.js')
+
+  // Try multiple possible locations for .prisma/client
+  // With prisma-client-js, the client is in node_modules/.prisma/client
+  // Priority: packages/prisma/node_modules/.prisma/client (where it's actually generated)
+  const possibleBases = [
+    resolve(MONOREPO_ROOT, 'packages', 'prisma', 'node_modules', '.prisma', 'client'),
+    resolve(MONOREPO_ROOT, 'node_modules', '.prisma', 'client'),
+    resolve(MONOREPO_ROOT, 'apps', 'backend', 'node_modules', '.prisma', 'client'),
+    ...PRISMA_CLIENT_BASES,
+  ]
+
+  for (const base of possibleBases) {
+    const candidates = buildSrcCandidates(base, cleanPath, hasExplicitExtension)
+
+    for (const candidate of candidates) {
+      if (candidate && existsSync(candidate)) {
+        return candidate
+      }
+    }
+  }
+
+  // If we're looking for 'default', try index.js/index.ts as fallback
+  if (cleanPath === 'default' || cleanPath === 'default.js') {
+    for (const base of possibleBases) {
+      const indexJs = resolve(base, 'index.js')
+      const indexTs = resolve(base, 'index.ts')
+      if (existsSync(indexJs)) return indexJs
+      if (existsSync(indexTs)) return indexTs
+    }
+  }
+
+  return null
+}
+
+function resolveIntoAppSrc(request) {
+  const normalized = normalizeRequest(request)
+
+  if (!normalized.startsWith('.')) {
+    return null
+  }
+
+  const srcMarker = '/src/'
+  const srcIndex = normalized.lastIndexOf(srcMarker)
+
+  if (srcIndex === -1) {
+    return null
+  }
+
+  const relativePath = normalized.slice(srcIndex + srcMarker.length)
+
+  if (!relativePath) {
+    return null
+  }
+
+  const hasExplicitExtension = relativePath.endsWith('.ts') || relativePath.endsWith('.js')
+
+  for (const root of SRC_ROOTS) {
+    const candidates = buildSrcCandidates(root, relativePath, hasExplicitExtension)
+
+    for (const candidate of candidates) {
+      if (candidate && existsSync(candidate)) {
+        return candidate
+      }
+    }
+  }
+
+  return null
+}
+
+function resolvePrismaGeneratedClient(request, parent) {
+  const normalized = normalizeRequest(request)
+
+  // Check if this is a path to Prisma 7 generated client
+  // Pattern: packages/prisma/generated/prisma/client (can be relative or absolute)
+  const prismaGeneratedPattern = /packages\/prisma\/generated\/prisma\/client/
+
+  if (!prismaGeneratedPattern.test(normalized)) {
+    return null
+  }
+
+  // Always resolve to the known Prisma Client location
+  // This handles both relative paths (../../../packages/...) and absolute paths
+  const prismaGeneratedRoot = resolve(PACKAGES_ROOT, 'prisma', 'generated', 'prisma', 'client')
+
+  // Extract any sub-path after the client directory
+  const match = normalized.match(/packages\/prisma\/generated\/prisma\/client(.*)/)
+  const relativePath = match ? (match[1] || '') : ''
+
+  // Build the full path
+  let resolvedPath = prismaGeneratedRoot
+  if (relativePath) {
+    // Remove leading slash if present
+    const cleanPath = relativePath.startsWith('/') ? relativePath.slice(1) : relativePath
+    resolvedPath = resolve(prismaGeneratedRoot, cleanPath)
+  }
+
+  // Build candidates for the requested path
+  const hasExplicitExtension = resolvedPath.endsWith('.ts') || resolvedPath.endsWith('.js')
+  const candidates = []
+
+  if (hasExplicitExtension) {
+    candidates.push(resolvedPath)
+  } else {
+    // Try common entry points - Prisma 7 generates client.ts as the main entry
+    candidates.push(
+      resolve(resolvedPath, 'client.ts'),
+      resolve(resolvedPath, 'client.js'),
+      resolve(resolvedPath, 'index.ts'),
+      resolve(resolvedPath, 'index.js'),
+      `${resolvedPath}.ts`,
+      `${resolvedPath}.js`,
+      resolvedPath,
+    )
+  }
+
+  // Check each candidate
+  for (const candidate of candidates) {
+    if (candidate && existsSync(candidate)) {
+      return candidate
+    }
+  }
+
+  // Debug: Log if we couldn't find the file (only in development/debug mode)
+  if (process.env.DEBUG_REQUIRE_HOOK) {
+    console.error(`[require-hook] Prisma Client not found. Request: ${request}, Normalized: ${normalized}, Root: ${prismaGeneratedRoot}, Candidates tried:`, candidates)
+  }
+
+  return null
+}
+
+// Store original _resolveFilename
+const originalResolveFilename = Module._resolveFilename
+
+// Override _resolveFilename to handle directory requires BEFORE tsconfig-paths
+Module._resolveFilename = function (request, parent, isMain, options) {
+  // Handle Prisma internal aliases like #main-entry-point
+  // These are used by Prisma's generated client code
+  if (request.startsWith('#') && parent && parent.filename) {
+    const isFromPrismaClient = parent.filename.includes(`${sep}.prisma${sep}client`) ||
+      parent.filename.includes(`${sep}@prisma${sep}client`)
+
+    if (isFromPrismaClient) {
+      // #main-entry-point refers to the main client.js file
+      if (request === '#main-entry-point') {
+        const prismaClientBase = resolve(MONOREPO_ROOT, 'packages', 'prisma', 'node_modules', '.prisma', 'client')
+        const mainEntry = resolve(prismaClientBase, 'client.js')
+        if (existsSync(mainEntry)) {
+          return originalResolveFilename.call(this, mainEntry, parent, isMain, options)
+        }
+      }
+    }
+  }
+
+  const packageTarget = resolveIntoPackages(request)
+
+  if (packageTarget) {
+    return originalResolveFilename.call(this, packageTarget, parent, isMain, options)
+  }
+
+  const atAliasTarget = resolveAtAlias(request)
+
+  if (atAliasTarget) {
+    return originalResolveFilename.call(this, atAliasTarget, parent, isMain, options)
+  }
+
+  const appSrcTarget = resolveIntoAppSrc(request)
+
+  if (appSrcTarget) {
+    return originalResolveFilename.call(this, appSrcTarget, parent, isMain, options)
+  }
+
+  const sourceSiblingTarget = resolveFromSourceSibling(request, parent)
+
+  if (sourceSiblingTarget) {
+    return originalResolveFilename.call(this, sourceSiblingTarget, parent, isMain, options)
+  }
+
+  // Check for Prisma 7 generated client FIRST (before other Prisma checks)
+  // This handles paths like ../../../packages/prisma/generated/prisma/client
+  const prismaGeneratedClientTarget = resolvePrismaGeneratedClient(request, parent)
+
+  if (prismaGeneratedClientTarget) {
+    return originalResolveFilename.call(this, prismaGeneratedClientTarget, parent, isMain, options)
+  }
+
+  const prismaClientTarget = resolvePrismaClient(request, parent)
+
+  if (prismaClientTarget) {
+    return originalResolveFilename.call(this, prismaClientTarget, parent, isMain, options)
+  }
+
+  // Check if this is a relative path to a packages directory
+  if (request.includes('packages/') && request.includes('/src') && !request.endsWith('.ts') && !request.endsWith('.js')) {
+    // Get the parent directory to resolve relative paths
+    const parentDir = parent ? dirname(parent.filename) : process.cwd()
+
+    // Try to resolve with /index.ts first (for ts-node)
+    const withIndexTs = `${request}/index.ts`
+    const resolvedWithIndexTs = resolve(parentDir, withIndexTs)
+
+    if (existsSync(resolvedWithIndexTs)) {
+      // Use the path with /index.ts appended
+      return originalResolveFilename.call(this, withIndexTs, parent, isMain, options)
+    }
+
+    // Try /index.js as fallback
+    const withIndexJs = `${request}/index.js`
+    const resolvedWithIndexJs = resolve(parentDir, withIndexJs)
+
+    if (existsSync(resolvedWithIndexJs)) {
+      return originalResolveFilename.call(this, withIndexJs, parent, isMain, options)
+    }
+
+    // Fallback: just append /index.ts and let ts-node handle it
+    // This is the most reliable approach since ts-node can handle .ts files
+    try {
+      return originalResolveFilename.call(this, `${request}/index.ts`, parent, isMain, options)
+    } catch (error) {
+      // If that fails, try /index.js
+      try {
+        return originalResolveFilename.call(this, `${request}/index.js`, parent, isMain, options)
+      } catch (error2) {
+        // Last resort: try original path
+        return originalResolveFilename.call(this, request, parent, isMain, options)
+      }
+    }
+  }
+
+  // Fall back to original _resolveFilename
+  return originalResolveFilename.call(this, request, parent, isMain, options)
+}
+
+console.log('✅ Runtime require hook loaded - directory requires will be fixed automatically')

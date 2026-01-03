@@ -217,6 +217,26 @@ export const GetActiveOrderForCheckoutQuery = graphql(`
     }
 `);
 
+export const GetActiveOrderWithPaymentsQuery = graphql(`
+    query GetActiveOrderWithPayments {
+        activeOrder {
+            id
+            code
+            state
+            totalWithTax
+            payments {
+                id
+                method
+                amount
+                state
+                transactionId
+                createdAt
+                metadata
+            }
+        }
+    }
+`);
+
 export const GetCustomerAddressesQuery = graphql(`
     query GetCustomerAddresses {
         activeCustomer {

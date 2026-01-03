@@ -1,0 +1,63 @@
+# Root-level nixpacks.toml - Optimized for faster deployment
+# Uses npm install instead of npm ci to handle lock file sync issues
+# Railway copies full repo, builds from root
+# VERSION: 2.13 - Note: Railway/Nixpacks generates Docker warnings for secrets
+# These warnings (SecretsUsedInArgOrEnv, UndefinedVar) are false positives from
+# Railway's auto-generated Dockerfile and do not affect the build or runtime
+
+[phases.setup]
+# Prisma 7.0.0 requires Node.js ^20.19 || ^22.12 || ^24.0
+# This means: 20.19.0+ (<21.0.0), 22.12.0+ (<23.0.0), or 24.0.0+
+# Railway's nodejs_22 provides 22.11.0 which is too old
+# nodejs_24 is not available in Nixpacks
+# Solution: Use nodejs_20 as base, then install Node.js 20.19.0+ via nvm
+nixPkgs = ["nodejs_20"]
+
+# Install dependencies - using npm install for better compatibility
+# Install backend dependencies first (needed for build)
+# Then install Prisma and shared packages dependencies
+# Install ts-node globally for runtime access
+# IMPORTANT: Install Node.js 20.19.0+ using nvm for Prisma 7 compatibility
+# Each command needs to load nvm since they run in separate shells
+[phases.install]
+cmds = [
+  "echo '=== Installing Node.js 20.19.0 using nvm ==='",
+  "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm install 20.19.0",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && nvm alias default 20.19.0",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && echo '=== Node.js version after nvm install (must be 20.19.0+ for Prisma 7) ===' && node --version && npm --version && echo '=== Verifying Node.js version meets Prisma 7 requirements ===' && node -e \"const v=process.versions.node.split('.'); const major=parseInt(v[0]); const minor=parseInt(v[1]); if((major===20&&minor>=19)||(major===22&&minor>=12)||major>=24){console.log('✅ Node.js version compatible with Prisma 7');}else{console.error('❌ Node.js version incompatible:', process.versions.node); process.exit(1);}\"",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && cd apps/backend && npm install --include=dev --prefer-offline --no-audit --legacy-peer-deps",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && cd packages/prisma && npm install --prefer-offline --no-audit --legacy-peer-deps",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && cd packages/shared-chat-auth && npm install --prefer-offline --no-audit --legacy-peer-deps || echo 'shared-chat-auth install skipped'",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && cd packages/domain && npm install --prefer-offline --no-audit --legacy-peer-deps || echo 'domain install skipped'",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && npm install -g ts-node tsconfig-paths || echo 'Global install skipped'"
+]
+
+# Generate Prisma Client (Prisma 7) and build NestJS
+# Verify packages exist before building
+# IMPORTANT: Run fix-requires.js after build to fix require paths
+# Prisma 7: Client is now generated in packages/prisma/generated/prisma/client
+# Load nvm to use Node.js 20.19.0 in build phase
+# Each command needs to load nvm since they run in separate shells
+[phases.build]
+cmds = [
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && echo '=== Node.js version in build phase ===' && node --version",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && echo '=== Generating Prisma Client 7 ===' && cd packages/prisma && npm run generate && echo '=== Prisma Client generated successfully ===' || (echo 'ERROR: Prisma generate failed!' && exit 1)",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && echo '=== Verifying Prisma Client generated ===' && (ls -la packages/prisma/node_modules/.prisma/client/index.js || ls -la packages/prisma/node_modules/@prisma/client/index.js || ls -la node_modules/.prisma/client/index.js || ls -la node_modules/@prisma/client/index.js || echo 'WARNING: Prisma client not found in expected location')",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && echo '=== Verifying packages exist ===' && ls -la packages/shared-chat-auth/src/index.ts || echo 'ERROR: shared-chat-auth/src/index.ts NOT FOUND'",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && ls -la packages/domain/src/index.ts || echo 'ERROR: domain/src/index.ts NOT FOUND'",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && echo '=== Building NestJS ===' && cd apps/backend && npm run build",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && echo '=== Checking dist files BEFORE fix ===' && grep -h 'packages/shared-chat-auth/src' apps/backend/dist/auth/auth.service.js | head -1 || echo 'No match found'",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && echo '=== Running fix-requires.js ===' && cd apps/backend && node scripts/fix-requires.js",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && echo '=== Checking dist files AFTER fix ===' && grep -h 'packages/shared-chat-auth/src' apps/backend/dist/auth/auth.service.js | head -1 || echo 'No match found'",
+  "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && echo '=== Verifying fix worked ===' && if grep -q 'packages/shared-chat-auth/src/index.ts' apps/backend/dist/auth/auth.service.js; then echo '✅ Fix verified: paths include /index.ts'; else echo '❌ Fix failed: paths still missing /index.ts'; fi"
+]
+
+# Start the production server
+# Load nvm and use Node.js 20.19.0, then start the server
+# IMPORTANT: Generate Prisma Client and run migrations before starting
+# Migrations will auto-apply any pending schema changes to the database
+# ts-node/register handles TypeScript execution
+# tsconfig-paths/register handles path aliases
+[start]
+cmd = "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm use 20.19.0 && echo '=== Node.js version at start ===' && node --version && echo '=== Ensuring Prisma Client exists ===' && (cd packages/prisma && npm run generate) && echo '✅ Prisma Client generated' && echo '=== Deploying Prisma Migrations to Railway Database ===' && (cd packages/prisma && npx prisma migrate deploy --schema ./schema.prisma && echo '✅ All migrations applied successfully') && echo '=== Starting NestJS Backend ===' && cd apps/backend && npm run start:prod"

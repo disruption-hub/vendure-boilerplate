@@ -1,0 +1,33 @@
+{
+  "theme": "classic",
+  "language": "en-EN",
+  "testMode": {
+    "enabled": false,
+    "credentials": {
+      "apiUser": "88569105",
+      "hmacKey": "H9qtqKGBMUFzH8F0kz4ihdw3MTBb0WbpJ1TLLuRLxHZM1",
+      "publicKey": "88569105:testpublickey_oHKEsiKA3i9E1JshcnIA7RktrR163DdRZYzYOWgXqwSXx",
+      "apiBaseUrl": "https://api.micuentaweb.pe/",
+      "apiPassword": "testpassword_NSJpdOElQsM4RMu16WF89ykCViBW9ddilhEdsq02sHA2T",
+      "scriptBaseUrl": "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js"
+    }
+  },
+  "activeMode": "production",
+  "paymentMethods": [
+    "CARDS"
+  ],
+  "productionMode": {
+    "enabled": true,
+    "credentials": {
+      "apiUser": "88569105",
+      "hmacKey": "QAIcB8EDBmn7nVyaWNdwXy8ZAVCIpIFOlAwsHaMWh5v0t",
+      "publicKey": "88569105:publickey_UKrWqzlcOvfMEi4OdXuBAcGK1TaTK6izlIJZYWwHGCqkv",
+      "apiBaseUrl": "https://api.micuentaweb.pe/",
+      "apiPassword": "prodpassword_tiPSSFkGzOi7hJgKBQgWiLv1Kayx93TRT7Xg3Yi71Do6S",
+      "scriptBaseUrl": "https://static.micuentaweb.pe/static/js/krypton-client/V4.0/stable/kr-payment-form.min.js"
+    }
+  },
+  "failureRedirectUrl": "/payments/lyra/browser-failure",
+  "successRedirectUrl": "/payments/lyra/browser-success"
+}
+

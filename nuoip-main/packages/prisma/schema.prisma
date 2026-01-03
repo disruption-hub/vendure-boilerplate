@@ -1,0 +1,1983 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Account {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  @@unique([provider, providerAccountId])
+}
+
+model BufferMessage {
+  id            String        @id
+  sessionId     String
+  role          MessageRole
+  content       String
+  metadata      Json?
+  timestamp     DateTime      @default(now())
+  MemorySession MemorySession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([timestamp])
+}
+
+model Conversation {
+  id        String    @id
+  userId    String?
+  sessionId String
+  title     String?
+  metadata  Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  Message   Message[]
+
+  @@index([sessionId])
+  @@index([userId])
+}
+
+model ConversationSummary {
+  id             String        @id
+  sessionId      String
+  summary        String
+  keyTopics      String[]
+  entities       String[]
+  userInterests  String[]
+  pendingActions String[]
+  messageCount   Int
+  createdAt      DateTime      @default(now())
+  MemorySession  MemorySession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([sessionId])
+}
+
+model Document {
+  id          String      @id
+  title       String?
+  content     String
+  metadata    Json?
+  source      String?
+  chunkIndex  Int?
+  totalChunks Int?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime
+  Embedding   Embedding[]
+
+  @@index([chunkIndex])
+  @@index([source])
+}
+
+model Embedding {
+  id         String   @id
+  documentId String
+  content    String
+  createdAt  DateTime @default(now())
+  Document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+}
+
+model KnowledgeNode {
+  id                                                                  String                  @id
+  sessionId                                                           String
+  nodeId                                                              String                  @unique
+  type                                                                NodeType
+  name                                                                String
+  properties                                                          Json?
+  MemorySession                                                       MemorySession           @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+  KnowledgeRelationship_KnowledgeRelationship_sourceIdToKnowledgeNode KnowledgeRelationship[] @relation("KnowledgeRelationship_sourceIdToKnowledgeNode")
+  KnowledgeRelationship_KnowledgeRelationship_targetIdToKnowledgeNode KnowledgeRelationship[] @relation("KnowledgeRelationship_targetIdToKnowledgeNode")
+
+  @@unique([sessionId, nodeId])
+  @@index([sessionId])
+  @@index([type])
+}
+
+model KnowledgeRelationship {
+  id                                                          String        @id
+  sessionId                                                   String
+  sourceId                                                    String
+  targetId                                                    String
+  type                                                        String
+  weight                                                      Float
+  context                                                     String
+  timestamp                                                   DateTime      @default(now())
+  MemorySession                                               MemorySession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+  KnowledgeNode_KnowledgeRelationship_sourceIdToKnowledgeNode KnowledgeNode @relation("KnowledgeRelationship_sourceIdToKnowledgeNode", fields: [sourceId], references: [nodeId])
+  KnowledgeNode_KnowledgeRelationship_targetIdToKnowledgeNode KnowledgeNode @relation("KnowledgeRelationship_targetIdToKnowledgeNode", fields: [targetId], references: [nodeId])
+
+  @@index([sessionId])
+  @@index([sourceId])
+  @@index([targetId])
+  @@index([timestamp])
+  @@index([type])
+}
+
+model MemoryEntity {
+  id            String        @id
+  sessionId     String
+  name          String
+  type          EntityType
+  value         String
+  confidence    Float
+  context       String
+  lastMentioned DateTime      @default(now())
+  MemorySession MemorySession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+
+  @@unique([sessionId, name, type])
+  @@index([lastMentioned])
+  @@index([sessionId])
+  @@index([type])
+}
+
+model MemorySession {
+  id                    String                  @id
+  sessionId             String                  @unique
+  userId                String?
+  tenantId              String?
+  metadata              Json?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime
+  BufferMessage         BufferMessage[]
+  ConversationSummary   ConversationSummary[]
+  KnowledgeNode         KnowledgeNode[]
+  KnowledgeRelationship KnowledgeRelationship[]
+  MemoryEntity          MemoryEntity[]
+  tenant                tenant?                 @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([tenantId])
+}
+
+model Message {
+  id             String       @id
+  conversationId String
+  role           MessageRole
+  content        String
+  metadata       Json?
+  timestamp      DateTime     @default(now())
+  Conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([timestamp])
+}
+
+model ChatbotTheme {
+  id        String   @id @default(cuid())
+  tenantId  String
+  name      String
+  colors    Json     // Stores the semantic color map
+  isDefault Boolean  @default(false)
+  isActive  Boolean  @default(false) // If currently selected
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tenant    tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}
+
+model PushSubscription {
+  id             String    @id
+  endpoint       String    @unique
+  keys           Json
+  expirationTime DateTime?
+  tenantId       String?
+  userId         String?
+  metadata       Json?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime
+
+  @@index([tenantId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+}
+
+model TestModel {
+  id   String @id
+  name String
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model application_requests {
+  id         String   @id
+  name       String
+  email      String
+  phone      String
+  source     String   @default("login_chat")
+  intent     String
+  confidence Float
+  transcript Json?
+  metadata   Json?
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+}
+
+model buffer_messages {
+  id        String   @id
+  sessionId String
+  tenantId  String
+  role      String
+  content   String
+  metadata  Json?
+  timestamp DateTime @default(now())
+
+  @@index([sessionId])
+}
+
+
+model catalogCategory {
+  id                       String               @id
+  tenantId                 String
+  name                     String
+  description              String?
+  type                     CatalogItemType      @default(PRODUCT)
+  parentId                 String?
+  createdAt                DateTime             @default(now())
+  updatedAt                DateTime
+  metadata                 Json?
+  parent                   catalogCategory?     @relation("catalogCategoriesToCatalogCategories", fields: [parentId], references: [id])
+  children                 catalogCategory[]    @relation("catalogCategoriesToCatalogCategories")
+  paymentProducts          paymentProduct[]
+
+  @@index([parentId])
+  @@index([tenantId])
+
+  @@map("catalog_categories")
+}
+
+
+model ChatAttachment {
+  id                        String                     @id
+  messageId                 String?
+  filename                  String
+  originalName              String
+  mimeType                  String
+  size                      Int
+  url                       String?
+  createdAt                 DateTime                   @default(now())
+  data                      String?
+  TenantUserChatMessage     TenantUserChatMessage? @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([messageId])
+  @@map("chat_attachments")
+}
+
+model chatbot_analytics {
+  id                  String   @id
+  tenantId            String
+  date                DateTime
+  totalConversations  Int
+  averageSatisfaction Float?
+  topTags             String[]
+  escalationCount     Int
+  toolUsage           Json
+  createdAt           DateTime @default(now())
+  tenant             tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, date])
+  @@index([tenantId, date])
+}
+
+model chatbotContactAccess {
+  id                  String              @id
+  tenantId            String
+  contactId           String
+  phoneUserId         String
+  createdAt           DateTime            @default(now())
+  chatbotContact    chatbotContact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  chatbotPhoneUser chatbotPhoneUser @relation(fields: [phoneUserId], references: [id], onDelete: Cascade)
+
+  @@unique([contactId, phoneUserId])
+  @@index([tenantId, contactId])
+  @@index([tenantId, phoneUserId])
+
+  @@map("chatbot_contact_access")
+}
+
+model chatbot_contact_members {
+  id                  String               @id
+  contactId           String
+  phoneUserId         String?
+  memberName          String?
+  memberPhone         String?
+  metadata            Json?
+  createdAt           DateTime             @default(now())
+  chatbotContact    chatbotContact     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  chatbotPhoneUser chatbotPhoneUser? @relation(fields: [phoneUserId], references: [id])
+
+  @@index([contactId])
+}
+
+model chatbotContact {
+  id                      String                    @id
+  tenantId                String
+  type                    ChatbotContactType        @default(CONTACT)
+  displayName             String
+  phone                   String?
+  avatarUrl               String?
+  description             String?
+  metadata                Json?
+  isDefaultFlowbot        Boolean                   @default(false)
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  email                   String?                   @db.VarChar(320)
+  chatbotContactAccess  chatbotContactAccess[]
+  chatbot_contact_members chatbot_contact_members[]
+  scheduled_messages      scheduled_messages[]
+  whatsapp_contacts       WhatsAppContact[]
+
+  @@unique([tenantId, phone])
+  @@index([tenantId])
+  @@index([type])
+
+  @@map("chatbot_contacts")
+}
+
+model chatbot_feedback {
+  id             String   @id
+  tenantId       String
+  userId         String
+  conversationId String?
+  rating         Int
+  feedback       String?
+  tags           String[]
+  createdAt      DateTime @default(now())
+  tenant        tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, rating])
+  @@index([userId, createdAt])
+}
+
+model ChatbotPhoneOtp {
+  id                  String              @id
+  publicId            String              @unique
+  userId              String
+  codeHash            String
+  expiresAt           DateTime
+  verifiedAt          DateTime?
+  attemptCount        Int                 @default(0)
+  metadata            Json?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime
+  chatbotPhoneUser chatbotPhoneUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@index([userId])
+  @@map("chatbot_phone_otps")
+}
+
+model ChatbotPhoneSession {
+  id                  String              @id
+  userId              String
+  sessionToken        String              @unique
+  expiresAt           DateTime
+  lastUsedAt          DateTime            @default(now())
+  revokedAt           DateTime?
+  metadata            Json?
+  createdAt           DateTime            @default(now())
+  chatbotPhoneUser chatbotPhoneUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@index([userId])
+  @@map("chatbot_phone_sessions")
+}
+
+model chatbotPhoneUser {
+  id                      String                    @id
+  phone                   String
+  normalizedPhone         String
+  countryCode             String?                   @db.VarChar(8)
+  language                String?                   @db.VarChar(10)
+  tenantId                String?
+  displayName             String?
+  lastActiveAt            DateTime?
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime
+  email                   String?                   @db.VarChar(320)
+  chatbotContactAccess  chatbotContactAccess[]
+  chatbot_contact_members chatbot_contact_members[]
+  chatbot_phone_otps      ChatbotPhoneOtp[]
+  chatbot_phone_sessions  ChatbotPhoneSession[]
+  users                   user[]
+
+  @@unique([normalizedPhone, tenantId], name: "normalizedPhone_tenantId")
+  @@index([phone])
+
+  @@map("chatbot_phone_users")
+}
+
+model chatbot_training {
+  id        String   @id
+  tenantId  String
+  type      String
+  content   Json
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  tenant   tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, type])
+}
+
+model communication_channel_settings {
+  id                   Int                       @id @default(autoincrement())
+  configId             Int
+  channel              CommunicationChannelType
+  provider             CommunicationProviderType
+  isEnabled            Boolean                   @default(false)
+  credentials          Json?
+  settings             Json?
+  webhookUrl           String?                   @db.VarChar(512)
+  externalId           String?                   @db.VarChar(255)
+  createdAt            DateTime                  @default(now())
+  updatedAt            DateTime
+  communication_config communication_config      @relation(fields: [configId], references: [id], onDelete: Cascade)
+
+  @@unique([configId, channel])
+}
+
+model communication_component_categories {
+  id                       Int                        @id @default(autoincrement())
+  name                     String                     @db.VarChar(120)
+  description              String?
+  icon                     String?                    @db.VarChar(120)
+  sortOrder                Int                        @default(0)
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime
+  communication_components communication_components[]
+}
+
+model communication_components {
+  id                                 Int                                 @id @default(autoincrement())
+  categoryId                         Int?
+  componentKey                       String                              @unique
+  name                               String                              @db.VarChar(160)
+  description                        String?
+  channel                            CommunicationChannelType?
+  componentType                      String                              @db.VarChar(64)
+  markup                             String?
+  content                            Json?
+  variables                          Json?
+  metadata                           Json?
+  previewImage                       String?                             @db.VarChar(512)
+  sortOrder                          Int                                 @default(0)
+  isActive                           Boolean                             @default(true)
+  createdAt                          DateTime                            @default(now())
+  updatedAt                          DateTime
+  communication_component_categories communication_component_categories? @relation(fields: [categoryId], references: [id])
+  communication_template_components  communication_template_components[]
+}
+
+model communication_config {
+  id                             Int                              @id @default(autoincrement())
+  tenantId                       String?
+  name                           String?                          @db.VarChar(120)
+  isActive                       Boolean                          @default(true)
+  defaultFromEmail               String?                          @db.VarChar(320)
+  defaultFromName                String?                          @db.VarChar(160)
+  defaultReplyToEmail            String?                          @db.VarChar(320)
+  adminEmail                     String?                          @db.VarChar(320)
+  metadata                       Json?
+  createdAt                      DateTime                         @default(now())
+  updatedAt                      DateTime
+  communication_channel_settings communication_channel_settings[]
+  tenant                        tenant?                         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  communication_logs             communication_logs[]
+  communication_templates        communication_templates[]
+  communication_workflows        communication_workflows[]
+}
+
+model communication_logs {
+  id                      String                     @id
+  configId                Int?
+  templateId              Int?
+  tenantId                String?
+  sentById                String?
+  channel                 CommunicationChannelType
+  provider                CommunicationProviderType?
+  status                  CommunicationLogStatus     @default(pending)
+  recipients              Json
+  subject                 String?                    @db.VarChar(512)
+  content                 Json?
+  errorCode               String?                    @db.VarChar(120)
+  errorMessage            String?
+  metadata                Json?
+  sentAt                  DateTime?
+  createdAt               DateTime                   @default(now())
+  updatedAt               DateTime
+  communication_config    communication_config?      @relation(fields: [configId], references: [id])
+  users                   user?                     @relation(fields: [sentById], references: [id])
+  communication_templates communication_templates?   @relation(fields: [templateId], references: [id])
+  tenant                 tenant?                   @relation(fields: [tenantId], references: [id])
+
+  @@index([channel])
+  @@index([sentAt])
+  @@index([status])
+}
+
+model communication_template_components {
+  id                       Int                      @id @default(autoincrement())
+  templateId               Int
+  componentId              Int
+  sortOrder                Int                      @default(0)
+  slot                     String?                  @db.VarChar(120)
+  settings                 Json?
+  createdAt                DateTime                 @default(now())
+  updatedAt                DateTime
+  communication_components communication_components @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  communication_templates  communication_templates  @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([templateId, sortOrder])
+}
+
+model communication_template_translations {
+  id                      Int                     @id @default(autoincrement())
+  templateId              Int
+  language                String                  @db.VarChar(12)
+  subject                 String?                 @db.VarChar(500)
+  content                 String
+  createdAt               DateTime                @default(now())
+  updatedAt               DateTime
+  communication_templates communication_templates @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, language])
+}
+
+model communication_templates {
+  id                                  Int                                   @id @default(autoincrement())
+  configId                            Int?
+  templateKey                         String
+  name                                String
+  description                         String?
+  channel                             CommunicationChannelType
+  category                            String?                               @db.VarChar(120)
+  isActive                            Boolean                               @default(true)
+  isDefault                           Boolean                               @default(false)
+  metadata                            Json?
+  createdAt                           DateTime                              @default(now())
+  updatedAt                           DateTime
+  communication_logs                  communication_logs[]
+  communication_template_components   communication_template_components[]
+  communication_template_translations communication_template_translations[]
+  communication_config                communication_config?                 @relation(fields: [configId], references: [id])
+  communication_workflow_steps        communication_workflow_steps[]
+
+  @@unique([templateKey, configId])
+}
+
+model communication_workflow_steps {
+  id                      Int                      @id @default(autoincrement())
+  workflowId              Int
+  templateId              Int?
+  stepType                String                   @db.VarChar(120)
+  channel                 CommunicationChannelType
+  order                   Int                      @default(0)
+  settings                Json?
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime
+  communication_templates communication_templates? @relation(fields: [templateId], references: [id])
+  communication_workflows communication_workflows  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@index([workflowId, order])
+}
+
+model communication_workflows {
+  id                           Int                            @id @default(autoincrement())
+  configId                     Int?
+  workflowKey                  String
+  name                         String
+  description                  String?
+  triggerType                  String?                        @db.VarChar(120)
+  isActive                     Boolean                        @default(true)
+  priority                     Int                            @default(0)
+  rules                        Json?
+  metadata                     Json?
+  createdAt                    DateTime                       @default(now())
+  updatedAt                    DateTime
+  communication_workflow_steps communication_workflow_steps[]
+  communication_config         communication_config?          @relation(fields: [configId], references: [id])
+
+  @@unique([workflowKey, configId])
+}
+
+
+
+model content_filters {
+  id        String   @id
+  tenantId  String
+  type      String
+  pattern   String
+  action    String
+  severity  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  tenant   tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, type])
+}
+
+model conversation_logs {
+  id           String   @id
+  tenantId     String
+  userId       String
+  messages     Json
+  satisfaction Int?
+  tags         String[]
+  createdAt    DateTime @default(now())
+  tenant      tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model conversation_summaries {
+  id           String   @id
+  sessionId    String
+  tenantId     String
+  summary      String
+  metadata     Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  entities     Json?
+  keyTopics    String?
+  messageCount Int?
+}
+
+
+model crmActivity {
+  id          String          @id
+  tenantId    String
+  contactId   String?
+  type        CrmActivityType
+  text        String
+  detail      String?
+  metadata    Json?
+  createdById String?
+  createdAt   DateTime        @default(now())
+
+  @@index([tenantId, contactId])
+  @@index([tenantId, createdAt])
+
+  @@map("crm_activities")
+}
+
+
+
+model crmAppointment {
+  id          String               @id
+  tenantId    String
+  contactId   String?
+  title       String
+  clientName  String?
+  date        DateTime
+  time        String               @db.VarChar(8)
+  duration    Int                  @default(30)
+  type        CrmAppointmentType   @default(consultation)
+  status      CrmAppointmentStatus @default(pending)
+  notes       String?
+  createdById String
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime
+
+  @@index([tenantId, contactId])
+  @@index([tenantId, date])
+  @@index([tenantId, status])
+
+  @@map("crm_appointments")
+}
+
+
+
+model crmSessionSummary {
+  id           String    @id
+  tenantId     String
+  contactId    String?
+  clientName   String?
+  date         DateTime
+  duration     String?   @db.VarChar(32)
+  summary      String
+  topics       String[]
+  sentiment    String?   @db.VarChar(32)
+  nextActions  String[]
+  aiInsights   String?
+  followUpDate DateTime?
+  followUpTime String?   @db.VarChar(8)
+  followUpNote String?
+  createdById  String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime
+
+  @@index([tenantId, contactId])
+  @@index([tenantId, createdAt])
+
+  @@map("crm_session_summaries")
+}
+
+
+
+model crmTask {
+  id           String          @id
+  tenantId     String
+  contactId    String?
+  title        String
+  description  String?
+  dueDate      DateTime?
+  dueTime      String?         @db.VarChar(8)
+  priority     CrmTaskPriority @default(medium)
+  completed    Boolean         @default(false)
+  completedAt  DateTime?
+  reminder     String?         @db.VarChar(16)
+  type         CrmTaskType     @default(general)
+  clientName   String?
+  note         String?
+  createdById  String
+  assignedToId String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime
+
+  @@index([tenantId, completed])
+  @@index([tenantId, contactId])
+  @@index([tenantId, dueDate])
+
+  @@map("crm_tasks")
+}
+
+
+model custom_tools {
+  id             String   @id
+  tenantId       String
+  name           String
+  description    String
+  endpoint       String
+  parameters     Json
+  authentication Json
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime
+  tenant        tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, name])
+}
+
+
+model deliveryMethod {
+  id                 String                 @id
+  tenantId           String
+  name               String
+  description        String?
+  priceCents         Int
+  isActive           Boolean                @default(true)
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime
+  currency           String                 @default("USD") @db.VarChar(3)
+  deliveryPriceRules deliveryPriceRule[]
+
+  @@index([currency])
+  @@index([tenantId])
+
+  @@map("delivery_methods")
+}
+
+
+
+model deliveryPriceRule {
+  id               String           @id
+  deliveryMethodId String
+  condition        String
+  value            Int
+  priceCents       Int
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime
+  deliveryMethod   deliveryMethod   @relation(fields: [deliveryMethodId], references: [id], onDelete: Cascade)
+
+  @@index([deliveryMethodId])
+
+  @@map("delivery_price_rules")
+}
+
+
+
+model department {
+  id                String             @id
+  tenantId          String
+  name              String
+  description       String?
+  isDefault         Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime
+  scheduleTemplates scheduleTemplate[]
+  users             user[]
+
+  @@unique([tenantId, name])
+
+  @@map("departments")
+}
+
+
+model escalation_rules {
+  id         String   @id
+  tenantId   String
+  condition  String
+  action     String
+  priority   String
+  recipients String[]
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  tenant    tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, priority])
+}
+
+model knowledge_base {
+  id        String   @id
+  tenantId  String
+  title     String
+  content   String
+  type      String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+model knowledge_nodes {
+  id         String   @id
+  sessionId  String
+  tenantId   String
+  nodeId     String
+  content    String
+  type       String
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  name       String?
+  properties Json?
+
+  @@unique([sessionId, nodeId])
+}
+
+model knowledge_relationships {
+  id               String    @id
+  sessionId        String
+  tenantId         String
+  fromNodeId       String
+  toNodeId         String
+  relationshipType String
+  strength         Float?
+  metadata         Json?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime
+  context          String?
+  sourceId         String?
+  targetId         String?
+  timestamp        DateTime?
+  type             String?
+  weight           Float?
+}
+
+model memory_entities {
+  id            String    @id
+  sessionId     String
+  tenantId      String
+  name          String
+  type          String
+  value         String?
+  context       String?
+  metadata      Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime
+  confidence    Float?
+  lastMentioned DateTime?
+
+  @@unique([sessionId, name, type])
+}
+
+model memory_sessions {
+  id        String   @id
+  sessionId String
+  tenantId  String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@unique([sessionId, tenantId])
+}
+
+
+model paymentLink {
+  id                   String                 @id
+  token                String                 @unique
+  productId            String?
+  sessionId            String?
+  tenantId             String?
+  amountCents          Int
+  currency             String
+  status               PaymentLinkStatus      @default(pending)
+  customerName         String?
+  customerEmail        String?
+  expiresAt            DateTime?
+  completedAt          DateTime?
+  gatewayTransactionId String?
+  gatewayPayload       Json?
+  formToken            String?
+  formTokenExpiresAt   DateTime?
+  metadata             Json?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime
+  baseAmountCents      Int
+  taxAmountCents       Int                    @default(0)
+  taxId                String?
+  taxRateBps           Int?
+  channel              PaymentLinkChannel     @default(unknown)
+  lastStatusChangeAt   DateTime?
+  customerPhone        String?
+  customerCountryCode  String?
+  productName          String?
+  paymentProduct       paymentProduct?        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  paymentTax           paymentTax?            @relation(fields: [taxId], references: [id])
+  paymentTransactions  paymentTransaction[]
+
+  @@index([channel])
+  @@index([productId])
+  @@index([status])
+  @@index([tenantId])
+  @@index([token])
+
+  @@map("payment_links")
+}
+
+
+
+model paymentProductImage {
+  id             String         @id
+  url            String
+  displayOrder   Int            @default(0)
+  isDefault      Boolean        @default(false)
+  productId      String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  paymentProduct paymentProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+
+  @@map("payment_product_images")
+}
+
+
+
+model paymentProduct {
+  id                  String               @id
+  tenantId            String
+  productCode         String
+  name                String
+  description         String?
+  amountCents         Int
+  currency            String               @default("USD")
+  isActive            Boolean              @default(true)
+  metadata            Json?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  baseAmountCents     Int
+  taxAmountCents      Int                  @default(0)
+  taxId               String?
+  priceIncludesTax    Boolean              @default(true)
+  categoryId          String?
+  trackStock          Boolean              @default(false)
+  paymentLinks        paymentLink[]
+  paymentProductImages paymentProductImage[]
+  catalogCategory     catalogCategory?     @relation(fields: [categoryId], references: [id])
+  paymentTax          paymentTax?          @relation(fields: [taxId], references: [id])
+  tenant              tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  stockEntries        stockEntry[]
+  stockMovements      stockMovement[]
+
+  @@unique([tenantId, productCode])
+  @@index([isActive])
+  @@index([taxId])
+  @@index([tenantId])
+
+  @@map("payment_products")
+}
+
+
+
+model paymentTax {
+  id              String           @id
+  name            String
+  description     String?
+  currency        String           @db.VarChar(3)
+  metadata        Json?
+  countryCode     String           @db.VarChar(3)
+  createdAt       DateTime         @default(now())
+  isDefault       Boolean          @default(false)
+  rateBps         Int
+  updatedAt       DateTime         @updatedAt
+  paymentLinks    paymentLink[]
+  paymentProducts paymentProduct[]
+
+  @@index([countryCode, currency])
+
+  @@map("payment_taxes")
+}
+
+
+
+model paymentTransaction {
+  id            String      @id
+  paymentLinkId String
+  gatewayId     String?
+  status        String
+  rawResponse   Json?
+  createdAt     DateTime    @default(now())
+  paymentLink   paymentLink @relation(fields: [paymentLinkId], references: [id], onDelete: Cascade)
+
+  @@index([gatewayId])
+  @@index([paymentLinkId])
+
+  @@map("payment_transactions")
+}
+
+
+
+model scheduleException {
+  id               String            @id
+  templateId       String?
+  exceptionType    ExceptionType
+  date             DateTime
+  startTime        String?
+  endTime          String?
+  newStartTime     String?
+  newEndTime       String?
+  reason           String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime
+  scheduleTemplate scheduleTemplate? @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@map("schedule_exceptions")
+}
+
+
+
+model scheduleSlot {
+  id               String           @id
+  templateId       String
+  startTime        String
+  endTime          String
+  duration         Int              @default(60)
+  bufferTime       Int              @default(15)
+  isActive         Boolean          @default(true)
+  maxBookings      Int?
+  priority         Int              @default(1)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime
+  scheduleTemplate scheduleTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@map("schedule_slots")
+}
+
+
+
+model scheduleTemplate {
+  id                 String              @id
+  name               String
+  description        String?
+  tenantId           String
+  isActive           Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime
+  recurringType      RecurringType
+  recurringDays      Int[]
+  timeZone           String              @default("America/Mexico_City")
+  departmentId       String?
+  scheduleExceptions scheduleException[]
+  scheduleSlots      scheduleSlot[]
+  department         department?         @relation(fields: [departmentId], references: [id])
+
+  @@map("schedule_templates")
+}
+
+
+model scheduled_messages {
+  id               String                 @id
+  tenantId         String
+  senderId         String
+  contactId        String?
+  recipientId      String?
+  sessionId        String?
+  content          String
+  attachments      Json?
+  scheduledAt      DateTime
+  sentAt           DateTime?
+  status           ScheduledMessageStatus @default(PENDING)
+  targetType       ScheduledMessageTarget @default(FLOWBOT)
+  attempts         Int                    @default(0)
+  lastError        String?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime
+  chatbotContact chatbotContact?      @relation(fields: [contactId], references: [id])
+  users            user                  @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  tenant          tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([status, scheduledAt])
+  @@index([tenantId, contactId])
+  @@index([tenantId, senderId])
+}
+
+
+model stockEntry {
+  id             String         @id @default(uuid())
+  tenantId       String
+  productId      String
+  locationId     String
+  quantity       Int            @default(0)
+  minStockLevel  Int            @default(0)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime
+  isUnlimited    Boolean        @default(false)
+  reserved       Int            @default(0)
+  stockLocation  stockLocation  @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  paymentProduct paymentProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, locationId])
+  @@index([tenantId])
+
+  @@map("stock_entries")
+}
+
+
+
+model stockLocation {
+  id             String          @id @default(uuid())
+  tenantId       String
+  name           String
+  description    String?
+  address        String?
+  isDefault      Boolean         @default(false)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime
+  type           StockLocationType @default(PHYSICAL)
+  isActive       Boolean         @default(true)
+  stockEntries   stockEntry[]
+  stockMovementsFrom stockMovement[] @relation("stockMovementsFromLocation")
+  stockMovements     stockMovement[] @relation("stockMovementsLocation")
+  stockMovementsTo   stockMovement[] @relation("stockMovementsToLocation")
+
+  @@index([tenantId])
+
+  @@map("stock_locations")
+}
+
+
+
+model stockMovement {
+  id                            String    @id @default(uuid())
+  tenantId                      String
+  productId                     String
+  locationId                    String?
+  fromLocationId                String?
+  toLocationId                  String?
+  type                          StockMovementType
+  quantityChange                Int
+  reservedChange                Int       @default(0)
+  quantityBefore                Int
+  quantityAfter                 Int
+  reservedBefore                Int       @default(0)
+  reservedAfter                 Int       @default(0)
+  reason                        String?
+  referenceId                   String?
+  performedById                 String?
+  createdAt                     DateTime  @default(now())
+  fromStockLocation             stockLocation? @relation("stockMovementsFromLocation", fields: [fromLocationId], references: [id])
+  locationStock                 stockLocation? @relation("stockMovementsLocation", fields: [locationId], references: [id])
+  paymentProduct                paymentProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+  toStockLocation               stockLocation? @relation("stockMovementsToLocation", fields: [toLocationId], references: [id])
+
+  @@index([createdAt])
+  @@index([locationId])
+  @@index([productId])
+  @@index([tenantId])
+
+  @@map("stock_movements")
+}
+
+
+model systemConfig {
+  id         String   @id
+  key        String   @unique
+  value      Json?
+  created_at DateTime @default(now())
+  updated_at DateTime
+
+  @@map("system_config")
+}
+
+model tenant_logo_assets {
+  id        String   @id
+  tenantId  String?
+  filename  String
+  mimeType  String
+  width     Int?
+  height    Int?
+  data      Bytes
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+model tenantSignupRequest {
+  id               String   @id
+  companyName      String
+  contactName      String
+  email            String
+  desiredSubdomain String   @unique
+  activationToken  String   @unique
+  status           String   @default("pending")
+  metadata         Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime
+
+  @@map("tenant_signup_requests")
+}
+
+model TenantUserChatMessage {
+  id                                                 String             @id
+  tenantId                                           String
+  threadKey                                          String
+  senderId                                           String
+  recipientId                                        String
+  content                                            String
+  createdAt                                          DateTime           @default(now())
+  readAt                                             DateTime?
+  deletedAt                                          DateTime?
+  editedAt                                           DateTime?
+  isDeleted                                          Boolean            @default(false)
+  attachments                                        ChatAttachment[]
+  users_tenant_user_chat_messages_recipientIdTousers user               @relation("tenant_user_chat_messages_recipientIdTousers", fields: [recipientId], references: [id], onDelete: Cascade)
+  users_tenant_user_chat_messages_senderIdTousers    user               @relation("tenant_user_chat_messages_senderIdTousers", fields: [senderId], references: [id], onDelete: Cascade)
+  tenant                                             tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, threadKey, createdAt])
+  @@map("tenant_user_chat_messages")
+}
+
+model tenant {
+  id                        String                      @id
+  name                      String
+  domain                    String?                     @unique
+  settings                  Json?
+  isActive                  Boolean                     @default(true)
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime
+  calendarSettings          Json?
+  chatbotConfig             Json?
+  subdomain                 String?
+  displayName               String?
+  legalName                 String?
+  tagline                   String?
+  contactEmail              String?
+  contactPhone              String?
+  websiteUrl                String?
+  industry                  String?
+  addressLine1              String?
+  addressLine2              String?
+  city                      String?
+  state                     String?
+  postalCode                String?
+  country                   String?
+  primaryColor              String?                     @db.VarChar(16)
+  logoUrl                   String?
+  logoWidth                 Int?
+  logoHeight                Int?
+  logoMimeType              String?
+  logoBlurData              String?
+  logoUpdatedAt             DateTime?
+  paymentReturnHomeUrl      String?
+  chatbot_analytics         chatbot_analytics[]
+  chatbot_feedback          chatbot_feedback[]
+  chatbot_training          chatbot_training[]
+  communication_config      communication_config[]
+  communication_logs        communication_logs[]
+  content_filters           content_filters[]
+  conversation_logs         conversation_logs[]
+  custom_tools              custom_tools[]
+  escalation_rules          escalation_rules[]
+  // delivery_methods          deliveryMethod[]
+  themes                    ChatbotTheme[]
+  // integrations              integration[]
+  // payment_links             paymentLink[]
+  scheduled_messages        scheduled_messages[]
+  tenant_user_chat_messages TenantUserChatMessage[]
+  tickets                   tickets[]
+  users                     user[]
+  whatsapp_contacts         WhatsAppContact[]
+  whatsapp_sessions         WhatsAppSession[]
+  paymentProducts          paymentProduct[]
+  memorySessions            MemorySession[]
+
+  @@map("tenants")
+}
+
+model ticket_attachments {
+  id           String   @id
+  ticketId     String
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  url          String
+  uploadedById String
+  createdAt    DateTime @default(now())
+  tickets      tickets  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  users        user    @relation(fields: [uploadedById], references: [id])
+
+  @@index([ticketId])
+}
+
+model ticket_comment_attachments {
+  id              String          @id
+  commentId       String
+  filename        String
+  originalName    String
+  mimeType        String
+  size            Int
+  url             String
+  createdAt       DateTime        @default(now())
+  ticket_comments ticket_comments @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@index([commentId])
+}
+
+model ticket_comments {
+  id                         String                       @id
+  ticketId                   String
+  authorId                   String
+  content                    String
+  isInternal                 Boolean                      @default(false)
+  isAiGenerated              Boolean                      @default(false)
+  createdAt                  DateTime                     @default(now())
+  updatedAt                  DateTime
+  ticket_comment_attachments ticket_comment_attachments[]
+  users                      user                        @relation(fields: [authorId], references: [id])
+  tickets                    tickets                      @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId, createdAt])
+}
+
+model tickets {
+  id                                String               @id
+  tenantId                          String
+  type                              TicketType
+  title                             String
+  description                       String
+  summary                           String?
+  status                            TicketStatus         @default(open)
+  priority                          TicketPriority       @default(medium)
+  customerId                        String
+  customerName                      String
+  customerEmail                     String?
+  customerPhone                     String?
+  createdById                       String
+  assignedToId                      String?
+  messageId                         String?
+  threadId                          String?
+  sessionContext                    Json?
+  tags                              String[]
+  responseTargetAt                  DateTime?
+  resolvedTargetAt                  DateTime?
+  firstResponseAt                   DateTime?
+  resolvedAt                        DateTime?
+  sentiment                         TicketSentiment?     @default(neutral)
+  sentimentSummary                  String?
+  createdAt                         DateTime             @default(now())
+  updatedAt                         DateTime
+  ticket_attachments                ticket_attachments[]
+  ticket_comments                   ticket_comments[]
+  users_tickets_assignedToIdTousers user?               @relation("tickets_assignedToIdTousers", fields: [assignedToId], references: [id])
+  users_tickets_createdByIdTousers  user                @relation("tickets_createdByIdTousers", fields: [createdById], references: [id])
+  tenant                           tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, assignedToId])
+  @@index([tenantId, createdAt])
+  @@index([tenantId, customerId])
+  @@index([tenantId, status, priority])
+}
+
+model trademark_registration_requests {
+  id             String   @id
+  brandName      String
+  contactName    String
+  email          String
+  phone          String?
+  company        String?
+  description    String?
+  classes        String?
+  similarMatches Json?
+  status         String   @default("pending")
+  source         String   @default("chatbot")
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime
+
+  @@index([brandName])
+}
+
+model trademark_registry {
+  id                      String    @id
+  row_number              Int?
+  expediente_number       String?
+  expediente_year         Int?
+  certificate_number      String?
+  class_code              String?
+  filing_date             DateTime?
+  intake_date             DateTime?
+  presentation_code       String?
+  expedient_type          String?
+  mark_type               String?
+  denomination            String?
+  country_code            String?
+  expiration_date         DateTime?
+  product_service_details String?
+  conclusion_type         String?
+  owner_names             String?
+  owner_types             String?
+  publication_date        DateTime?
+  resolution_date         DateTime?
+  resolution_number       String?
+  renewal_expedient       String?
+  modification_expedient  String?
+  cancellation_expedient  String?
+  search_document         String?
+  created_at              DateTime  @default(now())
+  updated_at              DateTime
+
+  @@index([denomination])
+  @@index([expediente_number])
+}
+
+model trademark {
+  id                 String    @id
+  expediente         String?
+  marca              String?
+  clase              String?
+  titular            String?
+  paisTitular        String?
+  estado             String?
+  fechaRegistro      DateTime?
+  fechaVencimiento   DateTime?
+  descripcion        String?
+  numeroRegistro     String?
+  fechaPresentacion  DateTime?
+  agente             String?
+  tipoSolicitud      String?
+  productosServicios String?
+  tenantId           String
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime
+
+  @@index([tenantId])
+
+  @@map("trademarks")
+}
+
+model user {
+  id                                                                     String                      @id
+  email                                                                  String
+  name                                                                   String?
+  password                                                               String?
+  tenantId                                                               String
+  createdAt                                                              DateTime                    @default(now())
+  updatedAt                                                              DateTime
+  calendarConfig                                                         Json?
+  profilePictureUrl                                                      String?
+  approvalMessage                                                        String?
+  approvalStatus                                                         TenantApprovalStatus        @default(pending)
+  approvalUpdatedAt                                                      DateTime?
+  approvedById                                                           String?
+  chatbotApprovedAt                                                      DateTime?
+  chatbotPhoneUserId                                                     String?
+  chatbotRevokedAt                                                       DateTime?
+  invitedById                                                            String?
+  lastChatbotInteractionAt                                               DateTime?
+  lastLoginAt                                                            DateTime?
+  metadata                                                               Json?
+  normalizedPhone                                                        String?                     @db.VarChar(32)
+  phone                                                                  String?                     @db.VarChar(32)
+  phoneCountryCode                                                       String?                     @db.VarChar(8)
+  preferredLanguage                                                      String?                     @default("es") @db.VarChar(10)
+  status                                                                 UserStatus                  @default(invited)
+  timezone                                                               String?                     @db.VarChar(64)
+  chatbotAccessStatus                                                    ChatbotAccessStatus         @default(pending)
+  departmentId                                                           String?
+  role                                                                   UserRole                    @default(user)
+  communication_logs                                                     communication_logs[]
+  scheduled_messages                                                     scheduled_messages[]
+  tenant_user_chat_messages_tenant_user_chat_messages_recipientIdTousers TenantUserChatMessage[] @relation("tenant_user_chat_messages_recipientIdTousers")
+  tenant_user_chat_messages_tenant_user_chat_messages_senderIdTousers    TenantUserChatMessage[] @relation("tenant_user_chat_messages_senderIdTousers")
+  ticket_attachments                                                     ticket_attachments[]
+  ticket_comments                                                        ticket_comments[]
+  tickets_tickets_assignedToIdTousers                                    tickets[]                   @relation("tickets_assignedToIdTousers")
+  tickets_tickets_createdByIdTousers                                     tickets[]                   @relation("tickets_createdByIdTousers")
+  users_users_approvedByIdTousers                                        user?                      @relation("users_approvedByIdTousers", fields: [approvedById], references: [id])
+  other_users_users_approvedByIdTousers                                  user[]                     @relation("users_approvedByIdTousers")
+  chatbotPhoneUser                                                    chatbotPhoneUser?        @relation(fields: [chatbotPhoneUserId], references: [id])
+  department                                                            department?                @relation(fields: [departmentId], references: [id])
+  users_users_invitedByIdTousers                                         user?                      @relation("users_invitedByIdTousers", fields: [invitedById], references: [id])
+  other_users_users_invitedByIdTousers                                   user[]                     @relation("users_invitedByIdTousers")
+  tenant                                                                tenant                     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  whatsapp_contacts                                                      WhatsAppContact[]
+  whatsapp_messages                                                      WhatsAppMessage[]
+
+  transfer_requests_from       ContactTransferRequest[] @relation("TransferFrom")
+  transfer_requests_to         ContactTransferRequest[] @relation("TransferTo")
+  transfer_requests_made       ContactTransferRequest[] @relation("TransferRequestedBy")
+  transfer_requests_supervised ContactTransferRequest[] @relation("TransferSupervisor")
+
+  @@unique([email, tenantId])
+
+  @@map("users")
+}
+
+model WhatsAppContact {
+  id                String            @id
+  sessionId         String
+  jid               String
+  name              String?
+  phoneNumber       String?
+  isGroup           Boolean           @default(false)
+  isBusiness        Boolean           @default(false)
+  avatarUrl         String?
+  lastMessageAt     DateTime?
+  unreadCount       Int               @default(0)
+  metadata          Json?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime
+  chatbotContactId  String?
+  userId            String?
+  tenantId          String
+  chatbotContact  chatbotContact? @relation(fields: [chatbotContactId], references: [id])
+  whatsapp_sessions WhatsAppSession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+  tenant           tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  users             user?            @relation(fields: [userId], references: [id])
+  
+  // Session Management
+  sessionStatus       WhatsAppContactSessionStatus @default(CLOSED)
+  sessionStartedAt    DateTime?
+  lastSessionClosedAt DateTime?
+
+  @@unique([tenantId, jid])
+  @@index([jid])
+  @@index([sessionId])
+  @@index([tenantId])
+
+  @@map("whatsapp_contacts")
+  
+  transfer_requests ContactTransferRequest[] @relation("TransferRequestContact")
+}
+
+model ContactTransferRequest {
+  id               String                        @id @default(cuid())
+  contactId        String
+  fromUserId       String?                       // Current owner (nullable if unassigned)
+  toUserId         String                        // Requesting operator
+  requestedById    String                        // Who made the request (same as toUserId)
+  supervisorId     String?                       // Assigned supervisor (nullable until resolved)
+  status           ContactTransferRequestStatus  @default(PENDING)
+  message          String?                       // Optional reason for request
+  supervisorNotes  String?                       // Supervisor's notes on decision
+  createdAt        DateTime                      @default(now())
+  updatedAt        DateTime                      @updatedAt
+  resolvedAt       DateTime?
+  
+  contact          WhatsAppContact @relation(fields: [contactId], references: [id], onDelete: Cascade, name: "TransferRequestContact")
+  fromUser         user?            @relation("TransferFrom", fields: [fromUserId], references: [id])
+  toUser           user             @relation("TransferTo", fields: [toUserId], references: [id])
+  requestedBy      user             @relation("TransferRequestedBy", fields: [requestedById], references: [id])
+  supervisor       user?            @relation("TransferSupervisor", fields: [supervisorId], references: [id])
+  
+  @@index([contactId])
+  @@index([toUserId])
+  @@index([supervisorId])
+  @@index([status])
+  @@index([createdAt])
+  
+  @@map("contact_transfer_requests")
+}
+
+
+model WhatsAppMessage {
+  id                String                @id
+  sessionId         String
+  messageId         String
+  remoteJid         String
+  fromMe            Boolean               @default(false)
+  content           String?
+  messageType       WhatsAppMessageType   @default(TEXT)
+  status            WhatsAppMessageStatus @default(PENDING)
+  mediaUrl          String?
+  mediaMimeType     String?
+  mediaSize         Int?
+  thumbnailUrl      String?
+  quotedMessageId   String?
+  timestamp         DateTime
+  deliveredAt       DateTime?
+  readAt            DateTime?
+  errorMessage      String?
+  metadata          Json?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime
+  senderId          String?
+  users             user?                @relation(fields: [senderId], references: [id])
+  whatsapp_sessions WhatsAppSession     @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+
+  @@unique([sessionId, messageId])
+  @@index([remoteJid])
+  @@index([sessionId, remoteJid, timestamp])
+  @@index([sessionId, timestamp])
+
+  @@map("whatsapp_messages")
+}
+
+model WhatsAppSessionConfig {
+  id                    String              @id
+  sessionId             String              @unique
+  routingRule           WhatsAppRoutingRule @default(FLOWBOT_FIRST)
+  autoReplyEnabled      Boolean             @default(false)
+  autoReplyMessage      String?
+  businessHoursEnabled  Boolean             @default(false)
+  businessHoursStart    String?             @db.VarChar(8)
+  businessHoursEnd      String?             @db.VarChar(8)
+  businessHoursTimezone String?             @db.VarChar(64)
+  awayMessage           String?
+  metadata              Json?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime
+  whatsapp_sessions     WhatsAppSession   @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+
+  @@map("whatsapp_session_configs")
+}
+
+model WhatsAppSessionKey {
+  id                String            @id
+  sessionId         String
+  type              String
+  keyId             String
+  data              Json
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime
+  whatsapp_sessions WhatsAppSession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+
+  @@unique([sessionId, type, keyId])
+  @@index([sessionId])
+
+  @@map("whatsapp_session_keys")
+}
+
+model WhatsAppSession {
+  id                       String                    @id
+  sessionId                String                    @unique
+  tenantId                 String
+  name                     String?
+  phoneNumber              String?
+  status                   WhatsAppSessionStatus     @default(DISCONNECTED)
+  creds                    Json                      @default("{}")
+  isActive                 Boolean                   @default(false)
+  browserActive            Boolean                   @default(false)
+  lastSync                 DateTime
+  lastConnected            DateTime?
+  errorMessage             String?
+  metadata                 Json?
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime
+  whatsapp_contacts        WhatsAppContact[]
+  whatsapp_messages        WhatsAppMessage[]
+  whatsapp_session_configs WhatsAppSessionConfig?
+  whatsapp_session_keys    WhatsAppSessionKey[]
+  tenant                  tenant                   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([status])
+  @@index([tenantId])
+
+  @@map("whatsapp_sessions")
+}
+
+enum CatalogItemType {
+  PRODUCT
+  SERVICE
+}
+
+enum ChatbotAccessStatus {
+  pending
+  approved
+  revoked
+}
+
+enum ChatbotContactType {
+  BOT
+  CONTACT
+  GROUP
+}
+
+enum CommunicationChannelType {
+  EMAIL
+  SMS
+  TELEGRAM
+  WHATSAPP
+  INSTAGRAM
+}
+
+enum CommunicationLogStatus {
+  pending
+  sent
+  partial
+  failed
+}
+
+enum CommunicationProviderType {
+  BREVO
+  RESEND
+  LABSMOBILE
+  TELEGRAM_BOT
+  WHATSAPP_CLOUD
+  INSTAGRAM_GRAPH
+}
+
+enum CrmActivityType {
+  message
+  call
+  email
+  note
+  ticket
+  product
+  appointment
+  task
+}
+
+enum CrmAppointmentStatus {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+enum CrmAppointmentType {
+  consultation
+  training
+  class
+  massage
+  other
+}
+
+enum CrmTaskPriority {
+  low
+  medium
+  high
+}
+
+enum CrmTaskType {
+  general
+  followup
+  call
+  meeting
+}
+
+enum EntityType {
+  brand
+  company
+  class
+  country
+  year
+}
+
+enum ExceptionType {
+  blocked
+  modified
+  additional
+}
+
+enum MessageRole {
+  user
+  assistant
+  system
+}
+
+enum NodeType {
+  brand
+  company
+  concept
+  relationship
+}
+
+enum PaymentLinkChannel {
+  chatbot
+  admin
+  api
+  unknown
+}
+
+enum PaymentLinkStatus {
+  pending
+  processing
+  completed
+  failed
+  expired
+  cancelled
+}
+
+enum RecurringType {
+  daily
+  weekly
+  monthly
+}
+
+enum ScheduledMessageStatus {
+  PENDING
+  PROCESSING
+  SENT
+  FAILED
+  CANCELLED
+}
+
+enum ScheduledMessageTarget {
+  FLOWBOT
+  TENANT_USER
+}
+
+enum StockLocationType {
+  PHYSICAL
+  DIGITAL
+}
+
+enum StockMovementType {
+  ADJUSTMENT
+  TRANSFER_OUT
+  TRANSFER_IN
+  RESERVATION
+  RELEASE
+  SALE
+  RETURN
+}
+
+enum TenantApprovalStatus {
+  pending
+  approved
+  rejected
+}
+
+enum TicketPriority {
+  low
+  medium
+  high
+  urgent
+}
+
+enum TicketSentiment {
+  positive
+  neutral
+  negative
+}
+
+enum TicketStatus {
+  open
+  in_progress
+  resolved
+  closed
+}
+
+enum TicketType {
+  help_desk
+  system_feature
+  system_bug
+}
+
+enum UserRole {
+  super_admin
+  admin
+  user
+}
+
+enum UserStatus {
+  invited
+  active
+  suspended
+  inactive
+}
+
+enum WhatsAppMessageStatus {
+  PENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+enum WhatsAppMessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+  STICKER
+  LOCATION
+  CONTACT
+  BUTTONS
+  LIST
+}
+
+enum WhatsAppRoutingRule {
+  FLOWBOT_ONLY
+  USER_ONLY
+  FLOWBOT_FIRST
+  USER_FIRST
+  MANUAL
+}
+
+enum WhatsAppSessionStatus {
+  DISCONNECTED
+  CONNECTING
+  CONNECTED
+  QR_REQUIRED
+  ERROR
+}
+
+enum WhatsAppContactSessionStatus {
+  OPEN
+  CLOSED
+}
+
+enum ContactTransferRequestStatus {
+  PENDING
+  APPROVED
+  DENIED
+  CANCELLED
+}

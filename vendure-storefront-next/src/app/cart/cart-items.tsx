@@ -2,15 +2,18 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Minus, Plus, X, Loader2 } from 'lucide-react';
 import { Price } from '@/components/commerce/price';
-import { removeFromCart, adjustQuantity } from './actions';
-import { useTransition } from 'react';
+import { adjustQuantity, removeFromCart, resetCart, unlockCart } from './actions';
+import { useEffect, useRef, useTransition } from 'react';
 import { cn, getVendureImageUrl } from '@/lib/utils';
+import { toast } from 'sonner';
 
 type ActiveOrder = {
     id: string;
+    state: string;
     currencyCode: string;
     lines: Array<{
         id: string;
@@ -33,7 +36,22 @@ type ActiveOrder = {
 };
 
 export function CartItems({ activeOrder }: { activeOrder: ActiveOrder | null }) {
+    const router = useRouter();
     const [isPending, startTransition] = useTransition();
+    const autoUnlockAttemptedRef = useRef(false);
+
+    useEffect(() => {
+        if (!activeOrder) return;
+        if (activeOrder.state === 'AddingItems') return;
+        if (autoUnlockAttemptedRef.current) return;
+        autoUnlockAttemptedRef.current = true;
+
+        (async () => {
+            const ok = await unlockCart();
+            if (!ok) return;
+            router.refresh();
+        })();
+    }, [activeOrder, router]);
 
     if (!activeOrder || activeOrder.lines.length === 0) {
         return (
@@ -53,18 +71,76 @@ export function CartItems({ activeOrder }: { activeOrder: ActiveOrder | null }) 
 
     const handleAdjustQuantity = (lineId: string, quantity: number) => {
         startTransition(async () => {
-            await adjustQuantity(lineId, quantity);
+            try {
+                await adjustQuantity(lineId, quantity);
+            } catch (e: any) {
+                toast.error(e?.message || 'Unable to update cart');
+            } finally {
+                router.refresh();
+            }
         });
     };
 
     const handleRemoveFromCart = (lineId: string) => {
         startTransition(async () => {
-            await removeFromCart(lineId);
+            try {
+                await removeFromCart(lineId);
+            } catch (e: any) {
+                toast.error(e?.message || 'Unable to remove item');
+            } finally {
+                router.refresh();
+            }
+        });
+    };
+
+    const handleResetCart = () => {
+        startTransition(async () => {
+            try {
+                await resetCart();
+                toast.message('Cart reset');
+            } catch (e: any) {
+                toast.error(e?.message || 'Unable to reset cart');
+            } finally {
+                router.refresh();
+            }
+        });
+    };
+
+    const handleUnlockCart = () => {
+        startTransition(async () => {
+            try {
+                const ok = await unlockCart();
+                if (!ok) {
+                    toast.error('Unable to unlock cart. Try Reset cart.');
+                } else {
+                    toast.message('Cart unlocked');
+                }
+            } catch (e: any) {
+                toast.error(e?.message || 'Unable to unlock cart');
+            } finally {
+                router.refresh();
+            }
         });
     };
 
     return (
         <div className={cn("lg:col-span-2 space-y-4 transition-opacity", isPending && "opacity-60 pointer-events-none")}>
+            <div className="flex items-center justify-end">
+                {activeOrder.state !== 'AddingItems' ? (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={isPending}
+                        onClick={handleUnlockCart}
+                        className="mr-2"
+                    >
+                        Unlock cart
+                    </Button>
+                ) : null}
+                <Button variant="outline" size="sm" disabled={isPending} onClick={handleResetCart}>
+                    Reset cart
+                </Button>
+            </div>
             {activeOrder.lines.map((line) => (
                 <div
                     key={line.id}

@@ -1,0 +1,487 @@
+/* 
+  Chatbot Component Styles 
+  Specific styling for UI components like cards, bubbles, and buttons.
+*/
+
+/* --- TABS --- */
+/* Default Tab State */
+.chatbot-theme [role="tab"] {
+    color: var(--chat-panel-text-dim);
+    background-color: transparent;
+    transition: all 0.2s ease;
+}
+
+.chatbot-theme [role="tab"]:hover {
+    color: var(--chat-hover-text);
+    background-color: var(--chat-hover-bg);
+}
+
+/* Active Tab */
+.chatbot-theme [role="tab"][aria-selected="true"] {
+    color: var(--chat-active-text);
+    background-color: var(--chat-active-bg);
+    font-weight: 600;
+}
+
+/* --- BUTTONS & CONTRAST RULES --- */
+
+/* 
+  CRITICAL: White Background Rule
+  If a button or tab has a white background (e.g. active state or variant),
+  it MUST have dark text/icons for contrast.
+*/
+/* 
+   FIX: Force dark text on white/light backgrounds (hover/active states) 
+   We explicitly target elements that turn white/light to ensure text is visible.
+*/
+.chatbot-theme button.bg-white,
+.chatbot-theme button.hover\:bg-white:hover,
+.chatbot-theme [role="tab"].bg-white,
+.chatbot-theme [role="tab"][aria-selected="true"] {
+    color: var(--chatbot-user-bubble-foreground) !important;
+    /* Force dark text */
+}
+
+/* Ensure children of interactable light-bg elements also inherit dark text */
+.chatbot-theme button.bg-white *,
+.chatbot-theme button.hover\:bg-white:hover *,
+.chatbot-theme [role="tab"].bg-white *,
+.chatbot-theme [role="tab"][aria-selected="true"] * {
+    color: var(--chatbot-user-bubble-foreground) !important;
+}
+
+/* All children inherit (except active items) */
+.chatbot-theme .chatbot-sidebar *:not(.is-active *) {
+    color: inherit !important;
+}
+
+/* 
+   Explicitly override Tailwind text colors in sidebar for inactive items 
+   This fixes specific utility classes winning over inheritance
+*/
+.chatbot-theme .chatbot-sidebar [class*="text-slate-"]:not(.is-active *),
+.chatbot-theme .chatbot-sidebar [class*="text-gray-"]:not(.is-active *),
+.chatbot-theme .chatbot-sidebar [class*="text-zinc-"]:not(.is-active *),
+.chatbot-theme .chatbot-sidebar [class*="text-neutral-"]:not(.is-active *),
+.chatbot-theme .chatbot-sidebar [class*="text-stone-"]:not(.is-active *) {
+    color: var(--chat-sidebar-text) !important;
+}
+
+/* Sidebar items - inactive hover state */
+.chatbot-theme .chatbot-sidebar-item:not(.is-active):hover {
+    background-color: var(--chat-hover-bg) !important;
+    color: var(--chat-hover-text) !important;
+}
+
+.chatbot-theme .chatbot-sidebar-item:not(.is-active):hover * {
+    color: var(--chat-hover-text) !important;
+}
+
+/* Sidebar items - active state (white background, dark text) */
+.chatbot-theme .chatbot-sidebar-item.is-active {
+    background: var(--chat-active-bg) !important;
+    color: var(--chat-active-text) !important;
+}
+
+/* Ensure all children of active item inherit the dark text */
+/* REVERTED: This wildcard override breaks specific name/preview/time styling */
+/* .chatbot-theme .chatbot-sidebar-item.is-active * {
+    color: var(--chat-active-text) !important;
+} */
+
+/* Bot Bubble - NOW CONFIGURABLE */
+.chatbot-theme .chatbot-assistant-bubble,
+.chatbot-assistant-bubble {
+    background: var(--chat-bubble-bot-bg, #ffffff) !important;
+    border-color: var(--chatbot-border, rgba(0, 0, 0, 0.1)) !important;
+    color: var(--chat-bubble-bot-text) !important;
+    /* Black/Dark text per user request */
+    box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
+}
+
+/* DEEP FIX for Bot Text: Ensure children inherit the variable color */
+/* This overrides the .bg-white * rule that forces dark text */
+/* DEEP FIX for Bot Text - NUCLEAR SPECIFICITY */
+/* DEEP FIX for Bot Text - ULTRA NUCLEAR SPECIFICITY */
+body .chatbot-theme .chatbot-assistant-bubble *,
+body .chatbot-assistant-bubble *,
+body .chatbot-theme .chatbot-assistant-bubble p,
+body .chatbot-assistant-bubble p,
+body .chatbot-theme .chatbot-assistant-bubble span,
+body .chatbot-assistant-bubble span,
+body .chatbot-theme .chatbot-assistant-bubble div,
+body .chatbot-assistant-bubble div,
+body .chatbot-theme .chatbot-assistant-bubble h1,
+body .chatbot-theme .chatbot-assistant-bubble h2,
+body .chatbot-theme .chatbot-assistant-bubble h3,
+body .chatbot-theme .chatbot-assistant-bubble h4,
+body .chatbot-theme .chatbot-assistant-bubble h5,
+body .chatbot-theme .chatbot-assistant-bubble h6,
+body .chatbot-theme .chatbot-assistant-bubble li,
+body .chatbot-theme .chatbot-assistant-bubble ul,
+body .chatbot-theme .chatbot-assistant-bubble ol,
+body .chatbot-theme .chatbot-assistant-bubble strong,
+body .chatbot-theme .chatbot-assistant-bubble b,
+body .chatbot-theme .chatbot-assistant-bubble i,
+body .chatbot-theme .chatbot-assistant-bubble em,
+body .chatbot-theme .chatbot-assistant-bubble a,
+body .chatbot-assistant-bubble a {
+    color: var(--chat-bubble-bot-text) !important;
+}
+
+/* User Bubble - NOW CONFIGURABLE */
+.chatbot-theme .chatbot-user-bubble,
+.chatbot-user-bubble {
+    background: var(--chat-bubble-user-bg, #2563eb) !important;
+    color: var(--chat-bubble-user-text, #ffffff) !important;
+    border-color: transparent !important;
+}
+
+/* User Bubble Text inheritance - NUCLEAR SPECIFICITY */
+/* User Bubble Text inheritance - ULTRA NUCLEAR SPECIFICITY */
+body .chatbot-theme .chatbot-user-bubble *,
+body .chatbot-user-bubble *,
+body .chatbot-theme .chatbot-user-bubble p,
+body .chatbot-user-bubble p,
+body .chatbot-theme .chatbot-user-bubble span,
+body .chatbot-user-bubble span,
+body .chatbot-theme .chatbot-user-bubble div,
+body .chatbot-user-bubble div,
+body .chatbot-theme .chatbot-user-bubble h1,
+body .chatbot-theme .chatbot-user-bubble h2,
+body .chatbot-theme .chatbot-user-bubble h3,
+body .chatbot-theme .chatbot-user-bubble h4,
+body .chatbot-theme .chatbot-user-bubble h5,
+body .chatbot-theme .chatbot-user-bubble h6,
+body .chatbot-theme .chatbot-user-bubble li,
+body .chatbot-theme .chatbot-user-bubble ul,
+body .chatbot-theme .chatbot-user-bubble ol,
+body .chatbot-theme .chatbot-user-bubble strong,
+body .chatbot-theme .chatbot-user-bubble b,
+body .chatbot-theme .chatbot-user-bubble i,
+body .chatbot-theme .chatbot-user-bubble em,
+body .chatbot-theme .chatbot-user-bubble a,
+body .chatbot-user-bubble a {
+    color: var(--chat-bubble-user-text, #ffffff) !important;
+}
+
+/* Accent Color Utilities */
+.chatbot-theme .text-accent {
+    color: var(--chat-accent, #22d3ee) !important;
+}
+
+.chatbot-theme .bg-accent {
+    background-color: var(--chat-accent, #22d3ee) !important;
+}
+
+/* Status text (Sent, Delivered, Read) */
+.chatbot-theme .message-status-text,
+.chatbot-theme .delivery-status {
+    color: var(--chat-status-text) !important;
+}
+
+/* Right panel - theme variable based */
+.chatbot-theme .chatbot-panel {
+    color: var(--chatbot-sidebar-text) !important;
+}
+
+/*
+   CRITICAL: Right Panel White Backgrounds
+   Any element in the right panel that turns white (active state, button, etc.)
+   MUST have dark text. This is scoped to panel to avoid left sidebar issues.
+*/
+.chatbot-theme .chatbot-panel .bg-white,
+.chatbot-theme .chatbot-panel .bg-white *,
+.chatbot-theme .chatbot-panel [style*="background-color: white"],
+.chatbot-theme .chatbot-panel [style*="background-color: rgb(255, 255, 255)"],
+.chatbot-theme .chatbot-panel [style*="background-color:#ffffff"] {
+    color: var(--chatbot-user-bubble-foreground) !important;
+}
+
+/* Bot Buttons (Quick Actions) */
+.chatbot-theme .chatbot-quick-action,
+.chatbot-quick-action {
+    background-color: var(--chat-bot-btn-bg, #ffffff) !important;
+    color: var(--chat-bot-btn-text, #0f172a) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.chatbot-theme .chatbot-quick-action:hover,
+.chatbot-quick-action:hover {
+    background-color: var(--chat-bot-btn-hover-bg, #f1f5f9) !important;
+    color: var(--chat-bot-btn-hover-text, #0f172a) !important;
+    transform: translateY(-1px);
+}
+
+.chatbot-theme .chatbot-quick-action:active,
+.chatbot-quick-action:active {
+    background-color: var(--chat-bot-btn-active-bg, #e2e8f0) !important;
+    color: var(--chat-bot-btn-active-text, #0f172a) !important;
+    transform: translateY(0);
+}
+
+/* Specific fix for CRM Tabs and Catalog Items to ensure active/hover state is handled */
+.chatbot-theme .crm-tab-active,
+.chatbot-theme .crm-tab-button.active,
+.chatbot-theme .crm-tab-button.is-active,
+.chatbot-theme .crm-tab-button[data-state="active"] {
+    background-color: var(--chat-active-bg) !important;
+    color: var(--chat-active-text) !important;
+}
+
+/* Read status - blue checkmarks */
+.chatbot-theme .message-status.read svg,
+.chatbot-theme .message-status[data-status="read"] svg {
+    color: var(--chat-status-read) !important;
+}
+
+/*
+   STRATEGY CHANGE:
+   Instead of a wildcard * rule with exceptions (which fails for children),
+   we rely on inheritance + targeted overrides for stubborn elements.
+*/
+
+/* 1. Base Inheritance: Panel text is white */
+.chatbot-theme .chatbot-panel {
+    color: var(--chat-sidebar-text) !important;
+}
+
+/* 2. Target specific stubborn elements that Tailwind makes black/gray */
+.chatbot-theme .chatbot-panel button span,
+.chatbot-theme .chatbot-panel .truncate,
+.chatbot-theme .chatbot-panel .crm-tab-button:not(.crm-tab-active):not(.active):not(.is-active):not([data-state="active"]):not(:hover) span,
+.chatbot-theme .chatbot-panel h3,
+.chatbot-theme .chatbot-panel h4,
+.chatbot-theme .chatbot-panel p,
+.chatbot-theme .chatbot-panel strong,
+/* Target text inside divs that might be direct children without other tags */
+.chatbot-theme .chatbot-panel div,
+/* Safety: Generic button text that isn't hovered/active */
+.chatbot-theme .chatbot-panel button:not(.bg-white):not(:hover):not(.active):not([data-state="active"]),
+/* Contact details are often p tags or links */
+.chatbot-theme .chatbot-panel p,
+.chatbot-theme .chatbot-panel a,
+/* Ultra-specific for contact details structure */
+.chatbot-theme .chatbot-panel .text-xs p,
+.chatbot-theme .chatbot-panel .text-sm p,
+.chatbot-theme .chatbot-panel .text-xs,
+.chatbot-theme .chatbot-panel div[style*="--chatbot-sidebar-secondary"] p,
+.chatbot-theme .chatbot-panel [class*="text-slate-"],
+.chatbot-theme .chatbot-panel [class*="text-gray-"],
+.chatbot-theme .chatbot-panel [class*="text-zinc-"],
+.chatbot-theme .chatbot-panel [class*="text-neutral-"],
+.chatbot-theme .chatbot-panel [class*="text-stone-"],
+/* Fix for Edit Details Modal - Force Light Text on Dark BG - GLOBAL PORTAL FIX */
+/* Modals are often Portals outside .chatbot-panel, so we target them globally or under body */
+body [role="dialog"][id^="radix-"].bg-slate-900,
+[role="dialog"][id^="radix-"].bg-slate-900,
+[role="dialog"][id^="radix-"].bg-slate-900 h2,
+[role="dialog"][id^="radix-"].bg-slate-900 p,
+[role="dialog"][id^="radix-"].bg-slate-900 label,
+[role="dialog"][id^="radix-"].bg-slate-900 div,
+[role="dialog"][id^="radix-"].bg-slate-900 span {
+    color: white !important;
+}
+
+/* Fix for Radix Dropdowns (Tickets Filters etc) - Global Portal Fix */
+/* MUST use Hardcoded Hex because Portals are outside .chatbot-theme scope, so variables are undefined */
+body [data-radix-popper-content-wrapper] [role="option"][data-highlighted],
+body [data-radix-popper-content-wrapper] [role="option"]:hover,
+body [data-radix-popper-content-wrapper] [role="menuitem"][data-highlighted],
+body [data-radix-popper-content-wrapper] [role="menuitem"]:hover,
+body [data-radix-popper-content-wrapper] [role="option"][data-highlighted] *,
+body [data-radix-popper-content-wrapper] [role="option"]:hover * {
+    color: #0b1120 !important;
+    /* Hardcoded var(--chatbot-user-bubble-foreground) */
+}
+
+/* Fix for Filter Button Hover (Todos) - Ensure it stays dark */
+.chatbot-theme .chatbot-panel button[role="combobox"].bg-zinc-800:hover,
+.chatbot-theme .chatbot-panel button[role="combobox"][aria-controls^="radix-"]:hover,
+.chatbot-theme .chatbot-panel button[role="combobox"].bg-zinc-800:focus {
+    background-color: #3f3f46 !important;
+    /* zinc-700 (slightly lighter than 800) */
+    color: white !important;
+    border-color: #52525b !important;
+    /* zinc-600 */
+}
+
+/* Fix for Tareas (Tasks) Card Contrast */
+/* Ensure task titles and meta text are always white/light on the dark task cards */
+.chatbot-theme .CrmChatPanel .rounded-xl h4,
+.chatbot-theme .CrmChatPanel .rounded-xl span {
+    color: var(--chatbot-sidebar-text) !important;
+}
+
+/* Pending status */
+.chatbot-theme .message-status.pending svg,
+.chatbot-theme .message-status[data-status="pending"] svg {
+    color: var(--chat-status-pending) !important;
+}
+
+.chatbot-theme .CrmChatPanel .rounded-xl span[style*="--chatbot-sidebar-secondary"] {
+    color: var(--chatbot-sidebar-secondary) !important;
+}
+
+/* Prevent task cards from turning blindingly white on hover, or handle it if they do */
+.chatbot-theme .CrmChatPanel .rounded-xl:hover h4 {
+    color: var(--chatbot-sidebar-text) !important;
+    /* Keep white if background stays dark */
+}
+
+/* Fix for Left Sidebar Tabs (Todos, WhatsApp, Usuarios) */
+/* Force the specific light-gray container to be dark to match the theme */
+.chatbot-theme div[role="tablist"].bg-gray-100 {
+    background-color: rgba(30, 41, 59, 0.5) !important;
+    /* Semi-transparent dark slate */
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Tab Inactive State: Force White Text */
+.chatbot-theme div[role="tablist"] button[role="tab"][data-state="inactive"] {
+    color: var(--chat-sidebar-text) !important;
+    /* Theme text variable */
+    background-color: transparent !important;
+}
+
+.chatbot-theme div[role="tablist"] button[role="tab"][data-state="inactive"]:hover {
+    color: var(--chat-hover-text) !important;
+    background-color: var(--chat-hover-bg) !important;
+    /* Subtle hover */
+}
+
+/* Fix for Search Bar (Left Sidebar) */
+/* Force Black Background with White Text and Icon */
+/* Nuclear specificity: generic body root override */
+body .chatbot-theme input.chatbot-sidebar-search-input,
+body .chatbot-theme input[type="search"].chatbot-sidebar-search-input,
+body .chatbot-theme input[placeholder*="Buscar"].chatbot-sidebar-search-input {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+    /* slate-700 / gray contour */
+    box-shadow: none !important;
+    /* Remove any inner shadows */
+    /* Ensure no background image/gradient conflicts */
+    background-image: none !important;
+}
+
+.chatbot-theme .chatbot-sidebar-search-input::placeholder {
+    color: #94a3b8 !important;
+    /* slate-400 placeholder */
+}
+
+
+
+/* Ensure the search icon (SVG within relative parent) is white */
+.chatbot-theme .chatbot-sidebar-search-input+svg,
+.chatbot-theme .chatbot-sidebar-search-input~svg,
+.chatbot-theme .chatbot-sidebar-search-input-wrapper svg,
+.chatbot-theme div.relative>svg.lucide-search {
+    stroke: white !important;
+    color: white !important;
+    fill: white !important;
+}
+
+/* Tab Active State: Force Green Background with White Text (User feedback) */
+.chatbot-theme div[role="tablist"] button[role="tab"][data-state="active"] {
+    background-color: var(--chatbot-user-bubble) !important;
+    /* Green */
+    color: white !important;
+    border-color: transparent !important;
+}
+
+/* Ensure specific button text colors override globally for this modal type */
+[role="dialog"][id^="radix-"].bg-slate-900 button.text-slate-200 {
+    color: #cbd5e1 !important;
+    /* slate-300 for better contrast */
+}
+
+[role="dialog"][id^="radix-"].bg-slate-900 button.text-white {
+    color: white !important;
+}
+
+/* Fix for the Close button */
+[role="dialog"][id^="radix-"].bg-slate-900 button.absolute {
+    color: white !important;
+}
+
+.chatbot-theme .chatbot-panel .text-xs,
+.chatbot-theme .chatbot-panel .text-sm,
+.chatbot-theme .chatbot-panel .font-semibold,
+.chatbot-theme .chatbot-panel .font-mono {
+    color: var(--chat-sidebar-text) !important;
+}
+
+/*
+   4. FORCE WHITE ICONS on Inactive elements.
+   This protects against the dark rule leaking or default browser styles.
+   We target SVGs that are NOT inside the active/hover/white-bg containers.
+   (Previously removed bad rule here)
+*/
+.chatbot-theme .chatbot-panel svg,
+.chatbot-theme .chatbot-panel svg path {
+    stroke: var(--chat-sidebar-text);
+    color: var(--chat-sidebar-text);
+}
+
+/*
+   3. FORCE DARK TEXT on Active/White/Hover elements.
+   This rule MUST follow the white text rules above.
+   We use double class specificity (.chatbot-panel.chatbot-panel) to ensure we verify over the stubborn overrides.
+*/
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-button:hover,
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-button:hover *,
+.chatbot-theme .chatbot-panel.chatbot-panel .bg-white *,
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-active *,
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-button.active *,
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-button.is-active *,
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-button[data-state="active"] *,
+.chatbot-theme .chatbot-panel.chatbot-panel .hover\:bg-white:hover *,
+/* Catch-all for Generic Hover White / Dark Mode Hover White */
+.chatbot-theme .chatbot-panel.chatbot-panel .group:hover *,
+.chatbot-theme .chatbot-panel.chatbot-panel [class*="hover\:bg-white"]:hover *,
+.chatbot-theme .chatbot-panel.chatbot-panel [class*="dark\:hover\:bg-white"]:hover *,
+.chatbot-theme .chatbot-panel.chatbot-panel .group:hover .group-hover\:text-slate-900,
+.chatbot-theme .chatbot-panel.chatbot-panel .group:hover .group-hover\:text-black,
+/* Explicitly target the overridden utility classes to ensure they flip to dark */
+.chatbot-theme .chatbot-panel.chatbot-panel .bg-white .font-mono,
+.chatbot-theme .chatbot-panel.chatbot-panel .hover\:bg-white:hover .font-mono,
+.chatbot-theme .chatbot-panel.chatbot-panel .group:hover .font-mono,
+.chatbot-theme .chatbot-panel.chatbot-panel [class*="hover\:bg-white"]:hover .font-mono,
+.chatbot-theme .chatbot-panel.chatbot-panel .bg-white [class*="text-"],
+.chatbot-theme .chatbot-panel.chatbot-panel .hover\:bg-white:hover [class*="text-"],
+.chatbot-theme .chatbot-panel.chatbot-panel .group:hover [class*="text-"] {
+    color: var(--chatbot-user-bubble-foreground) !important;
+    stroke: var(--chatbot-user-bubble-foreground) !important;
+}
+
+/* Specific fix for SVGs */
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-button:hover svg,
+.chatbot-theme .chatbot-panel.chatbot-panel .bg-white svg,
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-active svg,
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-button.active svg,
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-button.is-active svg,
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-button[data-state="active"] svg,
+.chatbot-theme .chatbot-panel.chatbot-panel .hover\:bg-white:hover svg {
+    color: var(--chatbot-user-bubble-foreground) !important;
+    stroke: var(--chatbot-user-bubble-foreground) !important;
+}
+
+.chatbot-theme {
+    background: var(--chat-sidebar-bg, linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(2, 6, 23, 0.98)));
+    color: var(--chat-sidebar-text, #f8fafc);
+    transition: background 0.35s ease;
+    --chatbot-header-padding-top: 1.25rem;
+}
+
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-button:hover svg path,
+.chatbot-theme .chatbot-panel.chatbot-panel .bg-white svg path,
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-active svg path,
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-button.active svg path,
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-button.is-active svg path,
+.chatbot-theme .chatbot-panel.chatbot-panel .crm-tab-button[data-state="active"] svg path,
+.chatbot-theme .chatbot-panel.chatbot-panel .hover\:bg-white:hover svg path {
+    stroke: var(--chatbot-user-bubble-foreground) !important;
+}

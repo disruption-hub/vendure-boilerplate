@@ -1,0 +1,19 @@
+/* 
+  Chatbot Theme Entry Point
+  Imports all modular CSS files in the correct order.
+*/
+
+/* 1. Variables - Must load first */
+@import './variables.css';
+
+/* 2. Tokens (legacy - to be consolidated) */
+@import './tokens.css';
+
+/* 3. Base scope & resets */
+@import './base.css';
+
+/* 4. Structural layout */
+@import './layout.css';
+
+/* 5. Component specifics */
+@import './components.css';

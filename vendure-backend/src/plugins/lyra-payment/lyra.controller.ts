@@ -34,19 +34,27 @@ export class LyraController {
             this.logger.log('Received Lyra IPN webhook');
 
             // 1. Parse Lyra Data
-            const krAnswer = body['kr-answer']; // JSON String
-            const krHash = body['kr-hash'];
+            let krAnswer: string;
+            let krHash: string;
+
+            if (Buffer.isBuffer(body)) {
+                // Preserved raw bytes from express.raw middleware (definitive signature fix)
+                const rawStr = body.toString('utf8');
+                const params = new URLSearchParams(rawStr);
+                krAnswer = params.get('kr-answer') || '';
+                krHash = params.get('kr-hash') || '';
+            } else {
+                // Fallback for parsed objects (if middleware didn't run)
+                krAnswer = typeof body['kr-answer'] === 'string' ? body['kr-answer'] : JSON.stringify(body['kr-answer']);
+                krHash = body['kr-hash'];
+                this.logger.warn('[Lyra] Processing parsed Object IPN (signature verification may fail)');
+            }
 
             if (!krAnswer || !krHash) {
                 this.logger.error('Missing kr-answer or kr-hash in webhook payload');
                 return res.status(400).send('Missing required fields');
             }
 
-            this.logger.log(`[Lyra Debug] Payload Inspection:
-            krHash: ${krHash}
-            krAnswer Type: ${typeof krAnswer}
-            krAnswer Length: ${krAnswer?.length}
-            krAnswer Start: ${String(krAnswer).substring(0, 50)}...`);
 
 
             const data = JSON.parse(krAnswer);
@@ -71,8 +79,6 @@ export class LyraController {
             const configuredProdKey = lyraMethod.handler.args.find(a => a.name === 'prodHmacKey')?.value;
             const envProdKey = process.env.LYRA_PROD_HMAC_KEY;
             const prodKey = (!configuredProdKey || isMaskedSecret(configuredProdKey) ? envProdKey : configuredProdKey)?.trim?.() ?? configuredProdKey;
-
-            this.logger.log(`[Lyra Debug] IPN Context: testMode=${testMode}. Checking against ALL keys.`);
 
             const keysToTry: { label: string, key: string }[] = [];
             if (testKey) keysToTry.push({ label: 'TEST', key: testKey });
@@ -123,9 +129,8 @@ export class LyraController {
                 // Log failure detail for debugging
                 const keyToLog = testMode ? testKey : prodKey;
                 const computedHex = keyToLog ? crypto.createHmac('sha256', keyToLog).update(krAnswer, 'utf8').digest('hex') : 'N/A';
-                this.logger.warn(`[Lyra] Signature verification skipped (body parser modifies payload). Computed: ${computedHex.substring(0, 16)}..., Provided: ${normalizedProvided.substring(0, 16)}...`);
-                // Note: We cannot verify signature due to NestJS body parser modifying payload.
-                // Payment flow is still secure via order code validation.
+                this.logger.error(`[Lyra] Invalid signature. Computed: ${computedHex.substring(0, 16)}..., Provided: ${normalizedProvided.substring(0, 16)}...`);
+                return res.status(403).send('Invalid Signature');
             } else {
                 this.logger.log(`[Lyra] Signature MATCHED using ${matchedKey} key.`);
             }

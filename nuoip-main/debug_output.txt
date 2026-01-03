@@ -1,0 +1,20 @@
+✅ Runtime require hook loaded - directory requires will be fixed automatically
+DATABASE_URL already defined via DATABASE_URL
+🔍 DIAGNOSTIC: Checking current state...
+
+1. WhatsAppContacts (JID 51916172368): 1
+   - JID: 51916172368@s.whatsapp.net
+     Linked User: Lucia Meza (cmhiw2xo70005ji04092hf2nb)
+     Linked Contact: undefined (null)
+
+2. Users (Name 'Lucia' OR Metadata JID): 1
+   - Lucia Meza (cmhiw2xo70005ji04092hf2nb)
+     Metadata: {"role":"super_admin","whatsappJid":"51916172368@s.whatsapp.net","whatsappSessionId":"session-1764628788062"}
+
+3. ChatbotContacts (Name 'Lucia' OR Metadata JID OR Phone): 2
+   - Alberto Saco (cmip7o3dt001901qv0vxxcfj7)
+     Phone: +51916172368
+     Metadata: {"pushName":null,"lastMessageAt":"2025-12-03T01:41:36.000Z","lastMessageFrom":"agent","lastMessageType":"TEXT","lastMessageStatus":"SENT","lastMessagePreview":"[Message]"}
+   - MatMax (cmigbet91001o01qazey1ydh3)
+     Phone: +51916172368
+     Metadata: {"pushName":null,"lastUpdated":"2025-12-01T00:59:14.012Z","lastMessageAt":"2025-12-02T23:13:07.000Z","lastMessageFrom":"agent","lastMessageType":"TEXT","lastMessageStatus":"SENT","lastMessagePreview":"[Message]","conversationContext":{"source":"whatsapp","history":[{"role":"user","content":"hola"},{"role":"assistant","content":"¡Hola! Soy Eres FlowBot, un asistente virtual que puede ayudarte con pagos y servicios. ¿En qué puedo ayudarte hoy?"},{"role":"user","content":"Hola"},{"role":"assistant","content":"¡Hola! ¿En qué puedo ayudarte?"},{"role":"user","content":"T"},{"role":"assistant","content":"¿Cómo puedo asistirte? Si necesitas generar un link de pago para un producto o servicio, puedo ayudarte con eso. Simplemente dime más detalles sobre lo que quieres cobrar y te proporcionaré un enlace de pago seguro."},{"role":"user","content":"Ggfg"},{"role":"assistant","content":"Lo siento, no entiendo la solicitud. Si necesitas generar un enlace de pago, por favor proporcióneme más detalles sobre el producto o servicio, como el nombre, descripción, monto a cobrar, etc. Puedo ayudarte a crear un enlace de pago seguro y confiable. Dime más sobre lo que necesitas y con gusto te asisto."},{"role":"user","content":"Hgg"},{"role":"assistant","content":"Disculpa, no he podido entender tu solicitud. Para poder ayudarte a generar un enlace de pago, necesito que me proporciones más detalles específicos, como:\n\n- Nombre del producto o servicio\n- Descripción del mismo\n- Monto a cobrar\n- Cualquier otra información relevante\n\nCon esos datos, puedo generar un enlace de pago seguro y confiable para que puedas compartirlo con tus clientes. Por favor, déjame saber los detalles y con gusto te ayudo. Estoy aquí para asistirte en todo lo relacionado a pagos y cobros."},{"role":"user","content":"Hola"},{"role":"assistant","content":"¡Hola! ¿En qué puedo ayudarte hoy? Si necesitas generar un enlace de pago para un producto o servicio, puedo guiarte a través del proceso. Simplemente proporcióneme los detalles como el nombre, descripción, monto a cobrar, y con gusto te proporcionaré un enlace de pago seguro y confiable. Estoy aquí para asistirte con tus necesidades de pagos y cobros."}],"language":"es","tenantId":"default-tenant","contactId":"cmigbet91001o01qazey1ydh3","paymentContext":null}}

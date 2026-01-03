@@ -1,0 +1,248 @@
+// This is your Prisma schema file for Complete Microservices Architecture
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tenant model for multi-tenancy
+model Tenant {
+  id          String   @id @default(cuid())
+  name        String
+  domain      String?  @unique
+  settings    Json     @default("{}") // Contains features, limits, branding
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  users       User[]
+  trademarks  Trademark[]
+  memorySessions MemorySession[]
+  bufferMessages BufferMessage[]
+  conversationSummaries ConversationSummary[]
+  memoryEntities MemoryEntity[]
+  knowledgeNodes KnowledgeNode[]
+  knowledgeRelationships KnowledgeRelationship[]
+  knowledgeBase KnowledgeBase[]
+
+  @@map("tenants")
+}
+
+// User model with tenant isolation
+model User {
+  id        String   @id @default(cuid())
+  email     String
+  name      String?
+  password  String?  // Added password field for authentication
+  role      String   @default("user") // user, admin, super_admin
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([email, tenantId])
+  @@map("users")
+}
+
+// Trademark model with tenant isolation
+model Trademark {
+  id                String    @id @default(cuid())
+  expediente        String?
+  marca             String?
+  clase             String?
+  titular           String?
+  paisTitular       String?
+  estado            String?
+  fechaRegistro     DateTime?
+  fechaVencimiento  DateTime?
+  descripcion       String?
+  numeroRegistro    String?
+  fechaPresentacion DateTime?
+  agente            String?
+  tipoSolicitud     String?
+  productosServicios String?
+  tenantId          String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  tenant            Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([marca])
+  @@index([titular])
+  @@index([clase])
+  @@map("trademarks")
+}
+
+// Memory Session with tenant isolation
+model MemorySession {
+  id        String   @id @default(cuid())
+  sessionId String
+  tenantId  String
+  metadata  Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tenant            Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  bufferMessages    BufferMessage[]
+  conversationSummaries ConversationSummary[]
+  memoryEntities    MemoryEntity[]
+  knowledgeNodes    KnowledgeNode[]
+  knowledgeRelationships KnowledgeRelationship[]
+
+  @@unique([sessionId, tenantId])
+  @@index([tenantId])
+  @@map("memory_sessions")
+}
+
+// Buffer Message with tenant isolation
+model BufferMessage {
+  id        String   @id @default(cuid())
+  sessionId String
+  tenantId  String
+  role      String   // user, assistant, system
+  content   String
+  metadata  Json     @default("{}")
+  timestamp DateTime @default(now())
+
+  // Relations
+  session   MemorySession @relation(fields: [sessionId, tenantId], references: [sessionId, tenantId], onDelete: Cascade)
+  tenant    Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, tenantId])
+  @@index([tenantId])
+  @@index([timestamp])
+  @@map("buffer_messages")
+}
+
+// Conversation Summary with tenant isolation
+model ConversationSummary {
+  id             String   @id @default(cuid())
+  sessionId      String
+  tenantId       String
+  summary        String
+  keyTopics      String[]
+  entities       String[]
+  userInterests  String[]
+  pendingActions String[]
+  messageCount   Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  session        MemorySession @relation(fields: [sessionId, tenantId], references: [sessionId, tenantId], onDelete: Cascade)
+  tenant         Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, tenantId])
+  @@index([tenantId])
+  @@map("conversation_summaries")
+}
+
+// Memory Entity with tenant isolation
+model MemoryEntity {
+  id           String   @id @default(cuid())
+  sessionId    String
+  tenantId     String
+  name         String
+  type         String
+  value        String?
+  confidence   Float
+  context      String?
+  lastMentioned DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  session      MemorySession @relation(fields: [sessionId, tenantId], references: [sessionId, tenantId], onDelete: Cascade)
+  tenant       Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, name, type])
+  @@index([sessionId, tenantId])
+  @@index([tenantId])
+  @@index([type])
+  @@map("memory_entities")
+}
+
+// Knowledge Node with tenant isolation
+model KnowledgeNode {
+  id         String   @id @default(cuid())
+  sessionId  String
+  tenantId   String
+  nodeId     String
+  type       String
+  name       String
+  properties Json     @default("{}")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  session    MemorySession @relation(fields: [sessionId, tenantId], references: [sessionId, tenantId], onDelete: Cascade)
+  tenant     Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sourceRelationships KnowledgeRelationship[] @relation("SourceNode")
+  targetRelationships KnowledgeRelationship[] @relation("TargetNode")
+
+  @@unique([sessionId, nodeId])
+  @@index([sessionId, tenantId])
+  @@index([tenantId])
+  @@index([type])
+  @@map("knowledge_nodes")
+}
+
+// Knowledge Relationship with tenant isolation
+model KnowledgeRelationship {
+  id         String   @id @default(cuid())
+  sessionId  String
+  tenantId   String
+  sourceId   String
+  targetId   String
+  type       String
+  weight     Float    @default(1.0)
+  context    String?
+  timestamp  DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  session    MemorySession @relation(fields: [sessionId, tenantId], references: [sessionId, tenantId], onDelete: Cascade)
+  tenant     Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sourceNode KnowledgeNode @relation("SourceNode", fields: [sourceId], references: [nodeId])
+  targetNode KnowledgeNode @relation("TargetNode", fields: [targetId], references: [nodeId])
+
+  @@index([sessionId, tenantId])
+  @@index([tenantId])
+  @@index([sourceId])
+  @@index([targetId])
+  @@index([type])
+  @@map("knowledge_relationships")
+}
+
+// Knowledge Base with tenant isolation
+model KnowledgeBase {
+  id         String   @id @default(cuid())
+  title      String
+  content    String
+  category   String
+  tags       String[]
+  embedding  String   // JSON string of embedding vector
+  tenantId   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([category])
+  @@index([tags])
+  @@map("knowledge_base")
+}

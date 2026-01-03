@@ -32,6 +32,7 @@ export const ActiveCustomerFragment = graphql(`
         phoneNumber
         customFields {
             walletAddress
+            zkeyInternalId
         }
     }
 `);

@@ -1,0 +1,45 @@
+/* Fullchat Theme Variables - All customizable theme tokens */
+.chatbot-theme {
+    /* Core surfaces and backgrounds */
+    --chatbot-surface: rgba(15, 23, 42, 0.85);
+    --chatbot-surface-muted: rgba(15, 23, 42, 0.65);
+    --chatbot-border: rgba(148, 163, 184, 0.25);
+    --chatbot-background: #ffffff;
+    --chatbot-header-background: rgba(15, 23, 42, 0.7);
+    --chatbot-thread-bg: #f5f1ed;
+    --chatbot-thread-bg-desktop: #f5f1ed;
+
+    /* Accent colors */
+    --chatbot-accent: #22d3ee;
+    --chatbot-accent-strong: #38bdf8;
+
+    /* Sidebar system */
+    --chatbot-sidebar-bg: rgba(15, 23, 42, 0.9);
+    --chatbot-sidebar-topbar-bg: rgba(15, 23, 42, 0.95);
+    --chatbot-sidebar-border: rgba(148, 163, 184, 0.25);
+    --chatbot-sidebar-text: #f8fafc;
+    --chatbot-sidebar-secondary: rgba(203, 213, 225, 0.95);
+    --chatbot-sidebar-hover-bg: rgba(30, 41, 59, 0.85);
+    --chatbot-sidebar-active-bg: rgba(30, 41, 59, 0.95);
+    --chatbot-sidebar-search-bg: rgba(15, 23, 42, 0.6);
+    --chatbot-sidebar-search-placeholder: rgba(148, 163, 184, 0.7);
+    --chatbot-sidebar-avatar-bg: rgba(15, 23, 42, 0.65);
+    --chatbot-sidebar-pill-bg: rgba(30, 41, 59, 0.75);
+    --chatbot-sidebar-accent: var(--chatbot-accent, #22d3ee);
+
+    /* Message bubbles */
+    --chatbot-user-bubble: #10b981;
+    --chatbot-user-bubble-foreground: #0b1120;
+    --chatbot-assistant-text: #f8fafc;
+
+    /* Quick actions and schedules */
+    --chatbot-quick-action-bg: rgba(255, 255, 255, 0.12);
+    --chatbot-quick-action-border: rgba(255, 255, 255, 0.24);
+    --chatbot-schedule-bg: rgba(13, 148, 136, 0.15);
+    --chatbot-schedule-border: rgba(45, 212, 191, 0.45);
+    --chatbot-schedule-shadow: rgba(13, 148, 136, 0.28);
+    --chatbot-schedule-date: #5eead4;
+    --chatbot-schedule-text: #0f766e;
+    --chatbot-schedule-number: #34d399;
+    --chatbot-schedule-icon: #2dd4bf;
+}

@@ -16,20 +16,24 @@ export class BookingsService {
         }
 
         // 2. Find Session
-        const session = await this.prisma.classSession.findUnique({
+        const session = await this.prisma.session.findUnique({
             where: { id: sessionId },
             include: {
                 bookings: true,
+                space: true,
             },
         });
 
         if (!session) {
-            throw new NotFoundException('Class session not found');
+            throw new NotFoundException('Session not found');
         }
 
         // 3. Check Capacity
-        if (session.bookings.length >= session.capacity) {
-            throw new BadRequestException('Class is full');
+        // Use session maxCapacity or fallback to space capacity if set, else default 20
+        const capacity = session.maxCapacity;
+
+        if (session.bookings.length >= capacity) {
+            throw new BadRequestException('Session is full');
         }
 
         // 4. Create Booking
@@ -42,7 +46,7 @@ export class BookingsService {
             include: {
                 session: {
                     include: {
-                        classType: true,
+                        service: true,
                     },
                 },
             },
@@ -61,7 +65,7 @@ export class BookingsService {
             include: {
                 session: {
                     include: {
-                        classType: true,
+                        service: true,
                     },
                 },
             },

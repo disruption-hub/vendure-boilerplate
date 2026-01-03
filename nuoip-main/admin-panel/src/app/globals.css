@@ -1,0 +1,279 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-text-primary bg-bg-primary;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  /* Ensure all text defaults to black for maximum contrast */
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-text-primary;
+  }
+  
+  p, span, div, label {
+    @apply text-text-primary;
+  }
+  
+  /* Input fields - solid white background with black text */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  textarea {
+    @apply text-text-primary bg-bg-primary;
+    background-color: #ffffff !important;
+  }
+  
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-text-muted;
+  }
+  
+  /* Select dropdowns - solid white background with black text */
+  select {
+    @apply text-text-primary bg-bg-primary;
+    background-color: #ffffff !important;
+    background-image: none;
+  }
+  
+  /* Select options - solid white background with black text */
+  select option {
+    @apply text-text-primary bg-bg-primary;
+    background-color: #ffffff !important;
+  }
+  
+  /* Ensure selects maintain solid background on focus */
+  select:focus {
+    @apply bg-bg-primary;
+    background-color: #ffffff !important;
+  }
+  
+  /* Buttons - ensure proper contrast */
+  button {
+    @apply text-text-primary;
+  }
+  
+  /* Primary action buttons - white text on colored background */
+  button.bg-primary-600,
+  button.bg-primary-700,
+  button[class*="bg-primary-"] {
+    @apply text-bg-primary;
+  }
+  
+  /* Secondary buttons - black text on white/light background */
+  button.bg-bg-primary,
+  button.bg-bg-secondary,
+  button.bg-bg-tertiary,
+  button.bg-bg-hover {
+    @apply text-text-primary;
+  }
+  
+  /* Icon buttons - ensure visible with hover states */
+  button[aria-label],
+  button[title] {
+    @apply text-icon-primary;
+  }
+  
+  /* Override any light text colors */
+  * {
+    color: inherit;
+  }
+  
+  /* Input focus states */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-color: rgb(37, 99, 235) !important; /* primary-600 */
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  }
+  
+  /* Input disabled states */
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    background-color: rgb(243, 244, 246) !important; /* gray-100 */
+    color: rgb(107, 114, 128) !important; /* gray-500 */
+    cursor: not-allowed;
+  }
+  
+  /* Buttons - comprehensive contrast rules */
+  button[class*="bg-primary-500"],
+  button[class*="bg-primary-600"],
+  button[class*="bg-primary-700"],
+  button[class*="bg-blue-"] {
+    color: #ffffff !important;
+  }
+  
+  button[class*="bg-primary-500"]:hover,
+  button[class*="bg-primary-600"]:hover,
+  button[class*="bg-primary-700"]:hover,
+  button[class*="bg-blue-"]:hover {
+    color: #ffffff !important;
+    opacity: 0.9;
+  }
+  
+  button[class*="bg-red-"],
+  button[class*="bg-destructive"] {
+    color: #ffffff !important;
+  }
+  
+  button[class*="bg-red-"]:hover,
+  button[class*="bg-destructive"]:hover {
+    color: #ffffff !important;
+    opacity: 0.9;
+  }
+  
+  /* Ensure delete/eliminar buttons with red background maintain red styling */
+  button[class*="bg-red-600"],
+  button[class*="bg-red-700"],
+  button[class*="bg-red-500"] {
+    background-color: rgb(220, 38, 38) !important; /* red-600 */
+    color: #ffffff !important;
+    border-color: rgb(220, 38, 38) !important;
+  }
+  
+  button[class*="bg-red-600"]:hover,
+  button[class*="bg-red-700"]:hover,
+  button[class*="bg-red-500"]:hover {
+    background-color: rgb(185, 28, 28) !important; /* red-700 */
+    color: #ffffff !important;
+    border-color: rgb(185, 28, 28) !important;
+  }
+  
+  /* Tabs - clear active/inactive states */
+  [role="tablist"] {
+    background-color: rgb(243, 244, 246) !important; /* gray-100 */
+    border-color: rgb(209, 213, 219) !important; /* gray-300 */
+  }
+  
+  [role="tab"] {
+    color: rgb(107, 114, 128) !important; /* gray-500 */
+  }
+  
+  [role="tab"][aria-selected="false"] {
+    background-color: transparent !important;
+    color: rgb(107, 114, 128) !important; /* gray-500 */
+  }
+  
+  [role="tab"][aria-selected="true"] {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-color: rgb(209, 213, 219) !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  
+  [role="tab"]:hover {
+    color: #000000 !important;
+  }
+  
+  [role="tab"]:focus-visible {
+    outline: 2px solid rgb(37, 99, 235) !important; /* primary-600 */
+    outline-offset: 2px;
+  }
+  
+  /* Dropdown menus */
+  [role="menu"],
+  [role="listbox"],
+  [data-radix-select-content],
+  [data-radix-dropdown-menu-content] {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-color: rgb(209, 213, 219) !important;
+  }
+  
+  [role="menuitem"],
+  [role="option"] {
+    color: #000000 !important;
+  }
+  
+  [role="menuitem"]:hover,
+  [role="menuitem"]:focus,
+  [role="option"]:hover,
+  [role="option"]:focus {
+    background-color: rgb(243, 244, 246) !important; /* gray-100 */
+    color: #000000 !important;
+  }
+  
+  [role="menuitem"][aria-disabled="true"],
+  [role="option"][aria-disabled="true"] {
+    color: rgb(156, 163, 175) !important; /* gray-400 */
+    cursor: not-allowed;
+  }
+  
+  /* Menu items and navigation */
+  nav a,
+  nav button,
+  [role="menuitem"],
+  [role="navigation"] a,
+  [role="navigation"] button {
+    color: #000000 !important;
+    transition: all 0.2s ease;
+  }
+  
+  nav a:hover,
+  nav button:hover,
+  [role="menuitem"]:hover,
+  [role="navigation"] a:hover,
+  [role="navigation"] button:hover {
+    background-color: rgb(243, 244, 246) !important; /* gray-100 */
+    color: #000000 !important;
+  }
+  
+  nav a[aria-current="page"],
+  nav button[aria-current="page"],
+  [role="menuitem"][aria-current="page"] {
+    background-color: rgb(219, 234, 254) !important; /* primary-100 */
+    color: #000000 !important;
+    font-weight: 600;
+  }
+  
+  /* Labels */
+  label {
+    color: #000000 !important;
+  }
+  
+  /* Links */
+  a {
+    color: rgb(37, 99, 235) !important; /* primary-600 */
+    text-decoration: underline;
+  }
+  
+  a:hover {
+    color: rgb(29, 78, 216) !important; /* primary-700 */
+  }
+  
+  a:visited {
+    color: rgb(79, 70, 229) !important; /* indigo-600 */
+  }
+  
+  /* Focus states */
+  *:focus-visible {
+    outline: 2px solid rgb(37, 99, 235) !important; /* primary-600 */
+    outline-offset: 2px;
+  }
+  
+  /* Disabled states */
+  [disabled],
+  [aria-disabled="true"] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

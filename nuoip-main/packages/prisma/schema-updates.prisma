@@ -1,0 +1,133 @@
+
+-- Add Tenant table to Prisma schema
+model Tenant {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  plan        String   @default("basic")
+  configJson  Json?    // Agent configurations, feature flags, etc.
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  users       User[]
+  trademarks  Trademark[]
+  memorySessions MemorySession[]
+  documents   Document[]
+  embeddings  Embedding[]
+  
+  @@map("tenants")
+}
+
+-- Update User model to include tenantId
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String    @default("user")
+  tenantId      String?   // Add tenant reference
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  tenant        Tenant?   @relation(fields: [tenantId], references: [id])
+  
+  @@map("users")
+}
+
+-- Update Trademark model to include tenantId
+model Trademark {
+  id                    String   @id @default(cuid())
+  tenantId              String   // Add tenant reference
+  expediente            String?  @unique
+  fechaPresentacion     DateTime?
+  fechaRegistro         DateTime?
+  marca                 String?
+  clase                 String?
+  titular               String?
+  paisTitular           String?
+  direccionTitular      String?
+  telefonoTitular       String?
+  emailTitular          String?
+  agente                String?
+  tipoSolicitud         String?
+  estado                String?
+  descripcion           String?
+  productosServicios    String?
+  numeroRegistro        String?
+  fechaPublicacion      DateTime?
+  fechaVencimiento      DateTime?
+  observaciones         String?
+  
+  // Search optimization fields
+  marcaNormalized       String?
+  titularNormalized     String?
+  descripcionNormalized String?
+  searchVector          String?
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  // Relations
+  tenant                Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@index([tenantId])
+  @@index([marcaNormalized])
+  @@index([titularNormalized])
+  @@index([clase])
+  @@index([estado])
+  @@index([fechaPresentacion])
+  @@index([fechaRegistro])
+  @@map("trademarks")
+}
+
+-- Update Memory models to include tenantId
+model MemorySession {
+  id          String   @id @default(cuid())
+  sessionId   String   @unique
+  tenantId    String   // Add tenant reference
+  userId      String?  
+  metadata    Json?    
+  
+  // Memory components
+  bufferMessages    BufferMessage[]
+  summaries         ConversationSummary[]
+  entities          MemoryEntity[]
+  knowledgeNodes    KnowledgeNode[]
+  relationships     KnowledgeRelationship[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  
+  @@index([sessionId])
+  @@index([tenantId])
+  @@index([userId])
+  @@map("memory_sessions")
+}
+
+model BufferMessage {
+  id          String   @id @default(cuid())
+  sessionId   String
+  tenantId    String   // Add tenant reference
+  role        MessageRole
+  content     String   @db.Text
+  metadata    Json?    
+  timestamp   DateTime @default(now())
+  
+  // Relations
+  session     MemorySession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
+  tenant      Tenant        @relation(fields: [tenantId], references: [id])
+  
+  @@index([sessionId])
+  @@index([tenantId])
+  @@index([timestamp])
+  @@map("buffer_messages")
+}

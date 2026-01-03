@@ -1,0 +1,45 @@
+# Nixpacks config for apps/backend directory
+# CRITICAL: This config REQUIRES Root Directory to be EMPTY
+# When Root Directory = apps/backend, Railway only copies that directory
+# This means packages/shared-chat-auth won't be available at runtime
+# 
+# SOLUTION: Clear Root Directory in Railway Dashboard
+# Then Railway will use root nixpacks.toml instead
+
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+# Install dependencies - using npm install for better compatibility
+# CRITICAL: Install at root level to ensure all packages are available
+[phases.install]
+cmds = [
+  "cd ../.. && npm install --include=dev --prefer-offline --no-audit --legacy-peer-deps"
+]
+
+# Generate Prisma Client, run migrations, and build NestJS
+[phases.build]
+cmds = [
+  # Clean all Prisma caches to force fresh generation
+  "echo '🧹 Cleaning Prisma caches...'",
+  "find . -path '*/node_modules/.prisma' -type d -exec rm -rf {} + 2>/dev/null || true",
+  "find . -path '*/node_modules/@prisma/client' -type d -exec rm -rf {} + 2>/dev/null || true",
+  "find . -name '.prisma' -type d -exec rm -rf {} + 2>/dev/null || true",
+  "echo '✅ Prisma caches cleaned'",
+  # Regenerate Prisma client (this will create it in packages/prisma/node_modules/@prisma/client)
+  "cd packages/prisma && npm run generate && echo '✅ Prisma client regenerated'",
+  # CRITICAL: Copy the generated client to root node_modules where the code expects it
+  "cd ../.. && if [ -d 'packages/prisma/node_modules/@prisma/client' ]; then rm -rf node_modules/@prisma/client 2>/dev/null || true && cp -r packages/prisma/node_modules/@prisma/client node_modules/@prisma/client && echo '✅ Prisma client copied to root node_modules'; else echo '❌ ERROR: Prisma client not found in packages/prisma/node_modules/@prisma/client' && exit 1; fi",
+  # CRITICAL: Verify that paymentReturnHomeUrl exists in the generated client before building
+  # This will fail the build early if the field is missing
+  "node scripts/verify-prisma-field.mjs || (echo '❌ Verification failed: paymentReturnHomeUrl not found in Prisma client' && exit 1)",
+  # Build backend (this will use the regenerated client)
+  "cd apps/backend && npm run build",
+  # Deploy migrations
+  "cd ../../packages/prisma && npm run migrate:deploy || echo 'Migrations skipped (may already be applied)'"
+]
+
+# Start the production server
+# CRITICAL: Regenerate Prisma client, verify it includes paymentReturnHomeUrl, and copy it to the correct location
+[start]
+cmd = "cd packages/prisma && npm run generate && cd ../.. && if [ -d 'packages/prisma/node_modules/@prisma/client' ]; then rm -rf node_modules/@prisma/client 2>/dev/null || true && cp -r packages/prisma/node_modules/@prisma/client node_modules/@prisma/client && echo '✅ Prisma client copied to root node_modules'; else echo '❌ ERROR: Prisma client not found' && exit 1; fi && node scripts/verify-prisma-field.mjs || (echo '❌ Verification failed: paymentReturnHomeUrl not found in Prisma client' && exit 1) && cd apps/backend && npm run start:prod"
+

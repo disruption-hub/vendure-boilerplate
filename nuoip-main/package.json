@@ -1,0 +1,24 @@
+{
+  "name": "ipnuo-root",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Root package.json for IPNuo monorepo",
+  "scripts": {
+    "dev:nextjs": "cd apps/nextjs && npm run dev",
+    "dev:backend": "cd apps/backend && npm run start:dev",
+    "build:nextjs": "cd apps/nextjs && npm run build",
+    "build:backend": "cd apps/backend && npm run build",
+    "build": "cd apps/backend && npm run prisma:generate && npm run build",
+    "start": "cd apps/backend && npm run prisma:migrate:deploy && npm run start:prod",
+    "start:local": "cd apps/nextjs && NEXT_PUBLIC_BACKEND_URL=http://localhost:3001 BACKEND_URL=http://localhost:3001 npm start"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.18",
+    "npm": ">=9"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

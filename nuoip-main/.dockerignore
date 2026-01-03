@@ -1,0 +1,50 @@
+# Docker ignore file to prevent Railway from processing unnecessary files
+# This helps avoid issues with Dockerfile generation
+
+# Node modules (will be installed during build)
+node_modules
+**/node_modules
+
+# Build outputs
+dist
+build
+.next
+out
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files (Railway handles these)
+.env
+.env.local
+.env.*.local
+
+# Test files
+**/*.test.ts
+**/*.test.js
+**/*.spec.ts
+**/*.spec.js
+
+# Documentation
+*.md
+docs
+.docs
+
+# Temporary files
+tmp
+temp
+*.tmp
+

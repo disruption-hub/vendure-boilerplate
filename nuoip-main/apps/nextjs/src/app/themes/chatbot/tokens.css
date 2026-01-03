@@ -1,0 +1,63 @@
+/* 
+  Chatbot Design Tokens 
+  Defines semantic variables for colors, spacing, and typography.
+  These are the "knobs" for the theme configurator.
+*/
+
+:root {
+  /* --- LAYOUT COLORS --- */
+
+  /* Sidebar (Dark by default) */
+  --chat-sidebar-bg: #0f172a;
+  /* slate-50 */
+  --chat-sidebar-text: #f8fafc;
+  --chat-sidebar-text-active: #ffffff;
+  /* slate-400 */
+  --chat-sidebar-text-dim: #94a3b8;
+  /* slate-400 */
+  --chat-sidebar-hover: rgba(255, 255, 255, 0.1);
+  --chat-sidebar-border: rgba(255, 255, 255, 0.1);
+  --chat-sidebar-active: #2563eb;
+  /* blue-600 */
+  --chat-sidebar-preview: #94a3b8;
+  --chat-sidebar-time: #94a3b8;
+  --chat-sidebar-preview-active: #e2e8f0;
+  --chat-sidebar-time-active: #e2e8f0;
+
+  /* Main Area (Light by default) */
+  --chat-main-bg: #f8fafc;
+  /* slate-50 */
+  --chat-header-bg: #ffffff;
+  --chat-header-text: #0f172a;
+  --chat-header-border: #e2e8f0;
+  /* slate-200 */
+
+  /* Right Panel (CRM, Info) */
+  --chat-panel-bg: #ffffff;
+  --chat-panel-text: #0f172a;
+  --chat-panel-text-dim: #64748b;
+  --chat-panel-border: #e2e8f0;
+  --chat-panel-hover: #f1f5f9;
+  /* slate-100 */
+
+  /* --- COMPONENT COLORS --- */
+
+  /* Message Bubbles */
+  --chat-bubble-user-bg: #2563eb;
+  /* blue-600 */
+  --chat-bubble-user-text: #ffffff;
+  --chat-bubble-bot-bg: #ffffff;
+  --chat-bubble-bot-text: #0f172a;
+  --chat-bubble-bot-border: #e2e8f0;
+
+  /* Inputs & Composer */
+  --chat-input-bg: #ffffff;
+  --chat-input-text: #0f172a;
+  --chat-input-placeholder: #94a3b8;
+  --chat-input-border: #e2e8f0;
+
+  /* Badges & Accents */
+  --chat-accent: #22d3ee;
+  /* cyan-400 */
+  --chat-accent-text: #0f172a;
+}

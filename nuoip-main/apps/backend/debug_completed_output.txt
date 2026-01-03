@@ -1,0 +1,1012 @@
+[32m[Nest] 16592  - [39m12/03/2025, 8:09:52 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 16592  - [39m12/03/2025, 8:09:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +10ms[39m
+DATABASE_URL already defined via DATABASE_URL
+[32m[Nest] 16592  - [39m12/03/2025, 8:09:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 16592  - [39m12/03/2025, 8:09:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16592  - [39m12/03/2025, 8:09:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16592  - [39m12/03/2025, 8:09:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPaymentsModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 16592  - [39m12/03/2025, 8:09:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16592  - [39m12/03/2025, 8:09:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatbotModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16592  - [39m12/03/2025, 8:09:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 16592  - [39m12/03/2025, 8:09:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 16592  - [39m12/03/2025, 8:09:52 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +0ms[39m
+[WhatsApp Service] 🚀 Initializing WhatsApp sessions on startup...
+[WhatsApp Service] Found 1 sessions to reconnect
+[WhatsApp Service] Reconnecting session: MatMax
+[2025-12-03T13:09:52.859Z] [socket-manager-registry] Creating new socket manager for session session-1764738037126
+[2025-12-03T13:09:52.859Z] [whatsapp-socket-manager] Connecting Baileys socket for session session-1764738037126
+[2025-12-03T13:09:53.035Z] [whatsapp-message-handler] Message handlers registered {"sessionId":"session-1764738037126"}
+[2025-12-03T13:09:53.035Z] [whatsapp-socket-manager] Baileys socket connected for session session-1764738037126
+[2025-12-03T13:09:53.035Z] [socket-manager-registry] Socket manager created and connected for session session-1764738037126
+[WhatsApp Service] ✅ Successfully reconnected: MatMax
+[WhatsApp Service] ✅ Session initialization complete
+Testing handlePaymentFlow with completed stage context...
+Message: Dame un link de pago
+Context: {
+  "stage": "completed",
+  "linkUrl": "https://flowcast.chat/pay/3d7XMysDhjJ2UtwUlraIOi3y",
+  "currency": "PEN",
+  "confirmed": true,
+  "linkRoute": "/pay/3d7XMysDhjJ2UtwUlraIOi3y",
+  "linkToken": "3d7XMysDhjJ2UtwUlraIOi3y",
+  "productId": "cmh8fgk9p0000btrmeirskn67",
+  "amountCents": 6000,
+  "productName": "MATPASS 01",
+  "customerName": "Ya",
+  "lastViewedAt": null,
+  "customerEmail": "betosaxo@gmail.com",
+  "historyOffset": 0,
+  "nameConfirmed": true,
+  "emailConfirmed": true,
+  "historyPageSize": 5,
+  "lastGeneratedAt": "2025-12-01T16:57:19.041Z",
+  "selectedCustomerId": null,
+  "selectedCustomerType": null
+}
+[PaymentFlowService] ========== PAYMENT FLOW HANDLER CALLED ==========
+[PaymentFlowService] Input: {
+  message: 'Dame un link de pago',
+  messageLength: 20,
+  sessionId: 'debug-session-1764767393036',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  hasConversationContext: true,
+  conversationContextKeys: [ 'language', 'tenantId', 'paymentContext' ]
+}
+[PaymentFlowService] Payment context loaded: {
+  stage: 'completed',
+  productId: 'cmh8fgk9p0000btrmeirskn67',
+  productName: 'MATPASS 01',
+  hasContext: true,
+  fullContext: {
+    stage: 'completed',
+    linkUrl: 'https://flowcast.chat/pay/3d7XMysDhjJ2UtwUlraIOi3y',
+    currency: 'PEN',
+    confirmed: true,
+    linkRoute: '/pay/3d7XMysDhjJ2UtwUlraIOi3y',
+    linkToken: '3d7XMysDhjJ2UtwUlraIOi3y',
+    productId: 'cmh8fgk9p0000btrmeirskn67',
+    amountCents: 6000,
+    productName: 'MATPASS 01',
+    customerName: 'Ya',
+    lastViewedAt: null,
+    customerEmail: 'betosaxo@gmail.com',
+    historyOffset: 0,
+    nameConfirmed: true,
+    emailConfirmed: true,
+    historyPageSize: 5,
+    lastGeneratedAt: '2025-12-01T16:57:19.041Z',
+    selectedCustomerId: null,
+    selectedCustomerType: null
+  }
+}
+[PaymentFlowService] Intent detection: {
+  normalizedMessage: 'dame un link de pago',
+  hasPaymentIntent: true,
+  inActiveFlow: false,
+  currentStage: 'completed',
+  willProcessMessage: true
+}
+[2025-12-03T13:09:53.041Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"connecting","hasQr":false}
+[2025-12-03T13:09:53.041Z] [whatsapp-socket-manager] WhatsApp connecting for session session-1764738037126
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+[2025-12-03T13:09:53.042Z] [whatsapp-soketi-emitter] Soketi client resolved from environment variables {"host":"soketi-production-2f36.up.railway.app","port":"443","useTLS":true}
+✅✅✅ SOKETI CLIENT RESOLVED ✅✅✅ {
+  channelHost: 'soketi-production-2f36.up.railway.app',
+  hasClient: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [ 'status', 'connection', 'sessionId', 'tenantId', 'timestamp' ],
+  isRailway: false
+}
+[PaymentFlowService] Products fetched: {
+  count: 6,
+  productNames: [
+    'T Pass',
+    'MATPASS 01',
+    'MATPASS 04',
+    'MATPASS 08',
+    'MATPASS 12',
+    'MATPASS 24'
+  ]
+}
+Result: {
+  "handled": true,
+  "response": "Ya tienes un enlace de pago activo para MATPASS 01 (60,00 PEN).\n\n🔗 [Haz clic aquí para abrir tu enlace existente](https://flowcast.chat/pay/3d7XMysDhjJ2UtwUlraIOi3y)\n\n¿Deseas crear un **nuevo enlace de pago**? Responde \"sí\" para empezar de nuevo o \"no\" para mantener el actual.",
+  "updatedPaymentContext": {
+    "stage": "awaiting_new_link_confirmation",
+    "linkUrl": "https://flowcast.chat/pay/3d7XMysDhjJ2UtwUlraIOi3y",
+    "currency": "PEN",
+    "confirmed": true,
+    "linkRoute": "/pay/3d7XMysDhjJ2UtwUlraIOi3y",
+    "linkToken": "3d7XMysDhjJ2UtwUlraIOi3y",
+    "productId": "cmh8fgk9p0000btrmeirskn67",
+    "amountCents": 6000,
+    "productName": "MATPASS 01",
+    "customerName": "Ya",
+    "lastViewedAt": null,
+    "customerEmail": "betosaxo@gmail.com",
+    "historyOffset": 0,
+    "nameConfirmed": true,
+    "emailConfirmed": true,
+    "historyPageSize": 5,
+    "lastGeneratedAt": "2025-12-01T16:57:19.041Z",
+    "selectedCustomerId": null,
+    "selectedCustomerType": null
+  },
+  "shouldUseAI": false
+}
+{"level":30,"time":"2025-12-03T13:09:53.159Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","browser":["FlowCast","Chrome","10.0.0"],"helloMsg":{"clientHello":{"ephemeral":"YF0Bs9pm7R6+yDTIp5kPB/7AMEio9vmA4Q9x/XQZ0zE="}},"msg":"connected to WA"}
+{"level":30,"time":"2025-12-03T13:09:53.267Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"username":"51916172368","passive":false,"userAgent":{"platform":"WEB","appVersion":{"primary":2,"secondary":3000,"tertiary":1027934701},"mcc":"000","mnc":"000","osVersion":"0.1","device":"Desktop","osBuildNumber":"0.1","releaseChannel":"RELEASE","localeLanguageIso6391":"en","localeCountryIso31661Alpha2":"US"},"webInfo":{"webSubPlatform":"WEB_BROWSER"},"connectType":"WIFI_UNKNOWN","connectReason":"USER_ACTIVATED","device":45,"pull":true},"msg":"logging in..."}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:09:53.386Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+{"level":30,"time":"2025-12-03T13:09:53.595Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"handled 0 offline messages/notifications"}
+[2025-12-03T13:09:53.595Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"hasQr":false}
+{"level":30,"time":"2025-12-03T13:09:53.596Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"30 pre-keys found on server"}
+{"level":50,"time":"2025-12-03T13:09:53.606Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"tag":"stream:error","attrs":{},"content":[{"tag":"conflict","attrs":{"type":"replaced"}}]},"msg":"stream errored out"}
+[2025-12-03T13:09:53.607Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"close","hasQr":false,"lastDisconnect":{"error":"Stream Errored (conflict)","statusCode":440}}
+[2025-12-03T13:09:53.607Z] [whatsapp-socket-manager] WhatsApp connection closed for session session-1764738037126 {"shouldReconnect":true,"statusCode":440}
+{"level":30,"time":"2025-12-03T13:09:53.607Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","trace":"Error: Stream Errored (conflict)\n    at WebSocketClient.<anonymous> (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:519:13)\n    at WebSocketClient.emit (node:events:524:28)\n    at WebSocketClient.emit (node:domain:489:12)\n    at /Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:236:35\n    at Object.decodeFrame (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js:144:17)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)","msg":"connection errored"}
+[2025-12-03T13:09:53.704Z] [whatsapp-socket-manager] Credentials updated for session session-1764738037126
+[2025-12-03T13:09:53.704Z] [whatsapp-socket-manager] 📱 Updating session info from creds update for session-1764738037126 {"phoneNumber":"51916172368","accountName":"MatMax"}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:09:53.924Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'lastDisconnect',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:09:54.479Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:09:54.480Z] [whatsapp-socket-manager] Scheduling reconnect attempt 1/5 for session session-1764738037126 in 5000ms
+[2025-12-03T13:09:59.481Z] [whatsapp-socket-manager] Connecting Baileys socket for session session-1764738037126
+[2025-12-03T13:09:59.620Z] [whatsapp-message-handler] Message handlers registered {"sessionId":"session-1764738037126"}
+[2025-12-03T13:09:59.620Z] [whatsapp-socket-manager] Baileys socket connected for session session-1764738037126
+[2025-12-03T13:09:59.620Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"connecting","hasQr":false}
+[2025-12-03T13:09:59.620Z] [whatsapp-socket-manager] WhatsApp connecting for session session-1764738037126
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [ 'status', 'connection', 'sessionId', 'tenantId', 'timestamp' ],
+  isRailway: false
+}
+{"level":30,"time":"2025-12-03T13:09:59.779Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","browser":["FlowCast","Chrome","10.0.0"],"helloMsg":{"clientHello":{"ephemeral":"FtxvqeSG/eWX9Rfq50cH/uuk0rXO80sg6Fcl0rS3j0I="}},"msg":"connected to WA"}
+{"level":30,"time":"2025-12-03T13:09:59.922Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"username":"51916172368","passive":false,"userAgent":{"platform":"WEB","appVersion":{"primary":2,"secondary":3000,"tertiary":1027934701},"mcc":"000","mnc":"000","osVersion":"0.1","device":"Desktop","osBuildNumber":"0.1","releaseChannel":"RELEASE","localeLanguageIso6391":"en","localeCountryIso31661Alpha2":"US"},"webInfo":{"webSubPlatform":"WEB_BROWSER"},"connectType":"WIFI_UNKNOWN","connectReason":"USER_ACTIVATED","device":45,"pull":true},"msg":"logging in..."}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:09:59.963Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+{"level":30,"time":"2025-12-03T13:10:00.381Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"handled 0 offline messages/notifications"}
+[2025-12-03T13:10:00.381Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"hasQr":false}
+{"level":30,"time":"2025-12-03T13:10:00.393Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"30 pre-keys found on server"}
+[2025-12-03T13:10:00.445Z] [whatsapp-socket-manager] Credentials updated for session session-1764738037126
+[2025-12-03T13:10:00.445Z] [whatsapp-socket-manager] 📱 Updating session info from creds update for session-1764738037126 {"phoneNumber":"51916172368","accountName":"MatMax"}
+{"level":30,"time":"2025-12-03T13:10:00.534Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"opened connection to WA"}
+[2025-12-03T13:10:00.541Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"hasQr":false}
+[2025-12-03T13:10:00.541Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"open","hasQr":false}
+[2025-12-03T13:10:00.542Z] [whatsapp-socket-manager] WhatsApp connection opened for session session-1764738037126
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+[2025-12-03T13:10:00.666Z] [whatsapp-socket-manager] Credentials updated for session session-1764738037126
+[2025-12-03T13:10:00.666Z] [whatsapp-socket-manager] 📱 Updating session info from creds update for session-1764738037126 {"phoneNumber":"51916172368","accountName":"MatMax"}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:00.673Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:00.904Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:01.310Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:10:01.430Z] [whatsapp-socket-manager] Credentials saved after successful connection for session session-1764738037126
+{"level":50,"time":"2025-12-03T13:10:05.840Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"tag":"stream:error","attrs":{},"content":[{"tag":"conflict","attrs":{"type":"replaced"}}]},"msg":"stream errored out"}
+[2025-12-03T13:10:05.842Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"close","hasQr":false,"lastDisconnect":{"error":"Stream Errored (conflict)","statusCode":440}}
+[2025-12-03T13:10:05.842Z] [whatsapp-socket-manager] WhatsApp connection closed for session session-1764738037126 {"shouldReconnect":true,"statusCode":440}
+{"level":30,"time":"2025-12-03T13:10:05.841Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","trace":"Error: Stream Errored (conflict)\n    at WebSocketClient.<anonymous> (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:519:13)\n    at WebSocketClient.emit (node:events:524:28)\n    at WebSocketClient.emit (node:domain:489:12)\n    at /Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:236:35\n    at Object.decodeFrame (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js:144:17)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)","msg":"connection errored"}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'lastDisconnect',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:06.075Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:10:06.075Z] [whatsapp-socket-manager] Scheduling reconnect attempt 1/5 for session session-1764738037126 in 5000ms
+[2025-12-03T13:10:11.077Z] [whatsapp-socket-manager] Connecting Baileys socket for session session-1764738037126
+[2025-12-03T13:10:11.218Z] [whatsapp-message-handler] Message handlers registered {"sessionId":"session-1764738037126"}
+[2025-12-03T13:10:11.218Z] [whatsapp-socket-manager] Baileys socket connected for session session-1764738037126
+[2025-12-03T13:10:11.218Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"connecting","hasQr":false}
+[2025-12-03T13:10:11.218Z] [whatsapp-socket-manager] WhatsApp connecting for session session-1764738037126
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [ 'status', 'connection', 'sessionId', 'tenantId', 'timestamp' ],
+  isRailway: false
+}
+{"level":30,"time":"2025-12-03T13:10:11.440Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","browser":["FlowCast","Chrome","10.0.0"],"helloMsg":{"clientHello":{"ephemeral":"PRgSSqE4U6h7LD4sBjDq453VsfY491FeVU+jr8pZhWg="}},"msg":"connected to WA"}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:11.557Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+{"level":30,"time":"2025-12-03T13:10:11.642Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"username":"51916172368","passive":false,"userAgent":{"platform":"WEB","appVersion":{"primary":2,"secondary":3000,"tertiary":1027934701},"mcc":"000","mnc":"000","osVersion":"0.1","device":"Desktop","osBuildNumber":"0.1","releaseChannel":"RELEASE","localeLanguageIso6391":"en","localeCountryIso31661Alpha2":"US"},"webInfo":{"webSubPlatform":"WEB_BROWSER"},"connectType":"WIFI_UNKNOWN","connectReason":"USER_ACTIVATED","device":45,"pull":true},"msg":"logging in..."}
+{"level":50,"time":"2025-12-03T13:10:12.303Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"tag":"stream:error","attrs":{},"content":[{"tag":"conflict","attrs":{"type":"replaced"}}]},"msg":"stream errored out"}
+[2025-12-03T13:10:12.304Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"close","hasQr":false,"lastDisconnect":{"error":"Stream Errored (conflict)","statusCode":440}}
+[2025-12-03T13:10:12.304Z] [whatsapp-socket-manager] WhatsApp connection closed for session session-1764738037126 {"shouldReconnect":true,"statusCode":440}
+{"level":30,"time":"2025-12-03T13:10:12.304Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","trace":"Error: Stream Errored (conflict)\n    at WebSocketClient.<anonymous> (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:519:13)\n    at WebSocketClient.emit (node:events:524:28)\n    at WebSocketClient.emit (node:domain:489:12)\n    at /Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:236:35\n    at Object.decodeFrame (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js:144:17)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)","msg":"connection errored"}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'lastDisconnect',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:12.528Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:10:12.528Z] [whatsapp-socket-manager] Scheduling reconnect attempt 1/5 for session session-1764738037126 in 5000ms
+[2025-12-03T13:10:17.528Z] [whatsapp-socket-manager] Connecting Baileys socket for session session-1764738037126
+[2025-12-03T13:10:17.665Z] [whatsapp-message-handler] Message handlers registered {"sessionId":"session-1764738037126"}
+[2025-12-03T13:10:17.665Z] [whatsapp-socket-manager] Baileys socket connected for session session-1764738037126
+[2025-12-03T13:10:17.666Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"connecting","hasQr":false}
+[2025-12-03T13:10:17.666Z] [whatsapp-socket-manager] WhatsApp connecting for session session-1764738037126
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [ 'status', 'connection', 'sessionId', 'tenantId', 'timestamp' ],
+  isRailway: false
+}
+{"level":30,"time":"2025-12-03T13:10:17.798Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","browser":["FlowCast","Chrome","10.0.0"],"helloMsg":{"clientHello":{"ephemeral":"PjSTXxVp4eaQg+l+1rq0bESTYYEOCQHwOSsywLqgmU0="}},"msg":"connected to WA"}
+{"level":30,"time":"2025-12-03T13:10:17.914Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"username":"51916172368","passive":false,"userAgent":{"platform":"WEB","appVersion":{"primary":2,"secondary":3000,"tertiary":1027934701},"mcc":"000","mnc":"000","osVersion":"0.1","device":"Desktop","osBuildNumber":"0.1","releaseChannel":"RELEASE","localeLanguageIso6391":"en","localeCountryIso31661Alpha2":"US"},"webInfo":{"webSubPlatform":"WEB_BROWSER"},"connectType":"WIFI_UNKNOWN","connectReason":"USER_ACTIVATED","device":45,"pull":true},"msg":"logging in..."}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:18.001Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+{"level":50,"time":"2025-12-03T13:10:18.286Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"tag":"stream:error","attrs":{},"content":[{"tag":"conflict","attrs":{"type":"replaced"}}]},"msg":"stream errored out"}
+[2025-12-03T13:10:18.287Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"close","hasQr":false,"lastDisconnect":{"error":"Stream Errored (conflict)","statusCode":440}}
+[2025-12-03T13:10:18.288Z] [whatsapp-socket-manager] WhatsApp connection closed for session session-1764738037126 {"shouldReconnect":true,"statusCode":440}
+{"level":30,"time":"2025-12-03T13:10:18.287Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","trace":"Error: Stream Errored (conflict)\n    at WebSocketClient.<anonymous> (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:519:13)\n    at WebSocketClient.emit (node:events:524:28)\n    at WebSocketClient.emit (node:domain:489:12)\n    at /Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:236:35\n    at Object.decodeFrame (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js:144:17)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)","msg":"connection errored"}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'lastDisconnect',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:18.511Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:10:18.511Z] [whatsapp-socket-manager] Scheduling reconnect attempt 1/5 for session session-1764738037126 in 5000ms
+[2025-12-03T13:10:23.512Z] [whatsapp-socket-manager] Connecting Baileys socket for session session-1764738037126
+[2025-12-03T13:10:23.648Z] [whatsapp-message-handler] Message handlers registered {"sessionId":"session-1764738037126"}
+[2025-12-03T13:10:23.648Z] [whatsapp-socket-manager] Baileys socket connected for session session-1764738037126
+[2025-12-03T13:10:23.648Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"connecting","hasQr":false}
+[2025-12-03T13:10:23.648Z] [whatsapp-socket-manager] WhatsApp connecting for session session-1764738037126
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [ 'status', 'connection', 'sessionId', 'tenantId', 'timestamp' ],
+  isRailway: false
+}
+{"level":30,"time":"2025-12-03T13:10:23.755Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","browser":["FlowCast","Chrome","10.0.0"],"helloMsg":{"clientHello":{"ephemeral":"f1yR2enVDhCQmKcZNQ0K0MFt5jwAzwox6e2cIJmtniw="}},"msg":"connected to WA"}
+{"level":30,"time":"2025-12-03T13:10:23.845Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"username":"51916172368","passive":false,"userAgent":{"platform":"WEB","appVersion":{"primary":2,"secondary":3000,"tertiary":1027934701},"mcc":"000","mnc":"000","osVersion":"0.1","device":"Desktop","osBuildNumber":"0.1","releaseChannel":"RELEASE","localeLanguageIso6391":"en","localeCountryIso31661Alpha2":"US"},"webInfo":{"webSubPlatform":"WEB_BROWSER"},"connectType":"WIFI_UNKNOWN","connectReason":"USER_ACTIVATED","device":45,"pull":true},"msg":"logging in..."}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:23.983Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+{"level":30,"time":"2025-12-03T13:10:24.165Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"30 pre-keys found on server"}
+{"level":30,"time":"2025-12-03T13:10:24.218Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"handled 0 offline messages/notifications"}
+[2025-12-03T13:10:24.218Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"hasQr":false}
+{"level":30,"time":"2025-12-03T13:10:24.252Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"opened connection to WA"}
+[2025-12-03T13:10:24.258Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"hasQr":false}
+[2025-12-03T13:10:24.259Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"open","hasQr":false}
+[2025-12-03T13:10:24.260Z] [whatsapp-socket-manager] WhatsApp connection opened for session session-1764738037126
+[2025-12-03T13:10:24.273Z] [whatsapp-socket-manager] Credentials updated for session session-1764738037126
+[2025-12-03T13:10:24.273Z] [whatsapp-socket-manager] 📱 Updating session info from creds update for session-1764738037126 {"phoneNumber":"51916172368","accountName":"MatMax"}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:24.504Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+{"level":50,"time":"2025-12-03T13:10:24.795Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"tag":"stream:error","attrs":{},"content":[{"tag":"conflict","attrs":{"type":"replaced"}}]},"msg":"stream errored out"}
+[2025-12-03T13:10:24.796Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"close","hasQr":false,"lastDisconnect":{"error":"Stream Errored (conflict)","statusCode":440}}
+[2025-12-03T13:10:24.796Z] [whatsapp-socket-manager] WhatsApp connection closed for session session-1764738037126 {"shouldReconnect":true,"statusCode":440}
+{"level":30,"time":"2025-12-03T13:10:24.795Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","trace":"Error: Stream Errored (conflict)\n    at WebSocketClient.<anonymous> (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:519:13)\n    at WebSocketClient.emit (node:events:524:28)\n    at WebSocketClient.emit (node:domain:489:12)\n    at /Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:236:35\n    at Object.decodeFrame (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js:144:17)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)","msg":"connection errored"}
+[2025-12-03T13:10:24.811Z] [whatsapp-socket-manager] Credentials updated for session session-1764738037126
+[2025-12-03T13:10:24.811Z] [whatsapp-socket-manager] 📱 Updating session info from creds update for session-1764738037126 {"phoneNumber":"51916172368","accountName":"MatMax"}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'lastDisconnect',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+❌❌❌ FAILED TO SEND EVENT ❌❌❌ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  error: 'Soketi trigger failed: Request failed with an error (code: no-code, status: no-status, host: soketi-production-2f36.up.railway.app)',
+  errorDetails: {
+    name: 'Error',
+    message: 'Soketi trigger failed: Request failed with an error (code: no-code, status: no-status, host: soketi-production-2f36.up.railway.app)'
+  },
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:25.022Z] [whatsapp-soketi-emitter] Failed to broadcast WhatsApp event {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","error":"Soketi trigger failed: Request failed with an error (code: no-code, status: no-status, host: soketi-production-2f36.up.railway.app)","errorDetails":{"name":"Error","message":"Soketi trigger failed: Request failed with an error (code: no-code, status: no-status, host: soketi-production-2f36.up.railway.app)"},"stack":"Error: Soketi trigger failed: Request failed with an error (code: no-code, status: no-status, host: soketi-production-2f36.up.railway.app)\n    at broadcastWhatsAppEvent (/Users/albertosaco/IPNuo/apps/backend/src/lib/whatsapp/integration/soketi-emitter.ts:255:13)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async WhatsAppSocketManager.handleConnectionUpdate (/Users/albertosaco/IPNuo/apps/backend/src/lib/whatsapp/baileys/socket-manager.ts:304:7)\n    at async EventEmitter.<anonymous> (/Users/albertosaco/IPNuo/apps/backend/src/lib/whatsapp/baileys/socket-manager.ts:164:9)","soketiHost":"soketi-production-2f36.up.railway.app","isRailway":false}
+[2025-12-03T13:10:25.023Z] [whatsapp-socket-manager] Scheduling reconnect attempt 1/5 for session session-1764738037126 in 5000ms
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:25.269Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:25.316Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:10:25.394Z] [whatsapp-socket-manager] Credentials saved after successful connection for session session-1764738037126
+[2025-12-03T13:10:30.025Z] [whatsapp-socket-manager] Connecting Baileys socket for session session-1764738037126
+[2025-12-03T13:10:30.172Z] [whatsapp-message-handler] Message handlers registered {"sessionId":"session-1764738037126"}
+[2025-12-03T13:10:30.172Z] [whatsapp-socket-manager] Baileys socket connected for session session-1764738037126
+[2025-12-03T13:10:30.172Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"connecting","hasQr":false}
+[2025-12-03T13:10:30.172Z] [whatsapp-socket-manager] WhatsApp connecting for session session-1764738037126
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [ 'status', 'connection', 'sessionId', 'tenantId', 'timestamp' ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:30.281Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+{"level":30,"time":"2025-12-03T13:10:30.397Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","browser":["FlowCast","Chrome","10.0.0"],"helloMsg":{"clientHello":{"ephemeral":"uSxkwgFYd2pfG6Ss5oxEh+FyIuXEReNanzHLo38czWo="}},"msg":"connected to WA"}
+{"level":30,"time":"2025-12-03T13:10:30.595Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"username":"51916172368","passive":false,"userAgent":{"platform":"WEB","appVersion":{"primary":2,"secondary":3000,"tertiary":1027934701},"mcc":"000","mnc":"000","osVersion":"0.1","device":"Desktop","osBuildNumber":"0.1","releaseChannel":"RELEASE","localeLanguageIso6391":"en","localeCountryIso31661Alpha2":"US"},"webInfo":{"webSubPlatform":"WEB_BROWSER"},"connectType":"WIFI_UNKNOWN","connectReason":"USER_ACTIVATED","device":45,"pull":true},"msg":"logging in..."}
+{"level":30,"time":"2025-12-03T13:10:31.422Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"30 pre-keys found on server"}
+[2025-12-03T13:10:31.426Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"hasQr":false}
+[2025-12-03T13:10:31.427Z] [whatsapp-socket-manager] Credentials updated for session session-1764738037126
+[2025-12-03T13:10:31.427Z] [whatsapp-socket-manager] 📱 Updating session info from creds update for session-1764738037126 {"phoneNumber":"51916172368","accountName":"MatMax"}
+{"level":30,"time":"2025-12-03T13:10:31.426Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"handled 0 offline messages/notifications"}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+{"level":30,"time":"2025-12-03T13:10:31.621Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"opened connection to WA"}
+[2025-12-03T13:10:31.629Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"hasQr":false}
+[2025-12-03T13:10:31.630Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"open","hasQr":false}
+[2025-12-03T13:10:31.630Z] [whatsapp-socket-manager] WhatsApp connection opened for session session-1764738037126
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:31.718Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:10:31.744Z] [whatsapp-socket-manager] Credentials updated for session session-1764738037126
+[2025-12-03T13:10:31.744Z] [whatsapp-socket-manager] 📱 Updating session info from creds update for session-1764738037126 {"phoneNumber":"51916172368","accountName":"MatMax"}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:31.962Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:10:32.140Z] [whatsapp-socket-manager] Credentials saved after successful connection for session session-1764738037126
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:32.356Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+{"level":50,"time":"2025-12-03T13:10:37.906Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"tag":"stream:error","attrs":{},"content":[{"tag":"conflict","attrs":{"type":"replaced"}}]},"msg":"stream errored out"}
+[2025-12-03T13:10:37.908Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"close","hasQr":false,"lastDisconnect":{"error":"Stream Errored (conflict)","statusCode":440}}
+[2025-12-03T13:10:37.908Z] [whatsapp-socket-manager] WhatsApp connection closed for session session-1764738037126 {"shouldReconnect":true,"statusCode":440}
+{"level":30,"time":"2025-12-03T13:10:37.907Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","trace":"Error: Stream Errored (conflict)\n    at WebSocketClient.<anonymous> (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:519:13)\n    at WebSocketClient.emit (node:events:524:28)\n    at WebSocketClient.emit (node:domain:489:12)\n    at /Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:236:35\n    at Object.decodeFrame (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js:144:17)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)","msg":"connection errored"}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'lastDisconnect',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:38.433Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:10:38.433Z] [whatsapp-socket-manager] Scheduling reconnect attempt 1/5 for session session-1764738037126 in 5000ms
+[2025-12-03T13:10:43.434Z] [whatsapp-socket-manager] Connecting Baileys socket for session session-1764738037126
+[2025-12-03T13:10:43.689Z] [whatsapp-message-handler] Message handlers registered {"sessionId":"session-1764738037126"}
+[2025-12-03T13:10:43.689Z] [whatsapp-socket-manager] Baileys socket connected for session session-1764738037126
+[2025-12-03T13:10:43.689Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"connecting","hasQr":false}
+[2025-12-03T13:10:43.689Z] [whatsapp-socket-manager] WhatsApp connecting for session session-1764738037126
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [ 'status', 'connection', 'sessionId', 'tenantId', 'timestamp' ],
+  isRailway: false
+}
+{"level":30,"time":"2025-12-03T13:10:43.792Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","browser":["FlowCast","Chrome","10.0.0"],"helloMsg":{"clientHello":{"ephemeral":"o3wZHEHe91YlgmbKryrFefm8N1/r1Vqs87czhJxB+gM="}},"msg":"connected to WA"}
+{"level":30,"time":"2025-12-03T13:10:43.879Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"username":"51916172368","passive":false,"userAgent":{"platform":"WEB","appVersion":{"primary":2,"secondary":3000,"tertiary":1027934701},"mcc":"000","mnc":"000","osVersion":"0.1","device":"Desktop","osBuildNumber":"0.1","releaseChannel":"RELEASE","localeLanguageIso6391":"en","localeCountryIso31661Alpha2":"US"},"webInfo":{"webSubPlatform":"WEB_BROWSER"},"connectType":"WIFI_UNKNOWN","connectReason":"USER_ACTIVATED","device":45,"pull":true},"msg":"logging in..."}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:44.020Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+{"level":30,"time":"2025-12-03T13:10:44.203Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"30 pre-keys found on server"}
+{"level":30,"time":"2025-12-03T13:10:44.241Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"handled 0 offline messages/notifications"}
+[2025-12-03T13:10:44.241Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"hasQr":false}
+{"level":30,"time":"2025-12-03T13:10:44.289Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","msg":"opened connection to WA"}
+[2025-12-03T13:10:44.296Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"hasQr":false}
+[2025-12-03T13:10:44.298Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"open","hasQr":false}
+[2025-12-03T13:10:44.298Z] [whatsapp-socket-manager] WhatsApp connection opened for session session-1764738037126
+[2025-12-03T13:10:44.312Z] [whatsapp-socket-manager] Credentials updated for session session-1764738037126
+[2025-12-03T13:10:44.312Z] [whatsapp-socket-manager] 📱 Updating session info from creds update for session-1764738037126 {"phoneNumber":"51916172368","accountName":"MatMax"}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:44.542Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:10:44.949Z] [whatsapp-socket-manager] Credentials updated for session session-1764738037126
+[2025-12-03T13:10:44.949Z] [whatsapp-socket-manager] 📱 Updating session info from creds update for session-1764738037126 {"phoneNumber":"51916172368","accountName":"MatMax"}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:45.166Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:10:45.286Z] [whatsapp-socket-manager] Credentials saved after successful connection for session session-1764738037126
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:45.405Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+{"level":50,"time":"2025-12-03T13:10:50.309Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","node":{"tag":"stream:error","attrs":{},"content":[{"tag":"conflict","attrs":{"type":"replaced"}}]},"msg":"stream errored out"}
+[2025-12-03T13:10:50.310Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"close","hasQr":false,"lastDisconnect":{"error":"Stream Errored (conflict)","statusCode":440}}
+[2025-12-03T13:10:50.311Z] [whatsapp-socket-manager] WhatsApp connection closed for session session-1764738037126 {"shouldReconnect":true,"statusCode":440}
+{"level":30,"time":"2025-12-03T13:10:50.310Z","pid":16592,"hostname":"MacBook-Air.local","class":"baileys","trace":"Error: Stream Errored (conflict)\n    at WebSocketClient.<anonymous> (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:519:13)\n    at WebSocketClient.emit (node:events:524:28)\n    at WebSocketClient.emit (node:domain:489:12)\n    at /Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:236:35\n    at Object.decodeFrame (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Utils/noise-handler.js:144:17)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)","msg":"connection errored"}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'lastDisconnect',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:10:50.744Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:10:50.744Z] [whatsapp-socket-manager] Scheduling reconnect attempt 1/5 for session session-1764738037126 in 5000ms
+Error: Timed Out
+    at /Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Utils/generics.js:170:32 {
+  data: {
+    stack: 'Error\n' +
+      '    at promiseTimeout (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Utils/generics.js:165:19)\n' +
+      '    at waitForMessage (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:117:53)\n' +
+      '    at query (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:139:22)\n' +
+      '    at sendPassiveIq (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:326:37)\n' +
+      '    at WebSocketClient.<anonymous> (/Users/albertosaco/IPNuo/apps/backend/node_modules/.pnpm/@whiskeysockets+baileys@6.17.16_eslint@9.39.1_jimp@1.6.0_typescript@5.9.3/node_modules/@whiskeysockets/baileys/lib/Socket/socket.js:510:15)\n' +
+      '    at processTicksAndRejections (node:internal/process/task_queues:95:5)'
+  },
+  isBoom: true,
+  isServer: false,
+  output: {
+    statusCode: 408,
+    payload: {
+      statusCode: 408,
+      error: 'Request Time-out',
+      message: 'Timed Out'
+    },
+    headers: {}
+  }
+}

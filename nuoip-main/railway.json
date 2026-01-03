@@ -1,0 +1,20 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "nixpacksConfigPath": "nixpacks.toml"
+  },
+  "deploy": {
+    "startCommand": "cd apps/backend && SERVICE_TYPE=backend ./scripts/start-service.sh",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  },
+  "watchPatterns": [
+    "apps/backend/**",
+    "packages/prisma/**"
+  ],
+  "variables": {
+    "NODE_VERSION": "20.19.0",
+    "BUILD_TIMESTAMP": "2025-12-06T14:32:00Z"
+  }
+}

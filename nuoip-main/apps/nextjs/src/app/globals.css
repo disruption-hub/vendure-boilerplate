@@ -1,0 +1,1372 @@
+/* Chatbot theme import must be at the top (CSS requirement) */
+@import './themes/chatbot/index.css';
+
+/* Proper load order for theme isolation */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+
+
+
+  --background: 222 47% 6%;
+  --foreground: 210 20% 96%;
+  --card: 222 36% 12%;
+  --card-foreground: 210 20% 96%;
+  --popover: 222 36% 12%;
+  --popover-foreground: 210 20% 96%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 215 25% 45%;
+  --secondary-foreground: 0 0% 0%;
+  --muted: 218 32% 18%;
+  --muted-foreground: 215 20% 70%;
+  --accent: 257 92% 66%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 85% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 215 32% 24%;
+  /* Input fields: white background with black text for maximum contrast */
+  --input: 0 0% 100%;
+  --input-foreground: 0 0% 0%;
+  --ring: 217 91% 60%;
+
+  /* Admin panel colors */
+  --primary-50: 239 246 255;
+  --primary-100: 219 234 254;
+  --primary-200: 191 219 254;
+  --primary-300: 147 197 253;
+  --primary-400: 96 165 250;
+  --primary-500: 59 130 246;
+  --primary-600: 37 99 235;
+  --primary-700: 29 78 216;
+  --primary-800: 30 64 175;
+  --primary-900: 30 58 138;
+
+  --radius: 0.375rem;
+
+  /* Chatbot theme variables moved to themes/chatbot/variables.css for proper scoping */
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: hsl(var(--background));
+  color: #000000;
+  /* Default to black text for admin dashboard */
+}
+
+
+/* Exception: Empty state message with FlowBot command text must be black */
+.chatbot-theme .bg-gray-50[class*="border-dashed"],
+.chatbot-theme div.bg-gray-50[class*="border-dashed"],
+.chatbot-theme [class*="bg-gray-50"][class*="border-dashed"] {
+  color: #000000 !important;
+}
+
+.chatbot-theme .bg-gray-50[class*="border-dashed"] *,
+.chatbot-theme div.bg-gray-50[class*="border-dashed"] *,
+.chatbot-theme [class*="bg-gray-50"][class*="border-dashed"] * {
+  color: #000000 !important;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Override dark mode for modals to ensure white backgrounds and black text */
+[class*="fixed inset-0 z-50"] [class*="bg-white"] {
+  color-scheme: light;
+}
+
+[class*="fixed inset-0 z-50"] [class*="bg-white"] input,
+[class*="fixed inset-0 z-50"] [class*="bg-white"] select,
+[class*="fixed inset-0 z-50"] [class*="bg-white"] textarea {
+  background-color: white;
+  color: black;
+  border-color: rgb(209 213 219);
+}
+
+[class*="fixed inset-0 z-50"] [class*="bg-white"] input::placeholder,
+[class*="fixed inset-0 z-50"] [class*="bg-white"] textarea::placeholder {
+  color: rgb(156 163 175);
+}
+
+/* Ensure modals fit on screen - override any conflicting max-height */
+[class*="fixed inset-0 z-50"]>[class*="mobile-scroll"],
+[class*="fixed inset-0 z-50"]>[class*="overflow-y-auto"],
+[class*="fixed inset-0 z-50"]>div[class*="overflow-y-auto"] {
+  max-height: calc(100vh - 2rem) !important;
+}
+
+/* Ensure Dialog components fit on screen */
+[data-radix-dialog-content] {
+  max-height: calc(100vh - 2rem) !important;
+  background-color: white;
+  color: black;
+}
+
+/* Make close button (corner square) visible with proper colors */
+[data-radix-dialog-content] button[class*="absolute"][class*="right-4"][class*="top-4"] {
+  background-color: transparent;
+  color: rgb(55 65 81);
+  /* gray-700 */
+  opacity: 1;
+}
+
+[data-radix-dialog-content] button[class*="absolute"][class*="right-4"][class*="top-4"]:hover {
+  color: rgb(17 24 39);
+  /* gray-900 */
+  background-color: rgb(243 244 246);
+  /* gray-100 */
+  opacity: 1;
+}
+
+/* Ensure header area has proper background */
+[data-radix-dialog-content]>div:first-child {
+  background-color: #f9fafb;
+  /* gray-50 */
+}
+
+[data-radix-dialog-content]>div[class*="overflow-y-auto"] {
+  max-height: calc(100vh - 10rem) !important;
+}
+
+/* Ensure all inputs, selects, and textareas in Dialog have white backgrounds and black text */
+/* [data-radix-dialog-content] input,
+[data-radix-dialog-content] select,
+[data-radix-dialog-content] textarea {
+  background-color: white;
+  color: black;
+  border-color: rgb(209 213 219);
+}
+
+[data-radix-dialog-content] input::placeholder,
+[data-radix-dialog-content] textarea::placeholder {
+  color: rgb(156 163 175) !important;
+} */
+
+/* [data-radix-dialog-content] [class*="SelectTrigger"] {
+  background-color: white;
+  color: black;
+  border-color: rgb(209 213 219);
+} */
+
+@media (min-width: 640px) {
+
+  [class*="fixed inset-0 z-50"]>[class*="mobile-scroll"],
+  [class*="fixed inset-0 z-50"]>[class*="overflow-y-auto"],
+  [class*="fixed inset-0 z-50"]>div[class*="overflow-y-auto"] {
+    max-height: calc(100vh - 3rem) !important;
+  }
+
+  [data-radix-dialog-content] {
+    max-height: calc(100vh - 3rem) !important;
+  }
+
+  [data-radix-dialog-content]>div[class*="overflow-y-auto"] {
+    max-height: calc(100vh - 11rem) !important;
+  }
+}
+
+/* Chatbot components */
+.chatbot-theme {
+  background: var(--chatbot-background, linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(2, 6, 23, 0.98)));
+  color: var(--chatbot-assistant-text, #f8fafc);
+  transition: background 0.35s ease;
+  --chatbot-header-padding-top: 1.25rem;
+  --chatbot-header-padding-bottom: 0.75rem;
+}
+
+.chatbot-header {
+  background: var(--chatbot-header-background, transparent);
+  border-bottom: 1px solid var(--chatbot-border, rgba(148, 163, 184, 0.25));
+  backdrop-filter: blur(12px);
+  min-height: 3.5rem;
+  padding-top: calc(env(safe-area-inset-top, 0px) + var(--chatbot-header-padding-top));
+  padding-bottom: var(--chatbot-header-padding-bottom);
+}
+
+@media (min-width: 640px) {
+  .chatbot-theme {
+    --chatbot-header-padding-top: 1.5rem;
+    --chatbot-header-padding-bottom: 1rem;
+  }
+}
+
+.chatbot-icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.chatbot-icon-button:hover,
+.chatbot-icon-button:focus-visible {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.26);
+  outline: none;
+}
+
+.chatbot-header-tag {
+  color: rgba(226, 232, 240, 0.7);
+  letter-spacing: 0.2em;
+}
+
+.chatbot-header-title {
+  color: #f8fafc;
+}
+
+.chatbot-composer-shell {
+  --composer-shell-padding: 1rem;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease-out;
+  background: rgb(245, 241, 237) !important;
+  padding: var(--composer-shell-padding);
+}
+
+/* Remove blue focus ring from shell when input is focused - AGGRESSIVE OVERRIDE */
+.chatbot-composer-shell,
+.chatbot-composer-shell:focus,
+.chatbot-composer-shell:focus-within,
+.chatbot-composer-shell:focus-visible,
+.chatbot-composer-shell *,
+.chatbot-composer-shell *:focus,
+.chatbot-composer-shell *:focus-within,
+.chatbot-composer-shell *:focus-visible {
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+  --tw-shadow: 0 25px 45px -35px rgba(15, 23, 42, 0.8) !important;
+}
+
+/* Restore the composer form border */
+.chatbot-composer-shell .chatbot-composer {
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Override blue focus ring on buttons inside composer */
+.chatbot-composer-shell button,
+.chatbot-composer-shell button:focus,
+.chatbot-composer-shell button:focus-visible,
+.chatbot-composer button,
+.chatbot-composer button:focus,
+.chatbot-composer button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: currentColor !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+}
+
+@media (min-width: 640px) {
+  .chatbot-composer-shell {
+    --composer-shell-padding: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .chatbot-composer-shell {
+    background: rgb(245, 241, 237) !important;
+    /* On desktop, reset positioning to work within flex layout */
+    position: relative !important;
+    transform: none !important;
+  }
+}
+
+.chatbot-composer {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 25px 45px -35px rgba(15, 23, 42, 0.8);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  min-height: 2.9rem;
+  align-items: center;
+}
+
+/* Change blue focus to white for form elements with chatbot-composer class */
+form.chatbot-composer:focus-within,
+form.chatbot-composer:focus,
+form.chatbot-composer:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8) !important;
+  outline-color: rgba(255, 255, 255, 0.8) !important;
+  outline-offset: 2px !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+  --tw-ring-color: rgba(255, 255, 255, 0.8) !important;
+  --tw-ring-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+  --tw-ring-width: 2px !important;
+  --tw-ring-offset-color: transparent !important;
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-offset-width: 0 !important;
+}
+
+/* Change blue focus ring to white for inner shell (composer) - desktop and mobile */
+.chatbot-composer:focus-within,
+.chatbot-composer:focus,
+.chatbot-composer:focus-visible {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  outline: 2px solid rgba(255, 255, 255, 0.8) !important;
+  outline-color: rgba(255, 255, 255, 0.8) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 14px 32px -24px rgba(15, 23, 42, 0.75), 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+  --tw-ring-color: rgba(255, 255, 255, 0.8) !important;
+  --tw-ring-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+  --tw-ring-width: 2px !important;
+  --tw-ring-offset-color: transparent !important;
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-offset-width: 0 !important;
+}
+
+.chatbot-composer *:focus,
+.chatbot-composer *:focus-visible,
+.chatbot-composer textarea:focus,
+.chatbot-composer textarea:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8) !important;
+  outline-color: rgba(255, 255, 255, 0.8) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+  --tw-ring-color: rgba(255, 255, 255, 0.8) !important;
+  --tw-ring-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+  --tw-ring-width: 2px !important;
+  --tw-ring-offset-color: transparent !important;
+  border-color: transparent !important;
+}
+
+/* Override any blue ring classes */
+.chatbot-composer[class*="ring-blue"],
+.chatbot-composer[class*="focus:ring-blue"],
+.chatbot-composer[class*="focus-visible:ring-blue"] {
+  --tw-ring-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* .chatbot-composer-textarea {
+  background: transparent !important; */
+.chatbot-composer-textarea {
+  background: transparent !important;
+  color: #1e293b;
+  line-height: 1.45;
+  padding: 0.25rem 0;
+  border: none !important;
+  outline: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-offset-color: transparent !important;
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-offset-width: 0 !important;
+  box-shadow: none !important;
+  ring-color: transparent !important;
+}
+
+.chatbot-composer-textarea:focus,
+.chatbot-composer-textarea:focus-visible,
+.chatbot-composer-textarea:focus-within,
+.chatbot-composer-textarea:active {
+  outline: 2px solid rgba(255, 255, 255, 0.8) !important;
+  outline-color: rgba(255, 255, 255, 0.8) !important;
+  outline-offset: 2px !important;
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+  --tw-ring-color: rgba(255, 255, 255, 0.8) !important;
+  --tw-ring-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5) !important;
+  --tw-ring-width: 2px !important;
+  --tw-ring-offset-color: transparent !important;
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-offset-width: 0 !important;
+  ring-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Remove browser default blue focus ring */
+.chatbot-composer-textarea::-webkit-focus-ring-color {
+  color: transparent !important;
+}
+
+.chatbot-composer-textarea:focus::-webkit-focus-ring-color,
+.chatbot-composer-textarea:focus-visible::-webkit-focus-ring-color {
+  color: transparent !important;
+}
+
+/* Override any Tailwind focus ring classes */
+.chatbot-composer-textarea[class*="ring"],
+.chatbot-composer-textarea[class*="focus:ring"],
+.chatbot-composer-textarea[class*="focus-visible:ring"] {
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-width: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Remove ALL possible blue focus indicators - most aggressive */
+.chatbot-composer-textarea,
+.chatbot-composer-textarea:focus,
+.chatbot-composer-textarea:focus-visible,
+.chatbot-composer-textarea:focus-within,
+.chatbot-composer-textarea:active {
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-focus-ring-color: transparent !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+/* Remove blue border/outline from parent container when textarea focused */
+.chatbot-composer:has(.chatbot-composer-textarea:focus),
+.chatbot-composer:has(.chatbot-composer-textarea:focus-visible),
+.chatbot-composer:focus-within:has(.chatbot-composer-textarea) {
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  outline: none !important;
+  outline-color: transparent !important;
+  box-shadow: 0 25px 45px -35px rgba(15, 23, 42, 0.8) !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-width: 0 !important;
+}
+
+/* Remove blue focus from parent when textarea is focused */
+.chatbot-composer:has(.chatbot-composer-textarea:focus),
+.chatbot-composer:has(.chatbot-composer-textarea:focus-visible) {
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  outline: none !important;
+  box-shadow: 0 25px 45px -35px rgba(15, 23, 42, 0.8) !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-width: 0 !important;
+}
+
+/* Also target focus-within on parent */
+.chatbot-composer:focus-within {
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  outline: none !important;
+  box-shadow: 0 25px 45px -35px rgba(15, 23, 42, 0.8) !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-width: 0 !important;
+}
+
+.chatbot-composer-textarea::placeholder {
+  color: rgba(100, 116, 139, 0.6);
+}
+
+.chatbot-composer-send {
+  background: rgba(16, 185, 129, 0.9);
+  color: #ffffff;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.chatbot-composer-send:hover:not(:disabled),
+.chatbot-composer-send:focus-visible:not(:disabled) {
+  background: rgba(16, 185, 129, 1);
+  transform: translateY(-1px);
+}
+
+.chatbot-composer-send:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chatbot-schedule-block,
+.chatbot-schedule-block * {
+  color: var(--chatbot-schedule-text, #f8fafc);
+}
+
+.chatbot-schedule-block {
+  background: var(--chatbot-schedule-bg);
+  border: 1px solid var(--chatbot-schedule-border);
+  box-shadow: 0 22px 40px -30px var(--chatbot-schedule-shadow);
+  backdrop-filter: blur(10px);
+}
+
+.chatbot-schedule-date {
+  color: var(--chatbot-schedule-date);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.chatbot-schedule-slot {
+  color: var(--chatbot-schedule-text);
+}
+
+.chatbot-schedule-slot-number {
+  color: var(--chatbot-schedule-number);
+}
+
+.chatbot-schedule-slot-time {
+  color: var(--chatbot-schedule-text);
+}
+
+.chatbot-schedule-closing {
+  color: var(--chatbot-schedule-text);
+}
+
+.chatbot-schedule-text {
+  color: var(--chatbot-schedule-text);
+}
+
+.chatbot-bubble {
+  border: 1px solid transparent;
+  backdrop-filter: blur(12px);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Received messages (from contacts/assistant) - Light background with Dark Text */
+/* Received messages (from contacts/assistant) - Light background with Dark Text */
+/* OVERRIDE REMOVED for Theme Editor compatibility */
+/* .chatbot-theme .chatbot-assistant-bubble, */
+/* .chatbot-assistant-bubble { */
+/*   background: var(--chatbot-surface, rgba(255, 255, 255, 0.95)) !important; */
+/*   border-color: var(--chatbot-border, rgba(0, 0, 0, 0.1)) !important; */
+/*   color: #0f172a !important; */
+/*   Black/Dark text per user request */
+/*   box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1); */
+/* } */
+
+/* .chatbot-theme .chatbot-assistant-bubble, */
+/* .chatbot-theme .chatbot-assistant-bubble p, */
+/* .chatbot-theme .chatbot-assistant-bubble span, */
+/* .chatbot-theme .chatbot-assistant-bubble div, */
+/* .chatbot-theme .chatbot-assistant-bubble h1, */
+/* .chatbot-theme .chatbot-assistant-bubble h2, */
+/* .chatbot-theme .chatbot-assistant-bubble h3, */
+/* .chatbot-theme .chatbot-assistant-bubble h4, */
+/* .chatbot-theme .chatbot-assistant-bubble h5, */
+/* .chatbot-theme .chatbot-assistant-bubble h6, */
+/* .chatbot-theme .chatbot-assistant-bubble li, */
+/* .chatbot-theme .chatbot-assistant-bubble ul, */
+/* .chatbot-theme .chatbot-assistant-bubble ol, */
+/* .chatbot-theme .chatbot-assistant-bubble strong, */
+/* .chatbot-theme .chatbot-assistant-bubble b, */
+/* .chatbot-theme .chatbot-assistant-bubble i, */
+/* .chatbot-theme .chatbot-assistant-bubble em, */
+/* .chatbot-assistant-bubble * { */
+/*   color: #0f172a !important; */
+/* } */
+
+.chatbot-theme .chatbot-assistant-bubble a,
+.chatbot-assistant-bubble a {
+  color: #60a5fa !important;
+  /* Light blue links */
+  text-decoration: underline;
+  text-decoration-color: rgba(96, 165, 250, 0.7);
+}
+
+.chatbot-theme .chatbot-assistant-bubble a:hover,
+.chatbot-theme .chatbot-assistant-bubble a:focus-visible,
+.chatbot-theme .chatbot-assistant-bubble a:active,
+.chatbot-assistant-bubble a:hover,
+.chatbot-assistant-bubble a:focus-visible,
+.chatbot-assistant-bubble a:active {
+  color: #93c5fd !important;
+  text-decoration-color: rgba(147, 197, 253, 0.9);
+}
+
+/* Sent messages (from tenant user) - Green/colored background with White Text */
+/* Sent messages (from tenant user) - Green/colored background with White Text */
+/* OVERRIDE REMOVED to allow Theme Editor configuration */
+/* .chatbot-theme .chatbot-user-bubble, */
+/* .chatbot-user-bubble { */
+/*   background: var(--chatbot-user-bubble, linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(15, 118, 110, 0.92))) !important; */
+/*   color: #ffffff !important; */
+/*   White text per user request */
+/*   box-shadow: 0 4px 12px -4px rgba(16, 185, 129, 0.4); */
+/* } */
+
+/* .chatbot-theme .chatbot-user-bubble, */
+/* .chatbot-theme .chatbot-user-bubble p, */
+/* .chatbot-theme .chatbot-user-bubble span, */
+/* .chatbot-theme .chatbot-user-bubble div, */
+/* .chatbot-theme .chatbot-user-bubble h1, */
+/* .chatbot-theme .chatbot-user-bubble h2, */
+/* .chatbot-theme .chatbot-user-bubble h3, */
+/* .chatbot-theme .chatbot-user-bubble h4, */
+/* .chatbot-theme .chatbot-user-bubble h5, */
+/* .chatbot-theme .chatbot-user-bubble h6, */
+/* .chatbot-theme .chatbot-user-bubble li, */
+/* .chatbot-theme .chatbot-user-bubble ul, */
+/* .chatbot-theme .chatbot-user-bubble ol, */
+/* .chatbot-theme .chatbot-user-bubble strong, */
+/* .chatbot-theme .chatbot-user-bubble b, */
+/* .chatbot-theme .chatbot-user-bubble i, */
+/* .chatbot-theme .chatbot-user-bubble em, */
+/* .chatbot-user-bubble * { */
+/*   color: #ffffff !important; */
+/* } */
+
+.chatbot-theme .chatbot-user-bubble a,
+.chatbot-user-bubble a {
+  color: #ffffff !important;
+}
+
+/* Timestamps */
+.chatbot-timestamp {
+  color: rgba(148, 163, 184, 0.8) !important;
+}
+
+.chatbot-assistant-bubble .chatbot-timestamp {
+  color: rgba(148, 163, 184, 0.75) !important;
+  /* Light gray on dark bubble */
+}
+
+.chatbot-user-bubble .chatbot-timestamp {
+  /* color: rgba(255, 255, 255, 0.75) !important; */
+  color: inherit !important;
+  opacity: 0.8;
+}
+
+/* Message status icons (delivered, read checkmarks) */
+.chatbot-user-bubble svg,
+.chatbot-user-bubble .message-status {
+  /* color: rgba(255, 255, 255, 0.85) !important; */
+  color: inherit !important;
+}
+
+/* Quick action buttons - dark surface with light text to match theme */
+.chatbot-quick-action {
+  background: var(--chatbot-surface, rgba(30, 41, 59, 0.85)) !important;
+  border: 1px solid var(--chatbot-border, rgba(148, 163, 184, 0.25)) !important;
+  color: #0f172a !important;
+  /* Dark text per user request "must be dark" even if bg is preserved */
+  backdrop-filter: blur(6px);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.chatbot-quick-action:hover,
+.chatbot-quick-action:focus-visible {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border-color: rgba(148, 163, 184, 0.4) !important;
+  color: #ffffff !important;
+}
+
+/* ============================================
+   INFO MODAL & MESSAGE INFO DIALOG
+   ============================================ */
+
+.chatbot-theme [data-radix-dialog-content] {
+  background: var(--chatbot-sidebar-bg, rgba(15, 23, 42, 0.98)) !important;
+  color: var(--chatbot-sidebar-text, #f8fafc) !important;
+  border: 1px solid var(--chatbot-sidebar-border, rgba(148, 163, 184, 0.25)) !important;
+}
+
+.chatbot-theme [data-radix-dialog-content] * {
+  color: var(--chatbot-sidebar-text, #f8fafc);
+}
+
+.chatbot-theme [data-radix-dialog-content] h1,
+.chatbot-theme [data-radix-dialog-content] h2,
+.chatbot-theme [data-radix-dialog-content] h3,
+.chatbot-theme [data-radix-dialog-content] h4 {
+  color: var(--chatbot-sidebar-text, #f8fafc) !important;
+}
+
+.chatbot-theme [data-radix-dialog-content] p,
+.chatbot-theme [data-radix-dialog-content] span,
+.chatbot-theme [data-radix-dialog-content] label {
+  color: var(--chatbot-sidebar-text, #f8fafc) !important;
+}
+
+.chatbot-theme [data-radix-dialog-content] button {
+  color: var(--chatbot-sidebar-text, #f8fafc) !important;
+}
+
+/* Dialog inputs - white background with dark text */
+/* Dialog inputs - allow utility classes to control styling */
+/* .chatbot-theme [data-radix-dialog-content] input,
+.chatbot-theme [data-radix-dialog-content] textarea,
+.chatbot-theme [data-radix-dialog-content] select {
+  background: #ffffff !important;
+  color: #1e293b !important;
+  border-color: var(--chatbot-sidebar-border, rgba(148, 163, 184, 0.35)) !important;
+} */
+
+.chatbot-theme [data-radix-dialog-content] input::placeholder,
+.chatbot-theme [data-radix-dialog-content] textarea::placeholder {
+  color: rgba(100, 116, 139, 0.7) !important;
+}
+
+/* ============================================
+   MESSAGE STATUS & DELIVERY STATES
+   ============================================ */
+
+/* Status text (Sent, Delivered, Read) */
+.chatbot-theme .message-status-text,
+.chatbot-theme .delivery-status {
+  color: var(--chatbot-sidebar-secondary, rgba(203, 213, 225, 0.9)) !important;
+}
+
+/* Status icons */
+.chatbot-theme .message-status svg {
+  color: var(--chatbot-sidebar-secondary, rgba(203, 213, 225, 0.85)) !important;
+}
+
+/* Read status - blue checkmarks */
+.chatbot-theme .message-status.read svg,
+.chatbot-theme .message-status[data-status="read"] svg {
+  color: #22d3ee !important;
+}
+
+/* Pending status */
+.chatbot-theme .message-status.pending svg,
+.chatbot-theme .message-status[data-status="pending"] svg {
+  color: rgba(148, 163, 184, 0.6) !important;
+}
+
+/* ============================================
+   INFO TOOLTIP/POPOVER
+   ============================================ */
+
+.chatbot-theme [data-radix-tooltip-content],
+.chatbot-theme [data-radix-popover-content] {
+  background: var(--chatbot-sidebar-bg, rgba(15, 23, 42, 0.98)) !important;
+  color: var(--chatbot-sidebar-text, #f8fafc) !important;
+  border: 1px solid var(--chatbot-sidebar-border, rgba(148, 163, 184, 0.25)) !important;
+}
+
+.chatbot-theme [data-radix-tooltip-content] *,
+.chatbot-theme [data-radix-popover-content] * {
+  color: var(--chatbot-sidebar-text, #f8fafc) !important;
+}
+
+
+/* Exception: Avatar initials should be white for contrast */
+.chatbot-sidebar-item.is-active .chatbot-sidebar-avatar,
+.chatbot-sidebar-item.is-active .chatbot-sidebar-avatar *,
+.chatbot-sidebar-item.is-active .chatbot-sidebar-avatar [class*="AvatarFallback"],
+.chatbot-sidebar-item.is-active .chatbot-sidebar-avatar [class*="AvatarFallback"] * {
+  color: #ffffff !important;
+}
+
+.chatbot-sidebar-item.is-active .chatbot-sidebar-secondary {
+  color: #334155 !important;
+  /* slate-700 for secondary text on light bg */
+}
+
+/* ============================================
+   CATALOG FILTER TABS - Force white text when not active
+   Override foreground color for unselected tabs
+   ============================================ */
+.chatbot-theme [class*="CatalogPanel"] button[class*="bg-white/5"]:not([class*="bg-emerald"]),
+.chatbot-theme [class*="CatalogPanel"] button[class*="text-white"]:not([class*="bg-emerald"]) {
+  color: #ffffff !important;
+}
+
+/* ============================================
+   TICKET CARDS - Allow hover states with dark text/icons  
+   Override foreground color on hover
+   ============================================ */
+.chatbot-theme [class*="TicketPanel"] button.group:hover *,
+.chatbot-theme [class*="TicketPanel"] button.group:hover span,
+.chatbot-theme [class*="TicketPanel"] button.group:hover div,
+.chatbot-theme [class*="TicketPanel"] button.group:hover h4,
+.chatbot-theme [class*="TicketPanel"] button.group:hover svg,
+.chatbot-theme [class*="TicketPanel"] button.group:hover [class*="group-hover"] {
+  /* Allow component-level group-hover classes to work */
+  color: inherit !important;
+}
+
+/* ============================================
+   WHITE BACKGROUND TABS/BUTTONS - Force dark text for contrast
+   Override the foreground color exclusions above
+   ============================================ */
+
+/* Any tab or button with actual white background needs black text */
+.chatbot-theme button.bg-white,
+.chatbot-theme button.bg-white *,
+.chatbot-theme button.hover\:bg-white:hover,
+.chatbot-theme button.hover\:bg-white:hover *,
+.chatbot-theme [role="tab"].bg-white,
+.chatbot-theme [role="tab"].bg-white *,
+[class*="CrmChatPanel"] button.bg-white,
+[class*="CrmChatPanel"] button.bg-white *,
+[class*="CrmChatPanel"] button.hover\:bg-white:hover,
+[class*="CrmChatPanel"] button.hover\:bg-white:hover * {
+  color: #000000 !important;
+}
+
+
+.chatbot-sidebar-item.is-active .chatbot-sidebar-avatar {
+  border-color: rgba(0, 0, 0, 0.1);
+  background: var(--chatbot-sidebar-accent, #5a9080) !important;
+}
+
+.chatbot-sidebar-item.is-active .chatbot-sidebar-avatar [class*="AvatarFallback"],
+.chatbot-sidebar-item.is-active .chatbot-sidebar-avatar [class*="AvatarFallback"] * {
+  color: #ffffff !important;
+}
+
+/* Ensure no other rules override the white color for active avatar initials */
+.chatbot-sidebar-item.is-active .chatbot-sidebar-avatar [class*="AvatarFallback"] {
+  color: #ffffff !important;
+}
+
+.chatbot-sidebar-avatar {
+  background: var(--chatbot-sidebar-avatar-bg);
+  border: 1px solid var(--chatbot-sidebar-border);
+  color: var(--chatbot-sidebar-text);
+}
+
+.chatbot-sidebar-pill {
+  background: var(--chatbot-sidebar-pill-bg);
+  border: 1px solid var(--chatbot-sidebar-border);
+  color: var(--chatbot-sidebar-accent);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chatbot-sidebar-pill:hover,
+.chatbot-sidebar-pill:focus-visible {
+  box-shadow: 0 16px 32px -20px rgba(15, 23, 42, 0.35);
+  border-color: var(--chatbot-sidebar-border);
+}
+
+.chatbot-sidebar-pill-secondary {
+  background: var(--chatbot-sidebar-pill-bg);
+  border: 1px solid var(--chatbot-sidebar-border);
+  color: var(--chatbot-sidebar-secondary);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chatbot-sidebar-pill-secondary:hover,
+.chatbot-sidebar-pill-secondary:focus-visible {
+  box-shadow: 0 16px 32px -20px rgba(15, 23, 42, 0.35);
+  border-color: var(--chatbot-sidebar-border);
+}
+
+.chatbot-thread-header {
+  border-color: var(--chatbot-sidebar-border);
+}
+
+@media (min-width: 768px) {
+  .chatbot-thread-header {
+    background: var(--chatbot-sidebar-topbar-bg);
+  }
+}
+
+.chatbot-thread-surface {
+  background: var(--chatbot-thread-bg);
+}
+
+.chatbot-panel {
+  background: var(--chatbot-sidebar-topbar-bg);
+  border-left: 1px solid var(--chatbot-sidebar-border);
+  color: var(--chatbot-sidebar-text);
+}
+
+@media (min-width: 768px) {
+  .chatbot-thread-surface {
+    background: var(--chatbot-thread-bg-desktop);
+  }
+}
+
+/* ============================================
+   GLOBAL CONTRAST RULES FOR ALL COMPONENTS
+   ============================================ */
+
+/* Input fields - white background with black text */
+/* Exclude chatbot components to preserve their original colors */
+:not(.chatbot-theme):not([class*="chatbot"]) input[type="text"],
+:not(.chatbot-theme):not([class*="chatbot"]) input[type="email"],
+:not(.chatbot-theme):not([class*="chatbot"]) input[type="password"],
+:not(.chatbot-theme):not([class*="chatbot"]) input[type="number"],
+:not(.chatbot-theme):not([class*="chatbot"]) input[type="tel"],
+:not(.chatbot-theme):not([class*="chatbot"]) input[type="url"],
+:not(.chatbot-theme):not([class*="chatbot"]) input[type="search"],
+:not(.chatbot-theme):not([class*="chatbot"]) input[type="date"],
+:not(.chatbot-theme):not([class*="chatbot"]) input[type="time"],
+:not(.chatbot-theme):not([class*="chatbot"]) input[type="datetime-local"],
+:not(.chatbot-theme):not([class*="chatbot"]) input[type="month"],
+:not(.chatbot-theme):not([class*="chatbot"]) input[type="week"],
+:not(.chatbot-theme):not([class*="chatbot"]) textarea {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: rgb(209, 213, 219) !important;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) input::placeholder,
+:not(.chatbot-theme):not([class*="chatbot"]) textarea::placeholder {
+  color: rgb(107, 114, 128) !important;
+  /* gray-500 for sufficient contrast */
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) input:focus,
+:not(.chatbot-theme):not([class*="chatbot"]) textarea:focus {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: rgb(37, 99, 235);
+  /* primary-600 for focus */
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) input:disabled,
+:not(.chatbot-theme):not([class*="chatbot"]) textarea:disabled {
+  background-color: rgb(243, 244, 246) !important;
+  /* gray-100 */
+  color: rgb(107, 114, 128) !important;
+  /* gray-500 */
+  cursor: not-allowed;
+}
+
+/* Select dropdowns - white background with black text */
+/* Exclude chatbot components to preserve their original colors */
+:not(.chatbot-theme):not([class*="chatbot"]) select {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: rgb(209, 213, 219) !important;
+  background-image: none !important;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) select option {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) select:focus {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: rgb(37, 99, 235);
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) select:disabled {
+  background-color: rgb(243, 244, 246) !important;
+  color: rgb(107, 114, 128) !important;
+  cursor: not-allowed;
+}
+
+/* Buttons - ensure proper contrast based on variant */
+/* Exclude chatbot components to preserve their original colors */
+:not(.chatbot-theme):not([class*="chatbot"]) button {
+  transition: all 0.2s ease;
+}
+
+/* Primary buttons - colored background with white text */
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-primary"],
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-blue"],
+:not(.chatbot-theme):not([class*="chatbot"]) button.bg-primary-500,
+:not(.chatbot-theme):not([class*="chatbot"]) button.bg-primary-600,
+:not(.chatbot-theme):not([class*="chatbot"]) button.bg-primary-700 {
+  color: #ffffff !important;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-primary"]:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-blue"]:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) button.bg-primary-500:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) button.bg-primary-600:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) button.bg-primary-700:hover {
+  color: #ffffff !important;
+  opacity: 0.9;
+}
+
+/* Secondary/outline buttons - light background with black text */
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-white"],
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-gray-50"],
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-gray-100"],
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-secondary"] {
+  color: #000000 !important;
+  border-color: rgb(209, 213, 219) !important;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-white"]:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-gray-50"]:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-gray-100"]:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-secondary"]:hover {
+  background-color: rgb(243, 244, 246) !important;
+  /* gray-100 */
+  color: #000000 !important;
+}
+
+/* Destructive buttons - red background with white text */
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-red"],
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-destructive"],
+:not(.chatbot-theme):not([class*="chatbot"]) button.bg-red-500,
+:not(.chatbot-theme):not([class*="chatbot"]) button.bg-red-600 {
+  color: #ffffff !important;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-red"]:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-destructive"]:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) button.bg-red-500:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) button.bg-red-600:hover {
+  color: #ffffff !important;
+  opacity: 0.9;
+}
+
+/* ============================================
+   TICKET PANEL BUTTONS - Allow hover states to override
+   Removed overly broad !important rules
+   ============================================ */
+
+/* Ticket panel buttons default to white text, but allow component overrides */
+.chatbot-theme [class*="TicketPanel"] button[class*="variant-ghost"]:not(:hover),
+.chatbot-theme [class*="TicketPanel"] button[class*="ghost"]:not(:hover),
+.chatbot-theme [class*="TicketPanel"] button.text-white:not(:hover):not(.group:hover),
+.chatbot-theme [class*="TicketPanel"] label.text-white:not(:hover):not(button:hover *) {
+  color: #ffffff !important;
+}
+
+/* ============================================
+   TICKET HISTORY BUTTONS (Tickets, Crear) - White when not active
+   ============================================ */
+
+/* Ticket history tab buttons - white text when not active */
+.chatbot-theme [class*="TicketPanel"] button[type="button"][style*="transparent"]:not(:hover),
+.chatbot-theme [class*="TicketPanel"] button[style*="background: transparent"]:not(:hover),
+.chatbot-theme [class*="TicketPanel"] button[style*="background:transparent"]:not(:hover) {
+  color: #ffffff !important;
+}
+
+.chatbot-theme [class*="TicketPanel"] button[type="button"][style*="transparent"]:not(:hover) svg,
+.chatbot-theme [class*="TicketPanel"] button[style*="background: transparent"]:not(:hover) svg,
+.chatbot-theme [class*="TicketPanel"] button[style*="background:transparent"]:not(:hover) svg {
+  color: #ffffff !important;
+}
+
+/* More specific targeting for ticket history buttons */
+.chatbot-theme [class*="TicketPanel"] button[class*="rounded-full"][class*="border"]:not([style*="var(--chatbot-sidebar-pill-bg)"]):not(:hover) {
+  color: #ffffff !important;
+}
+
+.chatbot-theme [class*="TicketPanel"] button[class*="rounded-full"][class*="border"]:not([style*="var(--chatbot-sidebar-pill-bg)"]):not(:hover) svg {
+  color: #ffffff !important;
+}
+
+
+/* Ghost buttons - transparent with black text */
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="ghost"],
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-transparent"] {
+  color: #000000 !important;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="ghost"]:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) button[class*="bg-transparent"]:hover {
+  background-color: rgb(243, 244, 246) !important;
+  /* gray-100 */
+  color: #000000 !important;
+}
+
+/* Tabs - clear active/inactive states */
+/* Exclude chatbot components to preserve their original colors */
+:not(.chatbot-theme):not([class*="chatbot"]) [role="tablist"] {
+  background-color: rgb(243, 244, 246) !important;
+  /* gray-100 */
+  border-color: rgb(209, 213, 219) !important;
+  /* gray-300 */
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) [role="tab"] {
+  color: rgb(107, 114, 128) !important;
+  /* gray-500 */
+  transition: all 0.2s ease;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) [role="tab"][aria-selected="false"] {
+  background-color: transparent !important;
+  color: rgb(107, 114, 128) !important;
+  /* gray-500 */
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) [role="tab"][aria-selected="true"] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: rgb(209, 213, 219) !important;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) [role="tab"]:hover {
+  color: #000000 !important;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) [role="tab"]:focus-visible {
+  outline: 2px solid rgb(37, 99, 235);
+  /* primary-600 */
+  outline-offset: 2px;
+}
+
+/* Dropdown menus - white background with black text */
+/* Exclude chatbot components to preserve their original colors */
+:not(.chatbot-theme):not([class*="chatbot"]) [role="menu"],
+:not(.chatbot-theme):not([class*="chatbot"]) [role="listbox"],
+:not(.chatbot-theme):not([class*="chatbot"]) [data-radix-select-content],
+:not(.chatbot-theme):not([class*="chatbot"]) [data-radix-dropdown-menu-content] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: rgb(209, 213, 219) !important;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) [role="menuitem"],
+:not(.chatbot-theme):not([class*="chatbot"]) [role="option"] {
+  color: #000000 !important;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) [role="menuitem"]:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) [role="menuitem"]:focus,
+:not(.chatbot-theme):not([class*="chatbot"]) [role="option"]:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) [role="option"]:focus {
+  background-color: rgb(243, 244, 246) !important;
+  /* gray-100 */
+  color: #000000 !important;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) [role="menuitem"][aria-disabled="true"],
+:not(.chatbot-theme):not([class*="chatbot"]) [role="option"][aria-disabled="true"] {
+  color: rgb(156, 163, 175) !important;
+  /* gray-400 */
+  cursor: not-allowed;
+}
+
+/* Menu items and navigation */
+/* Exclude chatbot components to preserve their original colors */
+:not(.chatbot-theme):not([class*="chatbot"]) nav a,
+:not(.chatbot-theme):not([class*="chatbot"]) nav button,
+:not(.chatbot-theme):not([class*="chatbot"]) [role="menuitem"],
+:not(.chatbot-theme):not([class*="chatbot"]) [role="navigation"] a,
+:not(.chatbot-theme):not([class*="chatbot"]) [role="navigation"] button {
+  color: #000000 !important;
+  transition: all 0.2s ease;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) nav a:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) nav button:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) [role="menuitem"]:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) [role="navigation"] a:hover,
+:not(.chatbot-theme):not([class*="chatbot"]) [role="navigation"] button:hover {
+  background-color: rgb(243, 244, 246) !important;
+  /* gray-100 */
+  color: #000000 !important;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) nav a[aria-current="page"],
+:not(.chatbot-theme):not([class*="chatbot"]) nav button[aria-current="page"],
+:not(.chatbot-theme):not([class*="chatbot"]) [role="menuitem"][aria-current="page"] {
+  background-color: rgb(219, 234, 254) !important;
+  /* primary-100 */
+  color: #000000 !important;
+  font-weight: 600;
+}
+
+/* Labels - ensure dark text */
+/* Exclude chatbot components to preserve their original colors */
+:not(.chatbot-theme):not([class*="chatbot"]) label {
+  color: #000000 !important;
+}
+
+/* Text elements - ensure proper contrast */
+/* Exclude chatbot components to preserve their original colors */
+:not(.chatbot-theme):not([class*="chatbot"]) h1,
+:not(.chatbot-theme):not([class*="chatbot"]) h2,
+:not(.chatbot-theme):not([class*="chatbot"]) h3,
+:not(.chatbot-theme):not([class*="chatbot"]) h4,
+:not(.chatbot-theme):not([class*="chatbot"]) h5,
+:not(.chatbot-theme):not([class*="chatbot"]) h6 {
+  color: #000000 !important;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) p,
+:not(.chatbot-theme):not([class*="chatbot"]) span,
+:not(.chatbot-theme):not([class*="chatbot"]) div,
+:not(.chatbot-theme):not([class*="chatbot"]) li {
+  color: #000000 !important;
+}
+
+/* Links - ensure proper contrast */
+/* Exclude chatbot components to preserve their original colors */
+:not(.chatbot-theme):not([class*="chatbot"]) a {
+  color: rgb(37, 99, 235) !important;
+  /* primary-600 */
+  text-decoration: underline;
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) a:hover {
+  color: rgb(29, 78, 216) !important;
+  /* primary-700 */
+}
+
+:not(.chatbot-theme):not([class*="chatbot"]) a:visited {
+  color: rgb(79, 70, 229) !important;
+  /* indigo-600 */
+}
+
+/* Focus states - visible and high contrast */
+/* Exclude chatbot components to preserve their original colors */
+:not(.chatbot-theme):not([class*="chatbot"]) *:focus-visible {
+  outline: 2px solid rgb(37, 99, 235);
+  /* primary-600 */
+  outline-offset: 2px;
+}
+
+/* Disabled states */
+[disabled],
+[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Ensure all text in payment left panel is white (black background) - HIGH SPECIFICITY */
+.payment-page .payment-left-panel,
+.payment-page .payment-left-panel *,
+.payment-left-panel,
+.payment-left-panel * {
+  color: #ffffff !important;
+}
+
+/* Force white color on all child elements recursively - deep nesting */
+.payment-page .payment-left-panel * *,
+.payment-page .payment-left-panel * * *,
+.payment-page .payment-left-panel * * * *,
+.payment-left-panel * *,
+.payment-left-panel * * *,
+.payment-left-panel * * * * {
+  color: #ffffff !important;
+}
+
+/* Override any potential dark mode or theme colors */
+.payment-page .payment-left-panel [class*="text-"],
+.payment-left-panel [class*="text-"] {
+  color: #ffffff !important;
+}
+
+/* Ensure flex containers and all their children are white */
+.payment-page .payment-left-panel .flex,
+.payment-page .payment-left-panel .flex *,
+.payment-left-panel .flex,
+.payment-left-panel .flex * {
+  color: #ffffff !important;
+}
+
+/* Specific element overrides with maximum specificity */
+.payment-page .payment-left-panel h1,
+.payment-page .payment-left-panel h2,
+.payment-page .payment-left-panel h3,
+.payment-page .payment-left-panel h4,
+.payment-page .payment-left-panel h5,
+.payment-page .payment-left-panel h6,
+.payment-page .payment-left-panel p,
+.payment-page .payment-left-panel span,
+.payment-page .payment-left-panel div,
+.payment-page .payment-left-panel label,
+.payment-page .payment-left-panel a,
+.payment-page .payment-left-panel button,
+.payment-page .payment-left-panel input,
+.payment-page .payment-left-panel textarea,
+.payment-page .payment-left-panel select,
+.payment-left-panel h1,
+.payment-left-panel h2,
+.payment-left-panel h3,
+.payment-left-panel h4,
+.payment-left-panel h5,
+.payment-left-panel h6,
+.payment-left-panel p,
+.payment-left-panel span,
+.payment-left-panel div,
+.payment-left-panel label,
+.payment-left-panel a,
+.payment-left-panel button,
+.payment-left-panel input,
+.payment-left-panel textarea,
+.payment-left-panel select {
+  color: #ffffff !important;
+}
+
+/* Override any Tailwind text color classes in payment left panel - MAXIMUM SPECIFICITY */
+.payment-page .payment-left-panel .text-black,
+.payment-page .payment-left-panel .text-gray-900,
+.payment-page .payment-left-panel .text-gray-800,
+.payment-page .payment-left-panel .text-gray-700,
+.payment-page .payment-left-panel .text-gray-600,
+.payment-page .payment-left-panel .text-slate-900,
+.payment-page .payment-left-panel .text-slate-800,
+.payment-page .payment-left-panel .text-slate-700,
+.payment-page .payment-left-panel .text-slate-600,
+.payment-left-panel .text-black,
+.payment-left-panel .text-gray-900,
+.payment-left-panel .text-gray-800,
+.payment-left-panel .text-gray-700,
+.payment-left-panel .text-gray-600,
+.payment-left-panel .text-slate-900,
+.payment-left-panel .text-slate-800,
+.payment-left-panel .text-slate-700,
+.payment-left-panel .text-slate-600 {
+  color: #ffffff !important;
+}
+
+/* Override any text-white classes that might not be working */
+.payment-page .payment-left-panel .text-white,
+.payment-left-panel .text-white {
+  color: #ffffff !important;
+}
+
+.payment-success-page .payment-left-panel,
+.payment-success-page .payment-left-panel *,
+.payment-failure-page .payment-left-panel,
+.payment-failure-page .payment-left-panel * {
+  color: #ffffff !important;
+}
+
+.payment-success-page .payment-left-panel h1,
+.payment-success-page .payment-left-panel h2,
+.payment-success-page .payment-left-panel h3,
+.payment-success-page .payment-left-panel h4,
+.payment-success-page .payment-left-panel h5,
+.payment-success-page .payment-left-panel h6,
+.payment-failure-page .payment-left-panel h1,
+.payment-failure-page .payment-left-panel h2,
+.payment-failure-page .payment-left-panel h3,
+.payment-failure-page .payment-left-panel h4,
+.payment-failure-page .payment-left-panel h5,
+.payment-failure-page .payment-left-panel h6 {
+  color: #ffffff !important;
+}
+
+.payment-success-page .payment-left-panel p,
+.payment-success-page .payment-left-panel span,
+.payment-success-page .payment-left-panel div:not(.bg-white):not([class*="bg-white"]),
+.payment-success-page .payment-left-panel label,
+.payment-failure-page .payment-left-panel p,
+.payment-failure-page .payment-left-panel span,
+.payment-failure-page .payment-left-panel div:not(.bg-white):not([class*="bg-white"]),
+.payment-failure-page .payment-left-panel label {
+  color: #ffffff !important;
+}
+/* Message Bubble Animations */
+@keyframes message-pop-in-user {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+    transform-origin: top right;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    transform-origin: top right;
+  }
+}
+
+@keyframes message-pop-in-bot {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+    transform-origin: top left;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    transform-origin: top left;
+  }
+}
+
+.animate-message-pop-in-user {
+  animation: message-pop-in-user 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.animate-message-pop-in-bot {
+  animation: message-pop-in-bot 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}

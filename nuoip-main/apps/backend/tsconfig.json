@@ -1,0 +1,100 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2021",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@ipnuo/domain": [
+        "../../packages/domain/src/index.ts"
+      ],
+      "@ipnuo/domain/*": [
+        "../../packages/domain/src/*"
+      ],
+      "@ipnuo/utils": [
+        "../../packages/utils/src/index.ts"
+      ],
+      "@ipnuo/utils/*": [
+        "../../packages/utils/src/*"
+      ],
+      "@ipnuo/shared-chat-auth": [
+        "../../packages/shared-chat-auth/src/index.ts"
+      ],
+      "@ipnuo/shared-chat-auth/*": [
+        "../../packages/shared-chat-auth/src/*"
+      ],
+      "@ipnuo/prisma": [
+        "../../packages/prisma/src/index.ts"
+      ],
+      "@ipnuo/prisma/*": [
+        "../../packages/prisma/src/*"
+      ],
+      "@/*": [
+        "./src/*"
+      ],
+      "@": [
+        "./src"
+      ]
+    }
+  },
+  "ts-node": {
+    "require": [
+      "tsconfig-paths/register"
+    ],
+    "compilerOptions": {
+      "module": "commonjs"
+    },
+    "files": true,
+    "transpileOnly": true,
+    "skipIgnore": false,
+    "ignore": [
+      "(?:^|/)packages/prisma/generated/"
+    ]
+  },
+  "tsconfig-paths": {
+    "baseUrl": ".",
+    "paths": {
+      "@ipnuo/domain": [
+        "../../packages/domain/src/index.ts"
+      ],
+      "@ipnuo/domain/*": [
+        "../../packages/domain/src/*"
+      ],
+      "@ipnuo/utils": [
+        "../../packages/utils/src/index.ts"
+      ],
+      "@ipnuo/utils/*": [
+        "../../packages/utils/src/*"
+      ],
+      "@ipnuo/shared-chat-auth": [
+        "../../packages/shared-chat-auth/src/index.ts"
+      ],
+      "@ipnuo/shared-chat-auth/*": [
+        "../../packages/shared-chat-auth/src/*"
+      ],
+      "@ipnuo/prisma": [
+        "../../packages/prisma/src/index.ts"
+      ],
+      "@ipnuo/prisma/*": [
+        "../../packages/prisma/src/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "scripts/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test"
+  ]
+}

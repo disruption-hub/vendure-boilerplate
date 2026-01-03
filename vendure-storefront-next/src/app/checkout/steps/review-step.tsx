@@ -22,7 +22,15 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
     (method) => method.code === selectedPaymentMethodCode
   );
 
-  const isLyraPayment = selectedPaymentMethodCode === 'lyra-payment';
+  const configuredLyraPaymentCode = process.env.NEXT_PUBLIC_LYRA_PAYMENT_METHOD_CODE || 'lyra-payment';
+  const isLyraPayment =
+    !!selectedPaymentMethodCode &&
+    (
+      selectedPaymentMethodCode === configuredLyraPaymentCode ||
+      selectedPaymentMethodCode.toLowerCase().includes('lyra') ||
+      selectedPaymentMethod?.name.toLowerCase().includes('lyra') ||
+      selectedPaymentMethod?.name.toLowerCase().includes('payzen')
+    );
 
   const handlePlaceOrder = async () => {
     if (!selectedPaymentMethodCode) return;
@@ -148,7 +156,7 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
       <div className="pt-4">
         {isLyraPayment ? (
           <LyraPayment
-            orderCode={order.code}
+            paymentMethodCode={selectedPaymentMethodCode!}
             onSuccess={handleLyraSuccess}
           />
         ) : (

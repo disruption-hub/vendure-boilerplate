@@ -1,0 +1,340 @@
+Baileys Documentation
+WhatsApp Web API Automation Library
+
+Introduction	9
+Baileys is a WhatsApp Web API automation TypeScript library (Node supported, web/extension support planned). This project doesn't control WhatsApp using an automated browser, but instead uses WhatsApp Web's WebSocket-based protocol to interact with WhatsApp servers.	9
+If you don't use TypeScript or JavaScript, it is recommended to learn them before using this library.	9
+Important Notice	9
+Baileys does not use the WhatsApp Business API (WABA). Rather it connects to a personal or a business (mobile app) account using the Linked Devices feature.	9
+This project is in no way affiliated with or endorsed by WhatsApp. Use at your own discretion. Do not spam people with this. We discourage any stalkerware, bulk or automated messaging usage.	9
+Installation	9
+Adding Baileys to your project is as simple as:	9
+Socket Configuration	10
+The first step into getting anywhere with Baileys is configuring the socket. Baileys is very open by default and allows you to configure various options. All configuration is passed through the makeWASocket function.	10
+Logger	10
+Baileys uses the pino library to log by default, but after a recent change, as long as you define a similar type, you'll be OK. As for pino, you can stream the logs into a file or even consume them as a realtime data stream.	10
+Auth State	10
+You should always implement your own auth state. Whether you decide a SQL, no-SQL or Redis auth state fits you best, that depends on your needs. As of now, there are no actively maintained 3rd-party auth states.	10
+getMessage Function	10
+It is important to note the getMessage function. This functionality is needed for resending missing messages or decrypting poll votes. This should be implemented by making a call to your database or wherever the message is stored, using the message key as an index.	10
+Example configuration:	10
+Browser Configuration	11
+The only consideration is when logging in using pairing code. In that case you should only set a valid/logical browser config (e.g. Browsers.macOS('Google Chrome')), otherwise the pair will fail. Once you are fully paired, you can switch the browser config back to normal.	11
+Version Settings	11
+It is recommended to leave the version settings to their default options. In future releases, the WhatsApp version will be actively locked to the library to insure maximum compatibility, under the ProtoCocktail project.	11
+Other Important Configurations	11
+Connecting to WhatsApp	12
+After configuring the socket, comes connecting to WhatsApp servers. There are 2 methods to pair your device: QR code pairing and phone number/pairing code method.	12
+QR Code Pairing	12
+After creating the socket, it will automatically connect and then start sending events. The main event to handle is the connection.update event.	12
+Handling Disconnections	12
+After scanning the code, WhatsApp will forcibly disconnect you, forcing a reconnect. You must handle this:	12
+Auth State Persistence	12
+In order to reconnect successfully, we must pass a way for Baileys to persist credentials and encryption keys.	13
+CRITICAL WARNING: DONT EVER USE THE useMultiFileAuthState IN PROD. This function consumes a lot of IO. Only use its implementation as a guide.	13
+Pairing Code Login	13
+When you want to request a pairing code, wait until the connecting/QR event. The phone number MUST be in E.164 format without a plus sign.	13
+History Sync	14
+After connecting successfully, the socket will try to download and process old chats, contacts and messages. This data is delivered via the messaging-history.set event.	14
+Disabling History Sync	14
+You can disable history sync by setting shouldSyncHistoryMessage option to () => false.	14
+Receiving Updates	15
+After getting the initial history messages, Baileys exposes real-time updates via the event emitter.	15
+Message Events	15
+messages.upsert - Provides messages from offline sync or real time. Type is either 'notify' (new messages) or 'append' (everything else).	15
+Chat Events	15
+Contact Events	15
+Group Events	15
+Handling Messages	16
+Messages come in the form of proto.IWebMessageInfo, which is the protobuf that WhatsApp Web stores its messages in.	16
+Text Messages	16
+Text messages come in two forms:	16
+Media Messages	16
+Media messages come in the following protobuf messages:	16
+Sending Messages	17
+One of the core features of any messaging experience is sending messages. Baileys provides comprehensive message sending capabilities.	17
+Use the sock.sendMessage function to send messages of all types to WhatsApp contacts and groups.	17
+Group Management	18
+WhatsApp group support is pivotal for many users of this library. Baileys has very extensive group support.	18
+Group Creation & Join	18
+Functions available for creating and joining groups.	18
+Participant Modifications	18
+Manage group participants including join requests.	18
+Metadata Query & Modification	18
+Query and modify group metadata including obtaining metadata by group invite code.	18
+Privacy Settings	19
+Baileys has some missing privacy settings as of the writing of this documentation. The currently exposed methods are:	19
+Blocklist	19
+fetchBlocklist - Fetch the list of people you are currently blocking	19
+Fetch Privacy Settings	19
+Update Privacy Settings	19
+Available update functions:	19
+Presence and Receipts	20
+Baileys supports sending presence data to WhatsApp.	20
+Socket-Level Presence	20
+Available presence types: 'unavailable', 'available'	20
+Chat-Level Presence	20
+Available types: 'composing', 'recording', 'paused'	20
+Mark Messages as Read	20
+Migration to v7.x.x	21
+ESM Migration	21
+Baileys 6.8.0 ditches CommonJS for ESM. This involves changing your package.json type to 'module' and replacing require() calls with import calls.	21
+LID (Local Identifier) System	21
+WhatsApp finalized its LID update to ensure anonymity of users in large groups. LIDs are unique identifiers for each user, separate from phone numbers.	21
+Key points:	21
+Proto Package Changes	21
+To reduce bundle size, only .create(), .encode() and .decode() methods remain in proto package. Use BufferJSON utilities for encoding types.	21
+Meta Coexistence	21
+Meta added support for Coexistence, allowing anyone to keep the WA Business App and linked devices while connecting to the Meta API. Support is experimental.	21
+Additional Important Notes	22
+Synopsis	22
+The main export of Baileys is the makeWASocket function, which returns an object full of socket-related functions. The socket is an extension of EventEmitter, allowing you to listen to events and collect data. Baileys is asynchronous and event-based.	22
+Authentication	22
+The socket authenticates with WhatsApp Web using an Auth state provided in the config. The useMultiFileAuthState function is provided for demo purposes, but should be implemented from scratch for production use, as it is very inefficient.	22
+Requirements	22
+Baileys requires Node 17+ to function. Support for other runtimes is planned for future releases.	22
+End of Documentation	22
+For the latest updates, visit: https://baileys.wiki/	22
+Introduction
+Baileys is a WhatsApp Web API automation TypeScript library (Node supported, web/extension support planned). This project doesn't control WhatsApp using an automated browser, but instead uses WhatsApp Web's WebSocket-based protocol to interact with WhatsApp servers.
+
+If you don't use TypeScript or JavaScript, it is recommended to learn them before using this library.
+
+Important Notice
+Baileys does not use the WhatsApp Business API (WABA). Rather it connects to a personal or a business (mobile app) account using the Linked Devices feature.
+
+This project is in no way affiliated with or endorsed by WhatsApp. Use at your own discretion. Do not spam people with this. We discourage any stalkerware, bulk or automated messaging usage.
+
+Installation
+Adding Baileys to your project is as simple as:
+
+npm install baileys
+yarn add baileys
+pnpm add baileys
+bun add baileys
+
+As of now, Baileys requires Node 17+ to function. It is planned to abstract the project away from Node in a future release.
+Socket Configuration
+The first step into getting anywhere with Baileys is configuring the socket. Baileys is very open by default and allows you to configure various options. All configuration is passed through the makeWASocket function.
+
+Logger
+Baileys uses the pino library to log by default, but after a recent change, as long as you define a similar type, you'll be OK. As for pino, you can stream the logs into a file or even consume them as a realtime data stream.
+
+Auth State
+You should always implement your own auth state. Whether you decide a SQL, no-SQL or Redis auth state fits you best, that depends on your needs. As of now, there are no actively maintained 3rd-party auth states.
+
+getMessage Function
+It is important to note the getMessage function. This functionality is needed for resending missing messages or decrypting poll votes. This should be implemented by making a call to your database or wherever the message is stored, using the message key as an index.
+
+Example configuration:
+
+import makeWASocket from 'baileys'
+import P from 'pino'
+
+const sock = makeWASocket({
+  auth: any, // auth state of your choosing
+  logger: P()
+})
+
+Browser Configuration
+The only consideration is when logging in using pairing code. In that case you should only set a valid/logical browser config (e.g. Browsers.macOS('Google Chrome')), otherwise the pair will fail. Once you are fully paired, you can switch the browser config back to normal.
+
+Version Settings
+It is recommended to leave the version settings to their default options. In future releases, the WhatsApp version will be actively locked to the library to insure maximum compatibility, under the ProtoCocktail project.
+
+Other Important Configurations
+syncFullHistory: Baileys emulates a web browser by default. If you want to emulate a desktop to get full chat history events, use this option.
+markOnlineOnConnect: By default, Baileys sets your presence as online on connect. Set to false to prevent this.
+cachedGroupMetadata: When sending messages to a group, provide a cache to prevent rate limits and bans.
+Connecting to WhatsApp
+After configuring the socket, comes connecting to WhatsApp servers. There are 2 methods to pair your device: QR code pairing and phone number/pairing code method.
+
+QR Code Pairing
+After creating the socket, it will automatically connect and then start sending events. The main event to handle is the connection.update event.
+
+sock.ev.on('connection.update', async (update) => {
+  const {connection, lastDisconnect, qr } = update
+  if (qr) {
+    console.log(await QRCode.toString(qr, {type:'terminal'}))
+  }
+})
+
+Handling Disconnections
+After scanning the code, WhatsApp will forcibly disconnect you, forcing a reconnect. You must handle this:
+
+import {DisconnectReason} from 'baileys'
+sock.ev.on('connection.update', (update) => {
+  const {connection, lastDisconnect} = update
+  if (connection === 'close' && lastDisconnect?.error?.output?.statusCode
+      === DisconnectReason.restartRequired) {
+    // create a new socket
+  }
+})
+
+Auth State Persistence
+In order to reconnect successfully, we must pass a way for Baileys to persist credentials and encryption keys.
+
+CRITICAL WARNING: DONT EVER USE THE useMultiFileAuthState IN PROD. This function consumes a lot of IO. Only use its implementation as a guide.
+
+const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys');
+const sock = makeWASocket({ auth: state });
+sock.ev.on('creds.update', saveCreds);
+
+Pairing Code Login
+When you want to request a pairing code, wait until the connecting/QR event. The phone number MUST be in E.164 format without a plus sign.
+
+sock.ev.on('connection.update', async (update) => {
+  if (connection == 'connecting' || !!qr) {
+    const code = await sock.requestPairingCode(phoneNumber)
+  }
+})
+History Sync
+After connecting successfully, the socket will try to download and process old chats, contacts and messages. This data is delivered via the messaging-history.set event.
+
+sock.ev.on('messaging-history.set', ({ chats, contacts, messages, syncType }) => {
+  // handle the chats, contacts and messages
+})
+
+You should store this data in your database. Keep a record of messages so you can provide those messages to the getMessage function.
+
+Disabling History Sync
+You can disable history sync by setting shouldSyncHistoryMessage option to () => false.
+Receiving Updates
+After getting the initial history messages, Baileys exposes real-time updates via the event emitter.
+
+Message Events
+messages.upsert - Provides messages from offline sync or real time. Type is either 'notify' (new messages) or 'append' (everything else).
+
+sock.ev.on('messages.upsert', ({type, messages}) => {
+  if (type == 'notify') {
+    for (const message of messages) {
+      // handle each message
+    }
+  }
+})
+
+messages.update - Message got edited, deleted or receipt state changed
+messages.delete - Declares deletion of messages
+messages.reaction - Reaction added or removed
+message-receipt.update - Who received/viewed/played messages
+
+Chat Events
+chats.upsert - New chat opened
+chats.update - Chat updated (unread count, latest message)
+chats.delete - Chat deleted
+blocklist.set / blocklist.update - Block list changes
+call - Universal event for call data
+
+Contact Events
+contacts.upsert - New contact added
+contacts.update - Contact details changed
+
+Group Events
+groups.upsert - Joined a new group
+groups.update - Group metadata changed
+group-participants.update - Group participants or ranks changed
+Handling Messages
+Messages come in the form of proto.IWebMessageInfo, which is the protobuf that WhatsApp Web stores its messages in.
+
+Text Messages
+Text messages come in two forms:
+proto.IMessage.conversation - Simple text messages
+proto.IMessage.extendedTextMessage - Messages with reply data, link previews, or group invites
+
+Media Messages
+Media messages come in the following protobuf messages:
+proto.IMessage.audioMessage
+proto.IMessage.documentMessage
+proto.IMessage.imageMessage
+proto.IMessage.videoMessage
+proto.IMessage.stickerMessage
+Sending Messages
+One of the core features of any messaging experience is sending messages. Baileys provides comprehensive message sending capabilities.
+
+Use the sock.sendMessage function to send messages of all types to WhatsApp contacts and groups.
+Group Management
+WhatsApp group support is pivotal for many users of this library. Baileys has very extensive group support.
+
+Group Creation & Join
+Functions available for creating and joining groups.
+
+Participant Modifications
+Manage group participants including join requests.
+
+Metadata Query & Modification
+Query and modify group metadata including obtaining metadata by group invite code.
+Privacy Settings
+Baileys has some missing privacy settings as of the writing of this documentation. The currently exposed methods are:
+
+Blocklist
+fetchBlocklist - Fetch the list of people you are currently blocking
+
+const response = await sock.fetchBlocklist()
+
+updateBlockStatus - Block or unblock a WhatsApp user
+
+await sock.updateBlockStatus(jid, 'block')
+
+Fetch Privacy Settings
+const privacySettings = await sock.fetchPrivacySettings(true);
+
+Update Privacy Settings
+Available update functions:
+updateLastSeenPrivacy
+updateProfilePicturePrivacy
+updateStatusPrivacy
+updateGroupsAddPrivacy
+updateOnlinePrivacy
+updateReadReceiptsPrivacy
+
+Options: 'all', 'contacts', 'contacts_blacklist', 'none'
+Presence and Receipts
+Baileys supports sending presence data to WhatsApp.
+
+Socket-Level Presence
+Available presence types: 'unavailable', 'available'
+
+await sock.sendPresenceUpdate('unavailable')
+
+NOTE: You can mark yourself as unavailable to ensure all notifications are received on the mobile phone.
+
+Chat-Level Presence
+Available types: 'composing', 'recording', 'paused'
+
+await sock.sendPresenceUpdate('composing', jid)
+
+Mark Messages as Read
+let key = { remoteJid, id, fromMe }
+await sock.readMessages([key])
+Migration to v7.x.x
+ESM Migration
+Baileys 6.8.0 ditches CommonJS for ESM. This involves changing your package.json type to 'module' and replacing require() calls with import calls.
+
+LID (Local Identifier) System
+WhatsApp finalized its LID update to ensure anonymity of users in large groups. LIDs are unique identifiers for each user, separate from phone numbers.
+
+Key points:
+LIDs are NOT unique per group - they're unique per user
+You can message using either LID or PN (phone number)
+PNs are less reliable - migrate to using LIDs
+Auth state must support lid-mapping and device-index keys
+
+Proto Package Changes
+To reduce bundle size, only .create(), .encode() and .decode() methods remain in proto package. Use BufferJSON utilities for encoding types.
+
+Meta Coexistence
+Meta added support for Coexistence, allowing anyone to keep the WA Business App and linked devices while connecting to the Meta API. Support is experimental.
+Additional Important Notes
+Synopsis
+The main export of Baileys is the makeWASocket function, which returns an object full of socket-related functions. The socket is an extension of EventEmitter, allowing you to listen to events and collect data. Baileys is asynchronous and event-based.
+
+Authentication
+The socket authenticates with WhatsApp Web using an Auth state provided in the config. The useMultiFileAuthState function is provided for demo purposes, but should be implemented from scratch for production use, as it is very inefficient.
+
+Requirements
+Baileys requires Node 17+ to function. Support for other runtimes is planned for future releases.
+
+
+
+End of Documentation
+For the latest updates, visit: https://baileys.wiki/

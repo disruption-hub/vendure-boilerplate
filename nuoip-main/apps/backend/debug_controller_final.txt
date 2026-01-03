@@ -1,0 +1,267 @@
+[32m[Nest] 18769  - [39m12/03/2025, 8:42:34 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 18769  - [39m12/03/2025, 8:42:34 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +7ms[39m
+DATABASE_URL already defined via DATABASE_URL
+[32m[Nest] 18769  - [39m12/03/2025, 8:42:34 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18769  - [39m12/03/2025, 8:42:34 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18769  - [39m12/03/2025, 8:42:34 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 18769  - [39m12/03/2025, 8:42:34 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPaymentsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18769  - [39m12/03/2025, 8:42:34 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18769  - [39m12/03/2025, 8:42:34 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChatbotModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18769  - [39m12/03/2025, 8:42:34 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 18769  - [39m12/03/2025, 8:42:34 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 18769  - [39m12/03/2025, 8:42:34 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminModule dependencies initialized[39m[38;5;3m +0ms[39m
+[WhatsApp Service] 🚀 Initializing WhatsApp sessions on startup...
+[WhatsApp Service] Found 1 sessions to reconnect
+[WhatsApp Service] Reconnecting session: MatMax
+[2025-12-03T13:42:35.465Z] [socket-manager-registry] Creating new socket manager for session session-1764738037126
+[2025-12-03T13:42:35.465Z] [whatsapp-socket-manager] Connecting Baileys socket for session session-1764738037126
+[2025-12-03T13:42:35.706Z] [whatsapp-message-handler] Message handlers registered {"sessionId":"session-1764738037126"}
+[2025-12-03T13:42:35.706Z] [whatsapp-socket-manager] Baileys socket connected for session session-1764738037126
+[2025-12-03T13:42:35.706Z] [socket-manager-registry] Socket manager created and connected for session session-1764738037126
+[WhatsApp Service] ✅ Successfully reconnected: MatMax
+[WhatsApp Service] ✅ Session initialization complete
+Services loaded: { hasSystemSettings: true, hasPaymentFlow: true, hasFlowConfig: true }
+Testing ChatbotStreamController.stream with completed stage context...
+[ChatbotStream] Received request: {
+  messageLength: 20,
+  messagePreview: 'Dame un link de pago',
+  sessionId: 'debug-session-1764769355709',
+  hasContext: true,
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok'
+}
+[ChatbotStream] 🔍 Payment flow check: {
+  message: 'Dame un link de pago',
+  sessionId: 'debug-session-1764769355709',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  hasContext: true,
+  paymentContext: {
+    stage: 'completed',
+    linkUrl: 'https://flowcast.chat/pay/3d7XMysDhjJ2UtwUlraIOi3y',
+    currency: 'PEN',
+    confirmed: true,
+    linkRoute: '/pay/3d7XMysDhjJ2UtwUlraIOi3y',
+    linkToken: '3d7XMysDhjJ2UtwUlraIOi3y',
+    productId: 'cmh8fgk9p0000btrmeirskn67',
+    amountCents: 6000,
+    productName: 'MATPASS 01',
+    customerName: 'Ya',
+    lastViewedAt: null,
+    customerEmail: 'betosaxo@gmail.com',
+    historyOffset: 0,
+    nameConfirmed: true,
+    emailConfirmed: true,
+    historyPageSize: 5,
+    lastGeneratedAt: '2025-12-01T16:57:19.041Z',
+    selectedCustomerId: null,
+    selectedCustomerType: null
+  },
+  stage: 'completed'
+}
+[PaymentFlowService] ========== PAYMENT FLOW HANDLER CALLED ==========
+[PaymentFlowService] Input: {
+  message: 'Dame un link de pago',
+  messageLength: 20,
+  sessionId: 'debug-session-1764769355709',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  hasConversationContext: true,
+  conversationContextKeys: [ 'language', 'tenantId', 'paymentContext' ]
+}
+[PaymentFlowService] Payment context loaded: {
+  stage: 'completed',
+  productId: 'cmh8fgk9p0000btrmeirskn67',
+  productName: 'MATPASS 01',
+  hasContext: true,
+  fullContext: {
+    stage: 'completed',
+    linkUrl: 'https://flowcast.chat/pay/3d7XMysDhjJ2UtwUlraIOi3y',
+    currency: 'PEN',
+    confirmed: true,
+    linkRoute: '/pay/3d7XMysDhjJ2UtwUlraIOi3y',
+    linkToken: '3d7XMysDhjJ2UtwUlraIOi3y',
+    productId: 'cmh8fgk9p0000btrmeirskn67',
+    amountCents: 6000,
+    productName: 'MATPASS 01',
+    customerName: 'Ya',
+    lastViewedAt: null,
+    customerEmail: 'betosaxo@gmail.com',
+    historyOffset: 0,
+    nameConfirmed: true,
+    emailConfirmed: true,
+    historyPageSize: 5,
+    lastGeneratedAt: '2025-12-01T16:57:19.041Z',
+    selectedCustomerId: null,
+    selectedCustomerType: null
+  }
+}
+[PaymentFlowService] Intent detection: {
+  normalizedMessage: 'dame un link de pago',
+  hasPaymentIntent: true,
+  inActiveFlow: false,
+  currentStage: 'completed',
+  willProcessMessage: true
+}
+[2025-12-03T13:42:35.713Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"connecting","hasQr":false}
+[2025-12-03T13:42:35.713Z] [whatsapp-socket-manager] WhatsApp connecting for session session-1764738037126
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+[2025-12-03T13:42:35.714Z] [whatsapp-soketi-emitter] Soketi client resolved from environment variables {"host":"soketi-production-2f36.up.railway.app","port":"443","useTLS":true}
+✅✅✅ SOKETI CLIENT RESOLVED ✅✅✅ {
+  channelHost: 'soketi-production-2f36.up.railway.app',
+  hasClient: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [ 'status', 'connection', 'sessionId', 'tenantId', 'timestamp' ],
+  isRailway: false
+}
+[PaymentFlowService] Products fetched: {
+  count: 6,
+  productNames: [
+    'T Pass',
+    'MATPASS 01',
+    'MATPASS 04',
+    'MATPASS 08',
+    'MATPASS 12',
+    'MATPASS 24'
+  ]
+}
+[ChatbotStream] 🏁 Payment flow result: {
+  handled: true,
+  shouldUseAI: false,
+  hasResponse: true,
+  responseLength: 278,
+  newStage: 'awaiting_new_link_confirmation',
+  linkUrl: 'https://flowcast.chat/pay/3d7XMysDhjJ2UtwUlraIOi3y'
+}
+[ChatbotStream] Payment flow handled message, returning payment response {
+  hasResponse: true,
+  responseLength: 278,
+  responsePreview: 'Ya tienes un enlace de pago activo para MATPASS 01 (60,00 PEN).\n' +
+    '\n' +
+    '🔗 [Haz clic aquí para abrir tu enl',
+  handled: true,
+  shouldUseAI: false
+}
+Header: Content-Type=text/event-stream
+Header: Cache-Control=no-cache
+Header: Connection=keep-alive
+Status: 200
+Write: data: {"type":"complete","fullResponse":"Ya tienes un enlace de pago activo para MATPASS 01 (60,00 PEN).\n\n🔗 [Haz clic aquí para abrir tu enlace existente](https://flowcast.chat/pay/3d7XMysDhjJ2UtwUlraIOi3y)\n\n¿Deseas crear un **nuevo enlace de pago**? Responde \"sí\" para empezar de nuevo o \"no\" para mantener el actual.","quickActions":[],"updatedConversationContext":{"language":"es","tenantId":"cmh9wylc60001tjs1qy2wm9ok","paymentContext":{"stage":"awaiting_new_link_confirmation","linkUrl":"https://flowcast.chat/pay/3d7XMysDhjJ2UtwUlraIOi3y","currency":"PEN","confirmed":true,"linkRoute":"/pay/3d7XMysDhjJ2UtwUlraIOi3y","linkToken":"3d7XMysDhjJ2UtwUlraIOi3y","productId":"cmh8fgk9p0000btrmeirskn67","amountCents":6000,"productName":"MATPASS 01","customerName":"Ya","lastViewedAt":null,"customerEmail":"betosaxo@gmail.com","historyOffset":0,"nameConfirmed":true,"emailConfirmed":true,"historyPageSize":5,"lastGeneratedAt":"2025-12-01T16:57:19.041Z","selectedCustomerId":null,"selectedCustomerType":null},"history":[{"role":"user","content":"Dame un link de pago"},{"role":"assistant","content":"Ya tienes un enlace de pago activo para MATPASS 01 (60,00 PEN).\n\n🔗 [Haz clic aquí para abrir tu enlace existente](https://flowcast.chat/pay/3d7XMysDhjJ2UtwUlraIOi3y)\n\n¿Deseas crear un **nuevo enlace de pago**? Responde \"sí\" para empezar de nuevo o \"no\" para mantener el actual."}]}}
+
+
+End
+{"level":30,"time":"2025-12-03T13:42:35.879Z","pid":18769,"hostname":"MacBook-Air.local","class":"baileys","browser":["FlowCast","Chrome","10.0.0"],"helloMsg":{"clientHello":{"ephemeral":"7SnfRc98utkPe2lN4zMRtDUKscup/5WYRKeWkjoaMEU="}},"msg":"connected to WA"}
+{"level":30,"time":"2025-12-03T13:42:36.032Z","pid":18769,"hostname":"MacBook-Air.local","class":"baileys","node":{"username":"51916172368","passive":false,"userAgent":{"platform":"WEB","appVersion":{"primary":2,"secondary":3000,"tertiary":1027934701},"mcc":"000","mnc":"000","osVersion":"0.1","device":"Desktop","osBuildNumber":"0.1","releaseChannel":"RELEASE","localeLanguageIso6391":"en","localeCountryIso31661Alpha2":"US"},"webInfo":{"webSubPlatform":"WEB_BROWSER"},"connectType":"WIFI_UNKNOWN","connectReason":"USER_ACTIVATED","device":45,"pull":true},"msg":"logging in..."}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:42:36.305Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+{"level":30,"time":"2025-12-03T13:42:36.499Z","pid":18769,"hostname":"MacBook-Air.local","class":"baileys","msg":"handled 0 offline messages/notifications"}
+[2025-12-03T13:42:36.499Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"hasQr":false}
+{"level":30,"time":"2025-12-03T13:42:36.506Z","pid":18769,"hostname":"MacBook-Air.local","class":"baileys","msg":"29 pre-keys found on server"}
+[2025-12-03T13:42:36.574Z] [whatsapp-socket-manager] Credentials updated for session session-1764738037126
+[2025-12-03T13:42:36.574Z] [whatsapp-socket-manager] 📱 Updating session info from creds update for session-1764738037126 {"phoneNumber":"51916172368","accountName":"MatMax"}
+{"level":30,"time":"2025-12-03T13:42:36.713Z","pid":18769,"hostname":"MacBook-Air.local","class":"baileys","msg":"opened connection to WA"}
+[2025-12-03T13:42:36.719Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"hasQr":false}
+[2025-12-03T13:42:36.720Z] [whatsapp-socket-manager] Connection update for session session-1764738037126: {"connection":"open","hasQr":false}
+[2025-12-03T13:42:36.720Z] [whatsapp-socket-manager] WhatsApp connection opened for session session-1764738037126
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:42:36.841Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:42:37.351Z] [whatsapp-socket-manager] Credentials updated for session session-1764738037126
+[2025-12-03T13:42:37.351Z] [whatsapp-socket-manager] 📱 Updating session info from creds update for session-1764738037126 {"phoneNumber":"51916172368","accountName":"MatMax"}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+🚀🚀🚀 BROADCASTING WhatsApp EVENT 🚀🚀🚀 {
+  sessionId: 'session-1764738037126',
+  tenantId: 'cmh9wylc60001tjs1qy2wm9ok',
+  eventName: 'connection.update',
+  isRailway: false,
+  isVercel: false,
+  hasData: true
+}
+📤📤📤 SENDING TO SOKETI 📤📤📤 {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  payloadKeys: [
+    'status',
+    'connection',
+    'phoneNumber',
+    'accountName',
+    'sessionId',
+    'tenantId',
+    'timestamp'
+  ],
+  isRailway: false
+}
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:42:37.572Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}
+[2025-12-03T13:42:37.762Z] [whatsapp-socket-manager] Credentials saved after successful connection for session session-1764738037126
+✅✅✅ EVENT SENT TO SOKETI ✅✅✅ {
+  channel: 'whatsapp.session-1764738037126',
+  eventName: 'connection.update',
+  soketiHost: 'soketi-production-2f36.up.railway.app',
+  isRailway: false
+}
+[2025-12-03T13:42:37.875Z] [whatsapp-soketi-emitter] WhatsApp event broadcasted {"channel":"whatsapp.session-1764738037126","sessionId":"session-1764738037126","tenantId":"cmh9wylc60001tjs1qy2wm9ok","eventName":"connection.update","isRailway":false}

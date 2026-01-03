@@ -1,0 +1,12 @@
+{
+  "buildCommand": "cd apps/nextjs && npx prisma generate --schema ../../packages/prisma/schema.prisma && npm run build",
+  "installCommand": "npm install",
+  "outputDirectory": "apps/nextjs/.next",
+  "framework": "nextjs",
+  "regions": [
+    "iad1"
+  ],
+  "env": {
+    "PRISMA_GENERATE_DATAPROXY": "false"
+  }
+}

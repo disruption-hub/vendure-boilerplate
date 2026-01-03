@@ -1,0 +1,27 @@
+<svg width="480" height="80" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 80">
+  <!-- FlowBot text in bold modern single-trace style -->
+  <g fill="none" stroke="#000000" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    
+    <!-- F -->
+    <path d="M 20 60 L 20 20 L 70 20 M 20 40 L 60 40"/>
+    
+    <!-- l -->
+    <path d="M 90 20 L 90 60"/>
+    
+    <!-- o -->
+    <circle cx="140" cy="40" r="20"/>
+    
+    <!-- w -->
+    <path d="M 180 30 L 190 60 L 210 30 L 230 60 L 240 30"/>
+    
+    <!-- B -->
+    <path d="M 270 20 L 270 60 M 270 20 Q 310 20 310 35 Q 310 40 270 40 Q 320 40 320 50 Q 320 60 270 60"/>
+    
+    <!-- o -->
+    <circle cx="350" cy="40" r="20"/>
+    
+    <!-- t -->
+    <path d="M 380 25 L 380 55 Q 380 60 390 60 L 405 60 M 375 35 L 395 35"/>
+    
+  </g>
+</svg>

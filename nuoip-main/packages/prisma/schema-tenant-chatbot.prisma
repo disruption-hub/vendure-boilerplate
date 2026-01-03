@@ -1,0 +1,135 @@
+// Tenant Chatbot Schema Extensions
+// Add these to your existing schema.prisma
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  domain    String? @unique
+  settings  Json?
+  isActive  Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Chatbot configuration
+  chatbotConfig Json?
+
+  // Relations
+  users           User[]
+  conversations   ConversationLog[]
+  chatbotTraining ChatbotTraining[]
+  contentFilters  ContentFilter[]
+  escalationRules EscalationRule[]
+  customTools     CustomTool[]
+}
+
+model ConversationLog {
+  id          String   @id @default(cuid())
+  tenantId    String
+  userId      String
+  messages    Json
+  satisfaction Int?
+  tags        String[]
+  createdAt   DateTime @default(now())
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model ChatbotTraining {
+  id          String   @id @default(cuid())
+  tenantId    String
+  type        String   // 'knowledge_base', 'custom_prompts', 'examples', 'domain_data'
+  content     Json
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, type])
+}
+
+model ContentFilter {
+  id        String   @id @default(cuid())
+  tenantId  String
+  type      String   // 'keyword', 'regex', 'sentiment', 'topic'
+  pattern   String
+  action    String   // 'block', 'modify', 'flag', 'escalate'
+  severity  String   // 'low', 'medium', 'high', 'critical'
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, type])
+}
+
+model EscalationRule {
+  id          String   @id @default(cuid())
+  tenantId    String
+  condition   String
+  action      String   // 'transfer_to_human', 'notify_admin', 'custom_response'
+  priority    String   // 'low', 'medium', 'high', 'urgent'
+  recipients  String[]
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, priority])
+}
+
+model CustomTool {
+  id            String   @id @default(cuid())
+  tenantId      String
+  name          String
+  description   String
+  endpoint      String
+  parameters    Json
+  authentication Json
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, name])
+}
+
+model ChatbotAnalytics {
+  id          String   @id @default(cuid())
+  tenantId    String
+  date        DateTime
+  totalConversations Int
+  averageSatisfaction Float?
+  topTags     String[]
+  escalationCount Int
+  toolUsage   Json
+  createdAt   DateTime @default(now())
+
+  @@unique([tenantId, date])
+  @@index([tenantId, date])
+}
+
+model ChatbotFeedback {
+  id          String   @id @default(cuid())
+  tenantId    String
+  userId      String
+  conversationId String?
+  rating      Int      // 1-5
+  feedback    String?
+  tags        String[]
+  createdAt   DateTime @default(now())
+
+  @@index([tenantId, rating])
+  @@index([userId, createdAt])
+}

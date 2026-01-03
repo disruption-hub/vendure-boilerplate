@@ -285,6 +285,12 @@ export const AddPaymentToOrderMutation = graphql(`
                 errorCode
                 message
             }
+            ... on PaymentDeclinedError {
+                paymentErrorMessage
+            }
+            ... on PaymentFailedError {
+                paymentErrorMessage
+            }
         }
     }
 `);
@@ -310,6 +316,12 @@ export const AddLyraPaymentMutation = graphql(`
             ... on ErrorResult {
                 errorCode
                 message
+            }
+            ... on PaymentDeclinedError {
+                paymentErrorMessage
+            }
+            ... on PaymentFailedError {
+                paymentErrorMessage
             }
         }
     }
@@ -415,6 +427,7 @@ export const UpdateCustomerMutation = graphql(`
             phoneNumber
             customFields {
                 walletAddress
+                zkeyInternalId
             }
         }
     }
@@ -447,5 +460,11 @@ export const UpdateCustomerEmailAddressMutation = graphql(`
                 message
             }
         }
+    }
+`);
+
+export const ResetActiveLyraPaymentsMutation = graphql(`
+    mutation ResetActiveLyraPayments {
+        resetActiveLyraPayments
     }
 `);

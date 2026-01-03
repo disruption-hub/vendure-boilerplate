@@ -1,0 +1,55 @@
+/* 
+  Chatbot Base Styles 
+  Sets the baseline appearance for elements within the .chatbot-theme scope.
+*/
+
+.chatbot-theme {
+    /* Set root variables for the scope */
+    background-color: var(--chat-main-bg);
+    color: var(--chat-panel-text);
+    font-family: inherit;
+
+    /* Reset box sizing if needed, though Tailwind handles this */
+    box-sizing: border-box;
+}
+
+/* Base element resets within the theme */
+.chatbot-theme h1,
+.chatbot-theme h2,
+.chatbot-theme h3,
+.chatbot-theme h4,
+.chatbot-theme h5,
+.chatbot-theme h6 {
+    color: var(--chat-panel-text);
+}
+
+.chatbot-theme p,
+.chatbot-theme span,
+.chatbot-theme div {
+    color: inherit;
+    /* Inherit from parent, usually panel-text */
+}
+
+.chatbot-theme a {
+    color: var(--chat-bubble-user-bg);
+    /* Use primary blue */
+    text-decoration: none;
+}
+
+.chatbot-theme a:hover {
+    text-decoration: underline;
+}
+
+/* Standard Inputs */
+.chatbot-theme input,
+.chatbot-theme textarea,
+.chatbot-theme select {
+    background-color: var(--chat-input-bg);
+    color: var(--chat-input-text);
+    border-color: var(--chat-input-border);
+}
+
+.chatbot-theme input::placeholder,
+.chatbot-theme textarea::placeholder {
+    color: var(--chat-input-placeholder);
+}

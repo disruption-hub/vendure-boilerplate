@@ -15,6 +15,7 @@ import path from 'path';
 import { ZKeyPlugin } from './plugins/zkey/zkey.plugin';
 import { ProxyTrustPlugin } from './plugins/proxy-trust.plugin';
 import { LyraPlugin } from './plugins/lyra-payment/lyra.plugin';
+import express from 'express';
 
 const isDev: Boolean = process.env.APP_ENV === 'dev';
 
@@ -72,6 +73,12 @@ export const config: VendureConfig = {
             ],
             credentials: true,
         },
+        middleware: [
+            {
+                route: '/payments/lyra-ipn',
+                handler: express.raw({ type: '*/*' }),
+            },
+        ],
     },
     authOptions: {
         tokenMethod: ['bearer', 'cookie'],

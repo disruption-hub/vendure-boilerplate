@@ -15,33 +15,114 @@ model User {
   firstName      String?
   lastName       String?
   stripeCustomerId String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
   
+  // Relations
+  serviceProvider ServiceProvider?
   passes         Pass[]
   bookings       Booking[]
-}
-
-model ClassType {
-  id              String   @id @default(uuid())
-  name            String
-  description     String?
-  creditsRequired Int      @default(1)
   
-  sessions        ClassSession[]
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
-model ClassSession {
+model Venue {
+  id           String   @id @default(uuid())
+  name         String
+  description  String?
+  address      String?
+  timezone     String   @default("UTC")
+  openingHours Json?    // Structure: { mon: { open: "09:00", close: "18:00" }, ... }
+  
+  spaces       Space[]
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Space {
+  id           String   @id @default(uuid())
+  venueId      String
+  venue        Venue    @relation(fields: [venueId], references: [id])
+  
+  name         String
+  capacity     Int      @default(1)
+  amenities    Json?    // e.g. ["yoga_mats", "projector"]
+  
+  sessions     Session[]
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ServiceProvider {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+  
+  bio          String?
+  specialties  String[] // e.g. ["Yoga", "Therapy"]
+  
+  services     Service[]
+  sessions     SessionProvider[]
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ServiceCategory {
+  id           String   @id @default(uuid())
+  name         String
+  description  String?
+  
+  services     Service[]
+  passTemplates PassTemplate[] @relation("PassTemplateCategories")
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Service {
+  id                  String   @id @default(uuid())
+  name                String
+  description         String?
+  durationMinutes     Int      @default(60)
+  bufferBeforeMinutes Int      @default(0)
+  bufferAfterMinutes  Int      @default(0)
+  defaultPrice        Decimal? @db.Decimal(10, 2)
+  isOnline            Boolean  @default(false)
+  
+  categoryId          String?
+  category            ServiceCategory? @relation(fields: [categoryId], references: [id])
+  
+  providerId          String? // Default provider if applicable
+  provider            ServiceProvider? @relation(fields: [providerId], references: [id])
+  
+  sessions            Session[]
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Session {
   id              String   @id @default(uuid())
-  classTypeId     String
-  classType       ClassType @relation(fields: [classTypeId], references: [id])
+  
+  // What is this session for?
+  serviceId       String
+  service         Service   @relation(fields: [serviceId], references: [id])
+  
+  // Where is it?
+  spaceId         String?
+  space           Space?    @relation(fields: [spaceId], references: [id])
+  
+  // Who is running it? (Can be multiple)
+  providers       SessionProvider[]
   
   startTime       DateTime
   endTime         DateTime
-  instructor      String?
-  capacity        Int      @default(20)
+  
+  // Overrides
+  maxCapacity     Int       // Defaults to Space validity or custom
+  bufferOverride  Int?      // Overrides service buffer settings
   
   bookings        Booking[]
   
@@ -49,32 +130,85 @@ model ClassSession {
   updatedAt       DateTime @updatedAt
 }
 
-model Pass {
-  id               String   @id @default(uuid())
-  userId           String
-  user             User     @relation(fields: [userId], references: [id])
+model SessionProvider {
+  sessionId       String
+  session         Session         @relation(fields: [sessionId], references: [id])
   
-  creditsRemaining Int
+  providerId      String
+  provider        ServiceProvider @relation(fields: [providerId], references: [id])
+  
+  @@id([sessionId, providerId])
+}
+
+model PassTemplate {
+  id                      String   @id @default(uuid())
+  name                    String
+  type                    PassType @default(PACK)
+  
+  // Linked Vendure Product
+  vendureProductVariantId String?
+  
+  // Entitlements
+  creditsAmount           Int?     // For PACK
+  unlimited               Boolean  @default(false) // For MEMBERSHIP
+  validDurationDays       Int?     // How long the pass is valid after purchase/activation
+  
+  // Restrictions
+  validForCategories      ServiceCategory[] @relation("PassTemplateCategories")
+  
+  passes                  Pass[]
+  
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+}
+
+enum PassType {
+  PACK
+  MEMBERSHIP
+}
+
+model Pass {
+  id               String       @id @default(uuid())
+  
+  userId           String
+  user             User         @relation(fields: [userId], references: [id])
+  
+  templateId       String
+  template         PassTemplate @relation(fields: [templateId], references: [id])
+  
+  status           PassStatus   @default(ACTIVE)
+  creditsRemaining Int?         // Decrements as used
   expiryDate       DateTime?
   
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+enum PassStatus {
+  ACTIVE
+  EXPIRED
+  REVOKED
 }
 
 model Booking {
-  id        String   @id @default(uuid())
+  id        String        @id @default(uuid())
+  
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User          @relation(fields: [userId], references: [id])
   
   sessionId String
-  session   ClassSession @relation(fields: [sessionId], references: [id])
+  session   Session       @relation(fields: [sessionId], references: [id])
   
   status    BookingStatus @default(CONFIRMED)
+  
   checkedIn Boolean       @default(false)
   checkedInAt DateTime?
   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  cancellationReason String?
+  isLateCancellation Boolean @default(false)
+  
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
 
 enum BookingStatus {

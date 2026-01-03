@@ -1,0 +1,53 @@
+/* 
+  Chatbot Layout Styles 
+  High-level structural styling for the main layout areas.
+*/
+
+/* --- THE ROOT CONTAINER --- */
+.chatbot-theme {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* --- SIDEBAR --- */
+.chatbot-theme .chatbot-sidebar {
+    background-color: var(--chat-sidebar-bg);
+    color: var(--chat-sidebar-text);
+    border-right: 1px solid var(--chat-sidebar-border);
+}
+
+.chatbot-theme .chatbot-sidebar * {
+    /* Force all children to inherit the white sidebar text color */
+    color: inherit !important;
+    border-color: var(--chat-sidebar-border);
+}
+
+/* --- MAIN CHAT AREA --- */
+.chatbot-theme .chatbot-main {
+    background-color: var(--chat-main-bg);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.chatbot-theme .chatbot-header {
+    background-color: var(--chat-header-bg);
+    color: var(--chat-header-text);
+    border-bottom: 1px solid var(--chat-header-border);
+}
+
+/* --- RIGHT PANEL --- */
+.chatbot-theme .chatbot-panel {
+    background-color: var(--chat-panel-bg);
+    color: var(--chat-panel-text);
+    border-left: 1px solid var(--chat-panel-border);
+}
+
+.chatbot-theme .chatbot-panel h1,
+.chatbot-theme .chatbot-panel h2,
+.chatbot-theme .chatbot-panel h3 {
+    color: var(--chat-panel-text);
+}
