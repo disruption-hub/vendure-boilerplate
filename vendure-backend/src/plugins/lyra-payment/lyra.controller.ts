@@ -62,15 +62,23 @@ export class LyraController {
             // Determine if we're in test mode
             const rawTestMode = lyraMethod.handler.args.find(a => a.name === 'testMode')?.value;
             const testMode = parseBoolean(rawTestMode, true);
-            const hmacKeyField = testMode ? 'testHmacKey' : 'prodHmacKey';
-            const configuredHmacKey = lyraMethod.handler.args.find(a => a.name === hmacKeyField)?.value;
-            const envHmacKey = process.env[testMode ? 'LYRA_TEST_HMAC_KEY' : 'LYRA_PROD_HMAC_KEY'];
-            const hmacKey = (!configuredHmacKey || isMaskedSecret(configuredHmacKey) ? envHmacKey : configuredHmacKey)?.trim?.() ?? configuredHmacKey;
 
-            this.logger.log(`[Lyra Debug] IPN Context: testMode=${testMode}, usingKeyFrom=${configuredHmacKey ? 'Config' : envHmacKey ? 'Env' : 'None'}`);
+            const configuredTestKey = lyraMethod.handler.args.find(a => a.name === 'testHmacKey')?.value;
+            const envTestKey = process.env.LYRA_TEST_HMAC_KEY;
+            const testKey = (!configuredTestKey || isMaskedSecret(configuredTestKey) ? envTestKey : configuredTestKey)?.trim?.() ?? configuredTestKey;
 
-            if (!hmacKey) {
-                this.logger.error(`Lyra HMAC key not configured for ${testMode ? 'TEST' : 'PRODUCTION'} mode`);
+            const configuredProdKey = lyraMethod.handler.args.find(a => a.name === 'prodHmacKey')?.value;
+            const envProdKey = process.env.LYRA_PROD_HMAC_KEY;
+            const prodKey = (!configuredProdKey || isMaskedSecret(configuredProdKey) ? envProdKey : configuredProdKey)?.trim?.() ?? configuredProdKey;
+
+            this.logger.log(`[Lyra Debug] IPN Context: testMode=${testMode}. Checking against ALL keys.`);
+
+            const keysToTry: { label: string, key: string }[] = [];
+            if (testKey) keysToTry.push({ label: 'TEST', key: testKey });
+            if (prodKey) keysToTry.push({ label: 'PRODUCTION', key: prodKey });
+
+            if (keysToTry.length === 0) {
+                this.logger.error('No Lyra HMAC keys configured');
                 return res.status(500).send('Configuration Error');
             }
 
@@ -84,40 +92,41 @@ export class LyraController {
                 const computedBase64 = crypto.createHmac('sha256', key).update(krAnswer, 'utf8').digest('base64');
                 const computedBase64Url = computedBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
 
-                const match = normalizedProvided.toLowerCase() === computedHex.toLowerCase() ||
+                return normalizedProvided.toLowerCase() === computedHex.toLowerCase() ||
                     normalizedProvided === computedBase64 ||
                     normalizedProvided === computedBase64Url;
-
-                if (match) {
-                    this.logger.log(`[Lyra Debug] Signature MATCHED using ${internalLabel} key strategy.`);
-                } else {
-                    this.logger.debug(`[Lyra Debug] Signature mismatch for ${internalLabel}. Computed: ${computedHex}`);
-                }
-                return match;
             };
 
-            // Try treating key as standard UTF-8 string (default)
-            let isValid = checkSignature(hmacKey, 'UTF-8 String');
+            let isValid = false;
+            let matchedKey = '';
 
-            // If failed, and key looks like Base64, try decoding it
-            if (!isValid) {
-                try {
-                    const keyBuffer = Buffer.from(hmacKey, 'base64');
-                    // Simple heuristic: if it decodes to something reasonable, try it
-                    if (keyBuffer.length > 0) {
-                        isValid = checkSignature(keyBuffer, 'Base64 Buffer');
-                    }
-                } catch (e) {
-                    // ignore
+            for (const { label, key } of keysToTry) {
+                // Try UTF-8
+                if (checkSignature(key, `${label} (UTF-8)`)) {
+                    isValid = true;
+                    matchedKey = `${label} (UTF-8)`;
+                    break;
                 }
+                // Try Base64
+                try {
+                    const keyBuffer = Buffer.from(key, 'base64');
+                    if (keyBuffer.length > 0 && checkSignature(keyBuffer, `${label} (Base64)`)) {
+                        isValid = true;
+                        matchedKey = `${label} (Base64)`;
+                        break;
+                    }
+                } catch (e) { }
             }
 
             if (!isValid) {
-                // Log the failure for the UTF-8 case (most common)
-                const computedHex = crypto.createHmac('sha256', hmacKey).update(krAnswer, 'utf8').digest('hex');
-                this.logger.error(`Invalid signature. Computed(UTF8): ${computedHex}, Provided: ${normalizedProvided}. Key(masked): ${hmacKey.substring(0, 4)}...`);
+                // Log failure detail for standard PROD key
+                const keyToLog = testMode ? testKey : prodKey;
+                const computedHex = keyToLog ? crypto.createHmac('sha256', keyToLog).update(krAnswer, 'utf8').digest('hex') : 'N/A';
+                this.logger.error(`Invalid signature. Tried ${keysToTry.length} keys. None matched. Computed(Primary): ${computedHex}, Provided: ${normalizedProvided}.`);
                 return res.status(403).send('Invalid Signature');
             }
+
+            this.logger.log(`[Lyra Debug] Signature MATCHED using ${matchedKey} key.`);
 
             this.logger.log(`Valid signature for order ${data.orderDetails?.orderId}`);
 
