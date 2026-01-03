@@ -128,18 +128,29 @@ export async function createCustomerAddress(address: AddressInput) {
 }
 
 export async function transitionToArrangingPayment() {
-    const result = await mutate(
-        TransitionOrderToStateMutation,
-        { state: 'ArrangingPayment' },
-        { useAuthToken: true }
-    );
-
-    if (result.data.transitionOrderToState?.__typename === 'OrderStateTransitionError') {
-        const errorResult = result.data.transitionOrderToState;
-        throw new Error(
-            `Failed to transition order state: ${errorResult.errorCode} - ${errorResult.message}`
+    try {
+        const result = await mutate(
+            TransitionOrderToStateMutation,
+            { state: 'ArrangingPayment' },
+            { useAuthToken: true }
         );
+
+        if (result.data.transitionOrderToState?.__typename === 'OrderStateTransitionError') {
+            const errorResult = result.data.transitionOrderToState;
+            // Only throw if it's not already in ArrangingPayment state
+            if (!errorResult.message?.includes('ArrangingPayment')) {
+                throw new Error(
+                    `Failed to transition order state: ${errorResult.errorCode} - ${errorResult.message}`
+                );
+            }
+        }
+    } catch (error: any) {
+        // Ignore error if already in ArrangingPayment state
+        if (!error.message?.includes('ArrangingPayment')) {
+            throw error;
+        }
     }
+
 
     revalidatePath('/checkout');
 }
