@@ -44,13 +44,13 @@ export async function initializeLyraPayment() {
 
         // Extract from metadata.public
         const metadata = lastPayment.metadata as any;
-        const { formToken, publicKey } = metadata.public;
+        const { formToken, publicKey, scriptBaseUrl } = metadata.public;
 
         if (!formToken || !publicKey) {
             throw new Error('Payment configuration error');
         }
 
-        return { formToken, publicKey, orderCode: data.addPaymentToOrder.code };
+        return { formToken, publicKey, scriptBaseUrl, orderCode: data.addPaymentToOrder.code };
     } else if (data?.addPaymentToOrder?.__typename) {
         // ErrorResult
         const errorResult = data.addPaymentToOrder as any;
