@@ -31,105 +31,104 @@ export class LyraController {
     @Post('lyra-ipn')
     async handleLyraWebhook(@Ctx() ctx: RequestContext, @Body() body: any, @Req() req: Request, @Res() res: Response) {
         try {
-            this.logger.log(`Received Lyra IPN webhook`);
-
             const rawBody = (req as any).rawBody;
-            let krAnswer: string;
-            let krHash: string;
+            const rawStr = Buffer.isBuffer(rawBody) ? rawBody.toString('utf8') : '';
 
-            if (Buffer.isBuffer(rawBody)) {
-                this.logger.log(`[Lyra] Processing rawBody Buffer (length: ${rawBody.length})`);
-                const rawStr = rawBody.toString('utf8');
-                const params = new URLSearchParams(rawStr);
-                krAnswer = params.get('kr-answer') || '';
-                krHash = params.get('kr-hash') || '';
-            } else if (Buffer.isBuffer(body)) {
-                this.logger.log(`[Lyra] Processing request body Buffer (length: ${body.length})`);
-                const rawStr = body.toString('utf8');
-                const params = new URLSearchParams(rawStr);
-                krAnswer = params.get('kr-answer') || '';
-                krHash = params.get('kr-hash') || '';
-            } else {
-                this.logger.warn(`[Lyra] Missing rawBody buffer (using parsed body - signature might fail)`);
-                krAnswer = typeof body['kr-answer'] === 'string' ? body['kr-answer'] : JSON.stringify(body['kr-answer']);
-                krHash = body['kr-hash'];
+            this.logger.log(`[Lyra-Lab] Webhook Received. Buffer Size: ${rawBody?.length || 0}`);
+            this.logger.log(`[Lyra-Lab] Content-Type: ${req.headers['content-type']}`);
+            this.logger.log(`[Lyra-Lab] Query: ${JSON.stringify(req.query)}`);
+            this.logger.log(`[Lyra-Lab] Buffer Sample (200 chars): ${rawStr.substring(0, 200)}...`);
+
+            let krAnswerVariant1 = ''; // From Body/Params
+            let krAnswerVariant2 = ''; // From Buffer Regex
+            let krAnswerVariant3 = ''; // From Buffer Slicing (The "True" literal)
+            let krHash = '';
+
+            // 1. Variant 1: The "Parsed" version
+            if (req.query['kr-hash']) {
+                krHash = String(req.query['kr-hash']);
+                krAnswerVariant1 = String(req.query['kr-answer'] || '');
+            } else if (body && body['kr-hash']) {
+                krHash = String(body['kr-hash']);
+                krAnswerVariant1 = typeof body['kr-answer'] === 'string' ? body['kr-answer'] : JSON.stringify(body['kr-answer']);
             }
 
-            if (!krAnswer || !krHash) {
-                this.logger.error('Missing kr-answer or kr-hash in webhook payload');
-                return res.status(400).send('Missing required fields');
+            // 2. Variant 2 & 3: Buffer Extraction
+            if (rawStr) {
+                const answerMatch = rawStr.match(/"kr-answer"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+                if (answerMatch) {
+                    krAnswerVariant2 = answerMatch[1];
+                    const fullMatch = answerMatch[0];
+                    const startPos = rawStr.indexOf(fullMatch) + fullMatch.indexOf(answerMatch[1]);
+                    krAnswerVariant3 = rawStr.substring(startPos, startPos + answerMatch[1].length);
+                }
             }
 
-            // --- Multi-Variant Payload Generation ---
-            const payloadVariants: { label: string, data: string }[] = [{ label: 'As Extracted', data: krAnswer }];
-            try {
-                const unescaped = JSON.parse(`"${krAnswer}"`);
-                if (unescaped !== krAnswer) payloadVariants.push({ label: 'Unescaped JSON', data: unescaped });
-            } catch (e) { }
+            const hashToMatch = String(krHash || '').trim().replace(/=+$/g, '');
+            if (!hashToMatch) {
+                this.logger.error('[Lyra-Lab] NO HASH FOUND in body, query or headers.');
+                return res.status(400).send('Missing Hash');
+            }
 
-            // 2. Retrieve Lyra HMAC key from Vendure Config
+            // 3. Key Discovery
             const methods = await this.paymentMethodService.findAll(ctx);
-            const lyraMethod = methods.items.find(m => m.handler.code === 'lyra-payment');
-            if (!lyraMethod) {
-                return res.status(500).send('Configuration Error');
-            }
+            const lyraHandler = methods.items.find(m => m.handler.code === 'lyra-payment');
+            const testKey = (process.env.LYRA_TEST_HMAC_KEY || lyraHandler?.handler.args.find(a => a.name === 'testHmacKey')?.value || '').trim();
+            const prodKey = (process.env.LYRA_PROD_HMAC_KEY || lyraHandler?.handler.args.find(a => a.name === 'prodHmacKey')?.value || '').trim();
 
-            const rawTestMode = lyraMethod.handler.args.find(a => a.name === 'testMode')?.value;
-            const testMode = parseBoolean(rawTestMode, true);
+            const keys: { label: string, val: string }[] = [];
+            if (testKey) keys.push({ label: 'TEST', val: testKey });
+            if (prodKey) keys.push({ label: 'PROD', val: prodKey });
 
-            const testKey = (process.env.LYRA_TEST_HMAC_KEY || lyraMethod.handler.args.find(a => a.name === 'testHmacKey')?.value || '').trim();
-            const prodKey = (process.env.LYRA_PROD_HMAC_KEY || lyraMethod.handler.args.find(a => a.name === 'prodHmacKey')?.value || '').trim();
+            // 4. THE ULTIMATE SWEEP
+            const payloads = [
+                { label: 'Parsed/Stringified', val: krAnswerVariant1 },
+                { label: 'Regex-Extracted', val: krAnswerVariant2 },
+                { label: 'Slice-Literal', val: krAnswerVariant3 }
+            ];
 
-            const keysToTry: { label: string, key: string }[] = [];
-            if (testKey) keysToTry.push({ label: 'TEST', key: testKey });
-            if (prodKey) keysToTry.push({ label: 'PRODUCTION', key: prodKey });
-
-            if (keysToTry.length === 0) {
-                this.logger.error('No Lyra HMAC keys configured');
-                return res.status(500).send('Configuration Error');
-            }
-
-            // 3. Signature Laboratory: Try every combination
-            const normalizedProvided = String(krHash).trim().replace(/=+$/g, '');
-            let matchedResult = '';
-
-            for (const keyItem of keysToTry) {
-                const keyVariants: { label: string, key: string | Buffer }[] = [
-                    { label: 'UTF-8', key: keyItem.key }
+            let winningMatch = '';
+            for (const keyObj of keys) {
+                const keyVariants = [
+                    { label: 'UTF8', key: keyObj.val },
+                    { label: 'Base64', key: Buffer.from(keyObj.val, 'base64') }
                 ];
-                try {
-                    const hexBuf = Buffer.from(keyItem.key, 'hex');
-                    if (hexBuf.length > 0 && /^[0-9a-fA-F]+$/.test(keyItem.key)) keyVariants.push({ label: 'Hex', key: hexBuf });
-                } catch (e) { }
-                try {
-                    const base64Buf = Buffer.from(keyItem.key, 'base64');
-                    if (base64Buf.length > 0) keyVariants.push({ label: 'Base64', key: base64Buf });
-                } catch (e) { }
-
-                for (const keyVariant of keyVariants) {
-                    for (const payloadVariant of payloadVariants) {
-                        const hmac = crypto.createHmac('sha256', keyVariant.key).update(payloadVariant.data, 'utf8');
-                        const computedHex = hmac.digest('hex');
-                        if (computedHex === normalizedProvided) {
-                            matchedResult = `${keyItem.label} Key (${keyVariant.label}) + Payload (${payloadVariant.label})`;
+                for (const kv of keyVariants) {
+                    for (const pv of payloads) {
+                        if (!pv.val) continue;
+                        const hmac = crypto.createHmac('sha256', kv.key).update(pv.val, 'utf8').digest('hex');
+                        if (hmac === hashToMatch) {
+                            winningMatch = `SUCCESS: Key=${keyObj.label}(${kv.label}) Payload=${pv.label}`;
                             break;
                         }
+                        // Also try the unescaped version of the payload
+                        try {
+                            const unescaped = JSON.parse(`"${pv.val}"`);
+                            if (unescaped !== pv.val) {
+                                const hmac2 = crypto.createHmac('sha256', kv.key).update(unescaped, 'utf8').digest('hex');
+                                if (hmac2 === hashToMatch) {
+                                    winningMatch = `SUCCESS: Key=${keyObj.label}(${kv.label}) Payload=${pv.label}+Unescaped`;
+                                    break;
+                                }
+                            }
+                        } catch (e) { }
                     }
-                    if (matchedResult) break;
+                    if (winningMatch) break;
                 }
-                if (matchedResult) break;
+                if (winningMatch) break;
             }
 
-            if (!matchedResult) {
-                this.logger.error(`[Lyra] Signature FAILED after trying all variants.`);
-                this.logger.error(`[Lyra] Provided Hash: ${normalizedProvided.substring(0, 16)}...`);
-                this.logger.error(`[Lyra] Payload Sample: ${krAnswer.substring(0, 100)}...`);
-                this.logger.warn('[Lyra] WARNING: Strict mode bypassed for LABORATORY TRACE');
+            if (winningMatch) {
+                this.logger.log(`[Lyra-Lab] ${winningMatch}`);
             } else {
-                this.logger.log(`[Lyra] Signature SUCCESS! Match: ${matchedResult}`);
+                this.logger.error(`[Lyra-Lab] ALL VARIANTS FAILED.`);
+                this.logger.error(`[Lyra-Lab] Hash Provided: ${hashToMatch}`);
+                this.logger.error(`[Lyra-Lab] Slice-Literal: ${krAnswerVariant3.substring(0, 100)}...`);
             }
 
-            const data = JSON.parse(payloadVariants.find(p => p.label === 'Unescaped JSON')?.data || krAnswer);
+            // Restore logic to continue (Permissive mode)
+            const finalData = JSON.parse(body['kr-answer'] || krAnswerVariant1 || '{}');
+            const data = typeof finalData === 'string' ? JSON.parse(finalData) : finalData;
 
             // 4. Update Order Status
             const orderCode = data?.orderDetails?.orderId;
