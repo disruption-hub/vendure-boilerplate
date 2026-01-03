@@ -61,6 +61,12 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
             label: [{ languageCode: LanguageCode.en, value: 'API Endpoint' }],
             description: [{ languageCode: LanguageCode.en, value: 'Lyra API endpoint URL' }]
         },
+        scriptBaseUrl: {
+            type: 'string',
+            defaultValue: 'https://static.lyra.com',
+            label: [{ languageCode: LanguageCode.en, value: 'Script Base URL (optional)' }],
+            description: [{ languageCode: LanguageCode.en, value: 'Base URL for loading Lyra JavaScript library' }]
+        },
     },
 
     createPayment: async (ctx, order, amount, args, metadata): Promise<CreatePaymentResult | CreatePaymentErrorResult> => {
@@ -113,8 +119,13 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
                 }
             };
 
+            const apiUrl = `${endpoint}Charge/CreatePayment`;
+            Logger.debug(`Lyra API URL: ${apiUrl}`, loggerCtx);
+            Logger.debug(`Lyra API Payload: ${JSON.stringify(payload, null, 2)}`, loggerCtx);
+            Logger.debug(`Using username: ${username}`, loggerCtx);
+
             const response = await axios.post(
-                `${endpoint}Charge/CreatePayment`,
+                apiUrl,
                 payload,
                 {
                     headers: {
@@ -139,6 +150,7 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
                         public: {
                             formToken: answer.formToken,
                             publicKey: publicKey,
+                            scriptBaseUrl: args.scriptBaseUrl || process.env.LYRA_SCRIPT_BASE_URL || 'https://static.lyra.com',
                         }
                     },
                 };

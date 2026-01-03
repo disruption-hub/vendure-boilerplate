@@ -21,9 +21,9 @@ export default function LyraPayment({ orderCode, onSuccess }: LyraPaymentProps) 
         setLoading(true);
         try {
             // 1. Call server action to initialize payment and get formToken
-            const { formToken, publicKey, orderCode: updatedOrderCode } = await initializeLyraPayment();
+            const { formToken, publicKey, orderCode: updatedOrderCode, scriptBaseUrl } = await initializeLyraPayment();
 
-            const endpoint = "https://static.lyra.com"; // MiCuentaWeb uses static.lyra.com for scripts
+            const endpoint = scriptBaseUrl || "https://static.lyra.com"; // Fallback to default
 
             // 2. Load the Lyra library
             const { KR } = await KRGlue.loadLibrary(endpoint, publicKey);
