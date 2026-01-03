@@ -17,7 +17,6 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
   const router = useRouter();
   const { order, paymentMethods, selectedPaymentMethodCode } = useCheckout();
   const [loading, setLoading] = useState(false);
-  const [showLyra, setShowLyra] = useState(false);
 
   const selectedPaymentMethod = paymentMethods.find(
     (method) => method.code === selectedPaymentMethodCode
@@ -27,11 +26,6 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
 
   const handlePlaceOrder = async () => {
     if (!selectedPaymentMethodCode) return;
-
-    if (isLyraPayment) {
-      setShowLyra(true);
-      return;
-    }
 
     setLoading(true);
     try {
@@ -152,7 +146,7 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
       </div>
 
       <div className="pt-4">
-        {showLyra && isLyraPayment ? (
+        {isLyraPayment ? (
           <LyraPayment
             orderCode={order.code}
             onSuccess={handleLyraSuccess}
@@ -165,7 +159,7 @@ export default function ReviewStep({ onEditStep }: ReviewStepProps) {
             className="w-full"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isLyraPayment ? 'Proceed to Secure Payment' : 'Place Order'}
+            Place Order
           </Button>
         )}
       </div>
