@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { mutate } from '@/lib/vendure/api';
-import { AddLyraPaymentMutation, TransitionOrderToStateMutation } from '@/lib/vendure/mutations';
+import { initializeLyraPayment } from '@/app/checkout/actions';
 
 interface LyraPaymentProps {
     orderCode: string;
@@ -21,68 +20,35 @@ export default function LyraPayment({ orderCode, onSuccess }: LyraPaymentProps) 
     const setupLyra = async () => {
         setLoading(true);
         try {
-            // 1. Transition order to ArrangingPayment if not already there
-            await mutate(
-                TransitionOrderToStateMutation,
-                { state: 'ArrangingPayment' },
-                { useAuthToken: true }
-            );
+            // 1. Call server action to initialize payment and get formToken
+            const { formToken, publicKey, orderCode: updatedOrderCode } = await initializeLyraPayment();
 
-            // 2. Call Vendure to generate the formToken
-            const { data } = await mutate(
-                AddLyraPaymentMutation,
-                { input: { method: 'lyra-payment', metadata: {} } },
-                { useAuthToken: true }
-            );
+            const endpoint = "https://static.lyra.com"; // MiCuentaWeb uses static.lyra.com for scripts
 
-            if (data?.addPaymentToOrder?.__typename === 'Order') {
-                const payments = data.addPaymentToOrder.payments;
-                if (!payments || payments.length === 0) {
-                    toast.error('No payment created');
-                    return;
+            // 2. Load the Lyra library
+            const { KR } = await KRGlue.loadLibrary(endpoint, publicKey);
+
+            // 3. Configure the form
+            await KR.setFormConfig({
+                formToken: formToken,
+                'kr-language': 'en-US',
+            });
+
+            // 4. Render and Show
+            const { result } = await KR.addForm('#lyra-payment-container');
+            await KR.showForm(result.formId);
+            setFormReady(true);
+
+            // 5. Listen for success
+            KR.onSubmit(async (paymentData: any) => {
+                if (paymentData.clientAnswer.orderStatus === 'PAID') {
+                    toast.success('Payment successful!');
+                    onSuccess(updatedOrderCode);
+                } else {
+                    toast.error('Payment failed. Please try again.');
                 }
-                const lastPayment = payments[payments.length - 1];
-
-                // Extract from metadata.public
-                const metadata = lastPayment.metadata as any;
-                const { formToken, publicKey } = metadata.public;
-
-                if (!formToken || !publicKey) {
-                    toast.error('Payment configuration error');
-                    return;
-                }
-
-                const endpoint = "https://static.lyra.com"; // MiCuentaWeb uses static.lyra.com for scripts
-
-                // 2. Load the Lyra library
-                const { KR } = await KRGlue.loadLibrary(endpoint, publicKey);
-
-                // 3. Configure the form
-                await KR.setFormConfig({
-                    formToken: formToken,
-                    'kr-language': 'en-US',
-                });
-
-                // 4. Render and Show
-                const { result } = await KR.addForm('#lyra-payment-container');
-                await KR.showForm(result.formId);
-                setFormReady(true);
-
-                // 5. Listen for success
-                KR.onSubmit(async (paymentData: any) => {
-                    if (paymentData.clientAnswer.orderStatus === 'PAID') {
-                        toast.success('Payment successful!');
-                        onSuccess(orderCode);
-                    } else {
-                        toast.error('Payment failed. Please try again.');
-                    }
-                    return false; // Prevent default redirect
-                });
-            } else if (data?.addPaymentToOrder?.__typename) {
-                // ErrorResult
-                const errorResult = data.addPaymentToOrder as any;
-                toast.error(errorResult.message || 'Payment initialization failed');
-            }
+                return false; // Prevent default redirect
+            });
         } catch (error: any) {
             console.error("Lyra Initialization Error:", error);
             toast.error(error.message || 'Failed to initialize payment');

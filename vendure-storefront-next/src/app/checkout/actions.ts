@@ -6,11 +6,53 @@ import {
     SetOrderBillingAddressMutation,
     SetOrderShippingMethodMutation,
     AddPaymentToOrderMutation,
+    AddLyraPaymentMutation,
     CreateCustomerAddressMutation,
     TransitionOrderToStateMutation,
 } from '@/lib/vendure/mutations';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from "next/navigation";
+
+export async function initializeLyraPayment() {
+    // Transition order to ArrangingPayment
+    await mutate(
+        TransitionOrderToStateMutation,
+        { state: 'ArrangingPayment' },
+        { useAuthToken: true }
+    );
+
+    // Call Vendure to generate the formToken
+    const { data } = await mutate(
+        AddLyraPaymentMutation,
+        { input: { method: 'lyra-payment', metadata: {} } },
+        { useAuthToken: true }
+    );
+
+    if (data?.addPaymentToOrder?.__typename === 'Order') {
+        const payments = data.addPaymentToOrder.payments;
+        if (!payments || payments.length === 0) {
+            throw new Error('No payment created');
+        }
+        const lastPayment = payments[payments.length - 1];
+
+        // Extract from metadata.public
+        const metadata = lastPayment.metadata as any;
+        const { formToken, publicKey } = metadata.public;
+
+        if (!formToken || !publicKey) {
+            throw new Error('Payment configuration error');
+        }
+
+        return { formToken, publicKey, orderCode: data.addPaymentToOrder.code };
+    } else if (data?.addPaymentToOrder?.__typename) {
+        // ErrorResult
+        const errorResult = data.addPaymentToOrder as any;
+        throw new Error(errorResult.message || 'Payment initialization failed');
+    }
+
+    throw new Error('Unexpected response from payment initialization');
+}
+
 
 interface AddressInput {
     fullName: string;
