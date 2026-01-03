@@ -70,6 +70,16 @@ export default function LyraPayment({ paymentMethodCode, onSuccess }: LyraPaymen
             await KR.showForm(result.formId);
 
             const mountId = ++mountCounterRef.current;
+
+            KR.onError((error: any) => {
+                console.error('Lyra Form Error:', error);
+                const msg = typeof error === 'string' ? error : (error?.errorMessage || 'Payment form error');
+                // Only update UI if this component is still mounted
+                if (mountId === mountCounterRef.current) {
+                    setErrorMessage(msg);
+                }
+            });
+
             KR.onSubmit(async (paymentData: any) => {
                 // Guard against multiple handlers if the user retries.
                 if (mountId !== mountCounterRef.current) return false;
