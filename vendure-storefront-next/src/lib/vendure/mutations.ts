@@ -289,6 +289,33 @@ export const AddPaymentToOrderMutation = graphql(`
     }
 `);
 
+export const AddLyraPaymentMutation = graphql(`
+    mutation AddLyraPayment($input: PaymentInput!) {
+        addPaymentToOrder(input: $input) {
+            __typename
+            ... on Order {
+                id
+                code
+                state
+                totalWithTax
+                payments {
+                    id
+                    method
+                    amount
+                    state
+                    transactionId
+                    metadata
+                }
+            }
+            ... on ErrorResult {
+                errorCode
+                message
+            }
+        }
+    }
+`);
+
+
 export const RegisterCustomerAccountMutation = graphql(`
     mutation RegisterCustomerAccount($input: RegisterCustomerInput!) {
         registerCustomerAccount(input: $input) {

@@ -14,6 +14,7 @@ import 'dotenv/config';
 import path from 'path';
 import { ZKeyPlugin } from './plugins/zkey/zkey.plugin';
 import { ProxyTrustPlugin } from './plugins/proxy-trust.plugin';
+import { LyraPlugin } from './plugins/lyra-payment/lyra.plugin';
 
 const isDev: Boolean = process.env.APP_ENV === 'dev';
 
@@ -128,6 +129,7 @@ export const config: VendureConfig = {
     plugins: [
         ProxyTrustPlugin,
         ZKeyPlugin,
+        LyraPlugin,
         AssetServerPlugin.init({
             route: 'assets',
             assetUploadDir: process.env.ASSET_VOLUME_PATH || path.resolve(process.cwd(), 'static/assets'),

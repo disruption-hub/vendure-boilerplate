@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from 'next/script';
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/layout/navbar";
@@ -68,6 +69,13 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en" suppressHydrationWarning>
+            <head>
+                {/* Lyra Payment Form CSS */}
+                <link
+                    rel="stylesheet"
+                    href="https://api.lyra.com/static/js/krypton-client/V4.0/ext/neon-reset.min.css"
+                />
+            </head>
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
             >
@@ -79,6 +87,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <Toaster />
                     </AuthProvider>
                 </ThemeProvider>
+
+                {/* Lyra Payment Form JS - loaded lazily for performance */}
+                <Script
+                    src="https://api.lyra.com/static/js/krypton-client/V4.0/ext/neon.js"
+                    strategy="lazyOnload"
+                />
             </body>
         </html>
     );
