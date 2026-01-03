@@ -139,7 +139,7 @@ export class LyraController {
                 return res.status(400).send('Missing order id');
             }
 
-            const order = await this.orderService.findOneByCode(ctx, orderCode);
+            const order = await this.orderService.findOneByCode(ctx, orderCode, ['payments']);
 
             if (!order) {
                 this.logger.error(`Order not found: ${orderCode}`);
@@ -152,7 +152,7 @@ export class LyraController {
                 return res.status(400).send('Missing transaction id');
             }
 
-            const payment = order.payments.find(p => p.transactionId === transactionUuid);
+            const payment = order.payments?.find(p => p.transactionId === transactionUuid);
 
             if (!payment) {
                 this.logger.warn(`Payment not found for transaction ${transactionUuid}`);
