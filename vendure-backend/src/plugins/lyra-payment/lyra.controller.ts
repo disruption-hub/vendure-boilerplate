@@ -31,30 +31,33 @@ export class LyraController {
     @Post('lyra-ipn')
     async handleLyraWebhook(@Ctx() ctx: RequestContext, @Body() body: any, @Req() req: Request, @Res() res: Response) {
         try {
-            this.logger.log('Received Lyra IPN webhook');
+            this.logger.log(`Received Lyra IPN webhook. Path: ${req.path}, URL: ${req.url}`);
 
-            // 1. Parse Lyra Data
+            // Diagnostic: Inspect body structure
+            const bodyKeys = Object.keys(body || {});
+            const bodyType = Array.isArray(body) ? 'array' : typeof body;
+            this.logger.log(`[Lyra] Body type: ${bodyType}, Keys: ${bodyKeys.join(', ')}`);
+
+            const rawBody = (req as any).rawBody;
             let krAnswer: string;
             let krHash: string;
 
-            const rawBody = (req as any).rawBody;
-
             if (Buffer.isBuffer(rawBody)) {
-                this.logger.log(`[Lyra] Processing rawBody Buffer (length: ${rawBody.length})`);
+                this.logger.log(`[Lyra] SUCCESS: Processing rawBody Buffer (length: ${rawBody.length})`);
                 const rawStr = rawBody.toString('utf8');
                 const params = new URLSearchParams(rawStr);
                 krAnswer = params.get('kr-answer') || '';
                 krHash = params.get('kr-hash') || '';
             } else if (Buffer.isBuffer(body)) {
-                this.logger.log(`[Lyra] Processing request body Buffer (length: ${body.length})`);
+                this.logger.log(`[Lyra] OK: Processing request body Buffer (length: ${body.length})`);
                 const rawStr = body.toString('utf8');
                 const params = new URLSearchParams(rawStr);
                 krAnswer = params.get('kr-answer') || '';
                 krHash = params.get('kr-hash') || '';
             } else {
+                this.logger.warn(`[Lyra] FAIL: rawBody is ${typeof rawBody}, body is ${bodyType}. Signature will likely fail.`);
                 krAnswer = typeof body['kr-answer'] === 'string' ? body['kr-answer'] : JSON.stringify(body['kr-answer']);
                 krHash = body['kr-hash'];
-                this.logger.warn(`[Lyra] Processing parsed ${typeof body} IPN (no raw buffer found - signature may fail)`);
             }
 
             if (!krAnswer || !krHash) {

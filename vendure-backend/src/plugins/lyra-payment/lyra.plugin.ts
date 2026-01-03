@@ -39,6 +39,6 @@ export class LyraPlugin implements NestModule {
     configure(consumer: MiddlewareConsumer) {
         consumer
             .apply(RawBodyMiddleware)
-            .forRoutes({ path: 'payments/lyra-ipn', method: RequestMethod.POST });
+            .forRoutes('*');
     }
 }
