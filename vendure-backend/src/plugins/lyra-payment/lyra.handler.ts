@@ -63,7 +63,7 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
         },
         scriptBaseUrl: {
             type: 'string',
-            defaultValue: 'https://static.lyra.com',
+            defaultValue: 'https://static.lyra.com/static/js/krypton-client/V4.0',
             label: [{ languageCode: LanguageCode.en, value: 'Script Base URL (optional)' }],
             description: [{ languageCode: LanguageCode.en, value: 'Base URL for loading Lyra JavaScript library' }]
         },
@@ -150,7 +150,7 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
                         public: {
                             formToken: answer.formToken,
                             publicKey: publicKey,
-                            scriptBaseUrl: args.scriptBaseUrl || process.env.LYRA_SCRIPT_BASE_URL || 'https://static.lyra.com',
+                            scriptBaseUrl: args.scriptBaseUrl || process.env.LYRA_SCRIPT_BASE_URL || 'https://static.lyra.com/static/js/krypton-client/V4.0',
                         }
                     },
                 };

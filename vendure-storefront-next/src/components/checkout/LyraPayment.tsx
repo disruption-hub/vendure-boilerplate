@@ -23,7 +23,7 @@ export default function LyraPayment({ orderCode, onSuccess }: LyraPaymentProps) 
             // 1. Call server action to initialize payment and get formToken
             const { formToken, publicKey, orderCode: updatedOrderCode, scriptBaseUrl } = await initializeLyraPayment();
 
-            const endpoint = scriptBaseUrl || "https://static.lyra.com"; // Fallback to default
+            const endpoint = scriptBaseUrl || "https://static.lyra.com/static/js/krypton-client/V4.0"; // Fallback to default
 
             // 2. Load the Lyra library
             const { KR } = await KRGlue.loadLibrary(endpoint, publicKey);
