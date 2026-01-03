@@ -29,7 +29,7 @@ export class LyraController {
     ) { }
 
     @Post('lyra-ipn')
-    async handleLyraWebhook(@Ctx() ctx: RequestContext, @Body() body: any, @Res() res: Response) {
+    async handleLyraWebhook(@Ctx() ctx: RequestContext, @Body() body: any, @Req() req: Request, @Res() res: Response) {
         try {
             this.logger.log('Received Lyra IPN webhook');
 
@@ -37,17 +37,24 @@ export class LyraController {
             let krAnswer: string;
             let krHash: string;
 
-            if (Buffer.isBuffer(body)) {
-                // Preserved raw bytes from express.raw middleware (definitive signature fix)
+            const rawBody = (req as any).rawBody;
+
+            if (Buffer.isBuffer(rawBody)) {
+                this.logger.log(`[Lyra] Processing rawBody Buffer (length: ${rawBody.length})`);
+                const rawStr = rawBody.toString('utf8');
+                const params = new URLSearchParams(rawStr);
+                krAnswer = params.get('kr-answer') || '';
+                krHash = params.get('kr-hash') || '';
+            } else if (Buffer.isBuffer(body)) {
+                this.logger.log(`[Lyra] Processing request body Buffer (length: ${body.length})`);
                 const rawStr = body.toString('utf8');
                 const params = new URLSearchParams(rawStr);
                 krAnswer = params.get('kr-answer') || '';
                 krHash = params.get('kr-hash') || '';
             } else {
-                // Fallback for parsed objects (if middleware didn't run)
                 krAnswer = typeof body['kr-answer'] === 'string' ? body['kr-answer'] : JSON.stringify(body['kr-answer']);
                 krHash = body['kr-hash'];
-                this.logger.warn('[Lyra] Processing parsed Object IPN (signature verification may fail)');
+                this.logger.warn(`[Lyra] Processing parsed ${typeof body} IPN (no raw buffer found - signature may fail)`);
             }
 
             if (!krAnswer || !krHash) {
@@ -55,8 +62,7 @@ export class LyraController {
                 return res.status(400).send('Missing required fields');
             }
 
-
-
+            this.logger.log(`[Lyra] Payload for HMAC (length: ${krAnswer.length}): ${krAnswer.substring(0, 50)}...`);
             const data = JSON.parse(krAnswer);
 
             // 2. Retrieve Lyra HMAC key from Vendure Config

@@ -73,12 +73,6 @@ export const config: VendureConfig = {
             ],
             credentials: true,
         },
-        middleware: [
-            {
-                route: '/payments/lyra-ipn',
-                handler: express.raw({ type: '*/*' }),
-            },
-        ],
     },
     authOptions: {
         tokenMethod: ['bearer', 'cookie'],
