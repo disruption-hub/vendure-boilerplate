@@ -39,3 +39,7 @@ export async function updateProfile(token: string, data: { firstName?: string; l
 export async function unlinkWallet(token: string) {
     return zkeyClient.unlinkWallet(token);
 }
+
+export async function linkWallet(token: string, address: string, signature: string) {
+    return zkeyClient.linkWallet(token, address, signature);
+}

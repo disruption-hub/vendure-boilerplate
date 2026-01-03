@@ -110,6 +110,24 @@ export class ZKeyClient {
         return response.json();
     }
 
+    async linkWallet(token: string, address: string, signature: string): Promise<{ success: boolean }> {
+        const response = await fetch(`${this.baseUrl}/auth/wallet/link`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ address, signature }),
+        });
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => null);
+            throw new Error((data as any)?.message || 'Failed to link wallet');
+        }
+
+        return response.json();
+    }
+
     async unlinkWallet(token: string): Promise<{ success: boolean }> {
         const response = await fetch(`${this.baseUrl}/auth/wallet/unlink`, {
             method: 'POST',

@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
     images: {
         // This is necessary to display images from your local Vendure instance
         unoptimized: true,
-        domains: ['localhost'],
         remotePatterns: [
             {
                 hostname: 'readonlydemo.vendure.io',

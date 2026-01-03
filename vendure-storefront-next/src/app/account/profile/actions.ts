@@ -57,9 +57,10 @@ export async function updateCustomerAction(prevState: { error?: string; success?
     }
 
     try {
-        // 1. Update ZKey first (Identity Source of Truth)
+        // 1. Prepare updates
         const zkeyToken = await getZKeyAuthToken();
-        if (zkeyToken) {
+
+        const zkeyUpdatePromise = zkeyToken ? (async () => {
             console.log('[Storefront] Syncing profile and wallet update to ZKey...');
             try {
                 await zkey.updateProfile(zkeyToken, {
@@ -71,10 +72,9 @@ export async function updateCustomerAction(prevState: { error?: string; success?
             } catch (zkeyError) {
                 console.error('[Storefront] ZKey profile update failed:', zkeyError);
             }
-        }
+        })() : Promise.resolve();
 
-        // 2. Also update Vendure directly
-        const result = await mutate(UpdateCustomerMutation, {
+        const vendureUpdatePromise = mutate(UpdateCustomerMutation, {
             input: {
                 firstName,
                 lastName,
@@ -84,6 +84,9 @@ export async function updateCustomerAction(prevState: { error?: string; success?
                 }
             },
         }, { useAuthToken: true });
+
+        // 2. Execute updates in parallel for better performance
+        const [_, result] = await Promise.all([zkeyUpdatePromise, vendureUpdatePromise]);
 
         const updateResult = result.data.updateCustomer;
 
@@ -145,5 +148,31 @@ export async function unlinkWalletAction() {
         return { success: true };
     } catch (e) {
         return { success: false, error: e instanceof Error ? e.message : 'Failed to unlink wallet' };
+    }
+}
+
+export async function linkWalletAction(address: string, signature: string) {
+    const token = await getZKeyAuthToken();
+    if (!token) {
+        return { success: false, error: 'Not authenticated with ZKey' };
+    }
+
+    try {
+        await zkey.linkWallet(token, address, signature);
+
+        await revalidateAuth();
+        revalidatePath('/account/profile');
+        return { success: true };
+    } catch (e) {
+        return { success: false, error: e instanceof Error ? e.message : 'Failed to link wallet' };
+    }
+}
+
+export async function getNonceAction(address: string) {
+    try {
+        return await zkey.getWalletNonce(address);
+    } catch (e) {
+        console.error('Failed to get wallet nonce:', e);
+        return { nonce: null };
     }
 }

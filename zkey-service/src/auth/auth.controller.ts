@@ -111,4 +111,13 @@ export class AuthController {
   async unlinkWallet(@Request() req: { user: { userId: string } }) {
     return this.authService.unlinkWallet(req.user.userId);
   }
+
+  @Post('wallet/link')
+  @UseGuards(JwtAuthGuard)
+  async linkWallet(
+    @Request() req: { user: { userId: string } },
+    @Body() body: { address: string; signature: string },
+  ) {
+    return this.authService.linkWallet(req.user.userId, body.address, body.signature);
+  }
 }

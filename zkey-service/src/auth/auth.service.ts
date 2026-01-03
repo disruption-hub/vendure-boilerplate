@@ -791,6 +791,56 @@ export class AuthService {
     return { success: true };
   }
 
+  async linkWallet(userId: string, address: string, signature: string) {
+    await this.verifyWalletSignature(address, signature);
+
+    // 1. Check if wallet is already linked to another user
+    const existing = await this.prisma.user.findFirst({
+      where: {
+        walletAddress: address,
+        id: { not: userId },
+        deletedAt: null,
+      },
+    });
+
+    if (existing) {
+      throw new ConflictException('This wallet is already linked to another account.');
+    }
+
+    // 2. Update user
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: { walletAddress: address },
+    });
+
+    // 3. Create identity
+    await this.prisma.userIdentity.upsert({
+      where: {
+        provider_providerId: {
+          provider: 'stellar',
+          providerId: address,
+        },
+      },
+      update: { userId },
+      create: {
+        userId,
+        provider: 'stellar',
+        providerId: address,
+      },
+    });
+
+    // 4. Sync to Vendure
+    try {
+      if (this.vendureSync) {
+        await this.vendureSync.syncUser(updatedUser);
+      }
+    } catch (error) {
+      this.logger.error(`Failed to sync linked wallet to Vendure: ${error}`);
+    }
+
+    return { success: true };
+  }
+
   async generateTokens(userId: string, app?: any) {
     const accessToken = this.jwtService.sign({ sub: userId });
 
