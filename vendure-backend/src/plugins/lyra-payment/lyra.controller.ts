@@ -29,27 +29,12 @@ export class LyraController {
     ) { }
 
     @Post('lyra-ipn')
-    async handleLyraWebhook(@Ctx() ctx: RequestContext, @Req() req: Request & { rawBody?: string }, @Body() body: any, @Res() res: Response) {
+    async handleLyraWebhook(@Ctx() ctx: RequestContext, @Body() body: any, @Res() res: Response) {
         try {
             this.logger.log('Received Lyra IPN webhook');
 
-            // 1. Parse Lyra Data - try to use rawBody for signature verification
-            const rawBody = (req as any).rawBody;
-            let krAnswerForHmac: string | undefined;
-
-            // Extract kr-answer from raw body if available (preserves exact bytes for HMAC)
-            if (rawBody && typeof rawBody === 'string') {
-                // rawBody is form-urlencoded, parse it to get kr-answer
-                try {
-                    const params = new URLSearchParams(rawBody);
-                    krAnswerForHmac = params.get('kr-answer') || undefined;
-                    this.logger.log(`[Lyra Debug] Using raw body for HMAC. Length: ${rawBody.length}`);
-                } catch (e) {
-                    this.logger.warn(`[Lyra Debug] Failed to parse rawBody as form-urlencoded: ${e}`);
-                }
-            }
-
-            const krAnswer = krAnswerForHmac || body['kr-answer']; // Fallback to parsed body
+            // 1. Parse Lyra Data
+            const krAnswer = body['kr-answer']; // JSON String
             const krHash = body['kr-hash'];
 
             if (!krAnswer || !krHash) {
@@ -137,9 +122,8 @@ export class LyraController {
                 // Log failure detail for standard PROD key
                 const keyToLog = testMode ? testKey : prodKey;
                 const computedHex = keyToLog ? crypto.createHmac('sha256', keyToLog).update(krAnswer, 'utf8').digest('hex') : 'N/A';
-                this.logger.warn(`[Lyra] Signature verification failed. Computed: ${computedHex.substring(0, 16)}..., Provided: ${normalizedProvided.substring(0, 16)}...`);
-                // Note: Signature verification is disabled due to NestJS body parser modifying the payload.
-                // The payment flow is still secure because we validate order code matches.
+                this.logger.error(`Invalid signature. Tried ${keysToTry.length} keys. None matched. Computed(Primary): ${computedHex}, Provided: ${normalizedProvided}.`);
+                return res.status(403).send('Invalid Signature');
             }
 
             this.logger.log(`[Lyra Debug] Signature MATCHED using ${matchedKey} key.`);
