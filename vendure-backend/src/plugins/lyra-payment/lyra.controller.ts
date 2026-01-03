@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Res, Logger } from '@nestjs/common';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { PaymentMethodService, RequestContext, Ctx, OrderService, TransactionalConnection } from '@vendure/core';
 import * as crypto from 'crypto';
 

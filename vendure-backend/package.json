@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "@prisma/client": "^7.2.0",
+    "@types/express": "^5.0.0",
     "@types/node": "^25.0.3",
     "@vendure/cli": "3.5.0",
     "@vendure/dashboard": "^3.5.2",
