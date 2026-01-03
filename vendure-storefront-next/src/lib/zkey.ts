@@ -32,6 +32,10 @@ export async function getProfile(token: string) {
     return zkeyClient.getProfile(token);
 }
 
+export async function updateProfile(token: string, data: { firstName?: string; lastName?: string; phone?: string; walletAddress?: string }) {
+    return zkeyClient.updateProfile(token, data);
+}
+
 export async function unlinkWallet(token: string) {
     return zkeyClient.unlinkWallet(token);
 }

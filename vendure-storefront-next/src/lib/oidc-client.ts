@@ -1,4 +1,5 @@
-const ZKEY_SERVICE_URL = process.env.NEXT_PUBLIC_ZKEY_URL || 'http://localhost:3002';
+const API_GATEWAY_URL = process.env.NEXT_PUBLIC_API_GATEWAY_URL || 'http://localhost:3004';
+const ZKEY_SERVICE_URL = process.env.NEXT_PUBLIC_ZKEY_URL || API_GATEWAY_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_ZKEY_CLIENT_ID || 'default-client-id';
 
 function getRedirectUri() {

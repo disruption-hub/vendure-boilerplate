@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PORTS=(3000 3001 3002 3003 3004)
+PORTS=(3000 3001 3002 3003 3004 3005)
 
 kill_port() {
   local port="$1"
@@ -41,6 +41,8 @@ exec pnpm exec concurrently \
   "pnpm --filter nextjs-starter-vendure dev" \
   "pnpm -C zkey-dashboard dev" \
   "PORT=3002 pnpm -C zkey-service start:dev" \
+  "PORT=3005 pnpm -C booking-service start:dev" \
+  "pnpm --filter api-gateway start:dev" \
   --kill-others \
-  --names "VENDURE,STOREFRONT,ZKEY_DASH,ZKEY_SVC" \
-  --prefix-colors "blue,magenta,cyan,green"
+  --names "VENDURE,STOREFRONT,ZKEY_DASH,ZKEY_SVC,BOOKING,GATEWAY" \
+  --prefix-colors "blue,magenta,cyan,green,red,yellow"

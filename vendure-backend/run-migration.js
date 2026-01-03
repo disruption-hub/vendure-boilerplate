@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 
 async function runMigration() {
-    console.log('--- VENDURE MIGRATION SCRIPT V5 (REMOVE REDUNDANT INDEX) ---');
+    console.log('--- VENDURE MIGRATION SCRIPT V7 (CORRECT CASING) ---');
 
     // Construct connection config
     const connectionConfig = {
@@ -32,46 +32,41 @@ async function runMigration() {
         await pool.query('SELECT 1');
         console.log('Connected. Starting schema alignment...');
 
-        // 1. Drop existing constraints and indexes that we want to clean up
-        console.log('Cleaning up existing constraints/indexes...');
+        // 1. Clean up old fields (including the ones with wrong casing I just added)
+        console.log('Cleaning up obsolete fields and constraints...');
         await pool.query(`ALTER TABLE customer DROP CONSTRAINT IF EXISTS "UQ_847464ecf377c421b29a3f37943"`);
-        await pool.query(`DROP INDEX IF EXISTS "public"."IDX_customer_customFieldsLogtouserid"`);
-        await pool.query(`DROP INDEX IF EXISTS "public"."IDX_customer_customfieldslogtouserid"`);
-        await pool.query(`DROP INDEX IF EXISTS "IDX_customer_customFieldsLogtouserid"`);
-        await pool.query(`DROP INDEX IF EXISTS "IDX_customer_customfieldslogtouserid"`);
         await pool.query(`ALTER TABLE customer DROP CONSTRAINT IF EXISTS "UQ_walletAddress"`);
+        await pool.query(`ALTER TABLE customer DROP CONSTRAINT IF EXISTS "UQ_customFieldsWalletAddress"`);
+        await pool.query(`ALTER TABLE customer DROP CONSTRAINT IF EXISTS "UQ_customFieldsZkeyInternalId"`);
+        await pool.query(`ALTER TABLE customer DROP CONSTRAINT IF EXISTS "UQ_customFieldsWalletaddress"`);
+        await pool.query(`ALTER TABLE customer DROP CONSTRAINT IF EXISTS "UQ_customFieldsZkeyinternalid"`);
 
-        // 2. Drop and Re-add columns to ensure fresh start and correct types
-        console.log('Re-creating columns...');
         await pool.query(`
             ALTER TABLE customer 
             DROP COLUMN IF EXISTS "customFieldsLogtouserid",
             DROP COLUMN IF EXISTS "customFieldsLogtodata",
-            DROP COLUMN IF EXISTS "customFieldsWalletaddress"
+            DROP COLUMN IF EXISTS "customFieldsWalletAddress",
+            DROP COLUMN IF EXISTS "customFieldsZkeyInternalId",
+            DROP COLUMN IF EXISTS "customFieldsWalletaddress",
+            DROP COLUMN IF EXISTS "customFieldsZkeyinternalid"
         `);
 
+        // 2. Add current fields with correct casing (lowercase after "customFields")
+        console.log('Adding current custom fields with correct casing...');
         await pool.query(`
             ALTER TABLE customer 
-            ADD COLUMN "customFieldsLogtouserid" character varying(255),
-            ADD COLUMN "customFieldsLogtodata" text,
-            ADD COLUMN "customFieldsWalletaddress" character varying(255)
+            ADD COLUMN IF NOT EXISTS "customFieldsWalletaddress" character varying(255),
+            ADD COLUMN IF NOT EXISTS "customFieldsZkeyinternalid" character varying(255)
         `);
 
-        // 3. Add the specific unique constraint expected by Vendure
-        console.log('Adding unique constraint...');
+        // 3. Add unique constraints
+        console.log('Adding unique constraints...');
         await pool.query(`
             ALTER TABLE customer 
-            ADD CONSTRAINT "UQ_847464ecf377c421b29a3f37943" 
-            UNIQUE ("customFieldsLogtouserid")
-        `);
-        
-        await pool.query(`
-            ALTER TABLE customer 
-            ADD CONSTRAINT "UQ_walletAddress" 
-            UNIQUE ("customFieldsWalletaddress")
+            ADD CONSTRAINT "UQ_customFieldsWalletaddress" UNIQUE ("customFieldsWalletaddress"),
+            ADD CONSTRAINT "UQ_customFieldsZkeyinternalid" UNIQUE ("customFieldsZkeyinternalid")
         `);
 
-        // Note: NO manual index creation here. Vendure handles the unique storage via the constraint.
         console.log('Schema alignment completed successfully!');
     } catch (error) {
         console.error('Migration failed with error:', error);

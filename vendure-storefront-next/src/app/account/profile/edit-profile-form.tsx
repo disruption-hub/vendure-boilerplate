@@ -70,6 +70,17 @@ export function EditProfileForm({ customer }: EditProfileFormProps) {
                             disabled={isPending}
                         />
                     </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="walletAddress">Wallet Address</Label>
+                        <Input
+                            id="walletAddress"
+                            name="walletAddress"
+                            type="text"
+                            placeholder="G..."
+                            defaultValue={(customer as any)?.customFields?.walletAddress || ''}
+                            disabled={isPending}
+                        />
+                    </div>
                     {state?.error && (
                         <div className="text-sm text-destructive">
                             {state.error}

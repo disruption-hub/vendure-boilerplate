@@ -15,12 +15,13 @@ import gql from 'graphql-tag';
                 phoneNumber: String
                 walletAddress: String
                 vendureId: String
+                verified: Boolean
             }
 
             extend type Mutation {
                 syncZKeyUser(input: SyncZKeyUserInput!): Customer
-                # deleteZKeyUser(id: String!, email: String): Boolean
-                # hardDeleteZKeyUser(id: String!, email: String): Boolean
+                deleteZKeyUser(id: String!, email: String): Boolean
+                hardDeleteZKeyUser(id: String!, email: String): Boolean
             }
         `,
         resolvers: [ZKeyResolver],

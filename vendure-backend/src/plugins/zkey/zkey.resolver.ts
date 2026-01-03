@@ -27,9 +27,9 @@ export class ZKeyResolver {
         @Args() args: { input: any },
     ) {
         const { input } = args;
-        const { id, email, firstName, lastName, phoneNumber, walletAddress, vendureId } = input;
+        const { id, email, firstName, lastName, phoneNumber, walletAddress, vendureId, verified } = input;
 
-        Logger.info(`[ZKeyPlugin] syncZKeyUser: ID=${id}, Email=${email}, Wallet=${walletAddress}`, 'ZKeyPlugin');
+        Logger.info(`[ZKeyPlugin] syncZKeyUser: ID=${id}, Email=${email}, Wallet=${walletAddress}, Verified=${verified}`, 'ZKeyPlugin');
 
         const repo = this.connection.getRepository(ctx, Customer);
         let customerId: any;
@@ -47,10 +47,10 @@ export class ZKeyResolver {
             if (existingById) Logger.info(`[ZKeyPlugin] Identified by Vendure ID: ${existingById.id}`, 'ZKeyPlugin');
         }
 
-        // Priority 1: ZKey ID (logtoUserId)
+        // Priority 1: ZKey ID (zkeyInternalId)
         if (!existingById) {
             existingByZKey = await repo.findOne({
-                where: { customFields: { logtoUserId: id } as any },
+                where: { customFields: { zkeyInternalId: id } as any },
                 withDeleted: true,
                 relations: ['user']
             });
@@ -91,19 +91,21 @@ export class ZKeyResolver {
                     lastName: lastName || '',
                     phoneNumber: phoneNumber,
                     user: existingUser,
-                    customFields: { logtoUserId: id, walletAddress: walletAddress } as any,
+                    customFields: { zkeyInternalId: id, walletAddress: walletAddress } as any,
                     channels: [ctx.channel]
                 }));
                 customerId = newCustomer.id;
+                linkedUserId = existingUser.id;
             } else {
                 Logger.info(`[ZKeyPlugin] Creating new Customer & User for ${email}`, 'ZKeyPlugin');
                 const user: any = await this.externalAuthenticationService.createCustomerAndUser(ctx, {
-                    strategy: 'zkey', externalIdentifier: id, verified: true, emailAddress: email,
+                    strategy: 'zkey', externalIdentifier: id, verified: verified ?? true, emailAddress: email,
                     firstName: firstName || email?.split('@')[0] || '', lastName: lastName || '',
                 } as any);
                 const customer = await this.customerService.findOneByUserId(ctx, user.id);
                 if (!customer) throw new Error('Failed to create customer');
                 customerId = customer.id;
+                linkedUserId = user.id;
             }
         }
 
@@ -117,7 +119,14 @@ export class ZKeyResolver {
             }
         }
 
-        // 3. Update Profile
+        // 3. Update User Verification Status
+        if (verified !== undefined && linkedUserId) {
+            const userRepo = this.connection.getRepository(ctx, User);
+            await userRepo.update(linkedUserId, { verified });
+            Logger.info(`[ZKeyPlugin] Updated verification status for User ${linkedUserId} to ${verified}`, 'ZKeyPlugin');
+        }
+
+        // 4. Update Profile
         const updateInput: any = {
             id: customerId,
             emailAddress: email,
@@ -127,14 +136,13 @@ export class ZKeyResolver {
             customFields: {
                 walletAddress: walletAddress === undefined ? undefined : walletAddress,
                 // Only update ZKey ID if provided and not empty
-                ...((id && id.trim() !== '') ? { logtoUserId: id } : {}),
+                ...((id && id.trim() !== '') ? { zkeyInternalId: id } : {}),
             },
         };
 
         return this.customerService.update(ctx, updateInput);
     }
 
-    /* Commented out as per simplification request
     @Allow(Permission.DeleteCustomer, Permission.UpdateCustomer)
     @Mutation()
     async deleteZKeyUser(
@@ -144,9 +152,9 @@ export class ZKeyResolver {
         const { id, email } = args;
         const repo = this.connection.getRepository(ctx, Customer);
 
-        // 1. Try to find by ZKey ID (logtoUserId) - include deleted
+        // 1. Try to find by ZKey ID (zkeyInternalId) - include deleted
         let customer = await repo.findOne({
-            where: { customFields: { logtoUserId: id } as any },
+            where: { customFields: { zkeyInternalId: id } as any },
             withDeleted: true
         });
 
@@ -173,7 +181,7 @@ export class ZKeyResolver {
                 // To ensure a future "reactivation" starts with a clean order history,
                 // we anonymize fields that we use to match (email/logtoUserId/walletAddress)
                 // so a new customer can be created on re-sync.
-                const anonymizedEmail = `deleted-${customer.id}-${Date.now()}@example.invalid`;
+                const anonymizedEmail = `deleted-${id}-${Date.now()}@softdelete.record`;
                 await this.customerService.update(ctx, {
                     id: customer.id,
                     emailAddress: anonymizedEmail,
@@ -182,8 +190,7 @@ export class ZKeyResolver {
                     phoneNumber: '',
                     customFields: {
                         walletAddress: null,
-                        logtoUserId: null,
-                        logtoData: null,
+                        zkeyInternalId: null,
                     },
                 } as any);
 
@@ -228,9 +235,9 @@ export class ZKeyResolver {
         const repo = this.connection.getRepository(ctx, Customer);
         const userRepo = this.connection.getRepository(ctx, User);
 
-        // 1. Try to find by ZKey ID (logtoUserId) - include deleted
+        // 1. Try to find by ZKey ID (zkeyInternalId) - include deleted
         let customer = await repo.findOne({
-            where: { customFields: { logtoUserId: id } as any },
+            where: { customFields: { zkeyInternalId: id } as any },
             withDeleted: true,
             relations: ['user']
         });
@@ -271,5 +278,4 @@ export class ZKeyResolver {
         Logger.info(`[ZKeyPlugin] Customer with ID ${id} or email ${email} not found for hard deletion.`, 'ZKeyPlugin');
         return true;
     }
-    */
 }

@@ -50,17 +50,38 @@ export async function updateCustomerAction(prevState: { error?: string; success?
     const firstName = formData.get('firstName') as string;
     const lastName = formData.get('lastName') as string;
     const phoneNumber = formData.get('phoneNumber') as string;
+    const walletAddress = formData.get('walletAddress') as string;
 
     if (!firstName || !lastName) {
         return { error: 'First name and last name are required' };
     }
 
     try {
+        // 1. Update ZKey first (Identity Source of Truth)
+        const zkeyToken = await getZKeyAuthToken();
+        if (zkeyToken) {
+            console.log('[Storefront] Syncing profile and wallet update to ZKey...');
+            try {
+                await zkey.updateProfile(zkeyToken, {
+                    firstName,
+                    lastName,
+                    phone: phoneNumber || undefined,
+                    walletAddress: walletAddress || undefined,
+                });
+            } catch (zkeyError) {
+                console.error('[Storefront] ZKey profile update failed:', zkeyError);
+            }
+        }
+
+        // 2. Also update Vendure directly
         const result = await mutate(UpdateCustomerMutation, {
             input: {
                 firstName,
                 lastName,
                 phoneNumber: phoneNumber || null,
+                customFields: {
+                    walletAddress: walletAddress || null,
+                }
             },
         }, { useAuthToken: true });
 
@@ -73,6 +94,7 @@ export async function updateCustomerAction(prevState: { error?: string; success?
         revalidatePath('/account/profile');
         return { success: true };
     } catch (error: unknown) {
+        console.error('[Storefront] Profile update failed:', error);
         return { error: 'An unexpected error occurred. Please try again.' };
     }
 }

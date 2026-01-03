@@ -3,3 +3,5 @@ packages:
   - 'vendure-storefront-next'
   - 'zkey-service'
   - 'zkey-dashboard'
+  - 'booking-service'
+  - 'api-gateway'

@@ -14,13 +14,14 @@ export function getVendureImageUrl(url: string | undefined): string {
 
   if (url.startsWith('http')) return normalizeUrl(url);
 
-  // In development, images are served from the backend (localhost:3000)
+  // In development, images are served from the backend (via Gateway 3004)
   // but the storefront runs on a different port (3001+)
   // We need to construct the absolute URL
-  // We try to get the backend URL from env vars, falling back to 127.0.0.1:3000
+  // We try to get the backend URL from env vars, falling back to Gateway
   const backendUrl = process.env.NEXT_PUBLIC_VENDURE_SHOP_API_URL ||
     process.env.VENDURE_SHOP_API_URL ||
-    'http://127.0.0.1:3000';
+    process.env.NEXT_PUBLIC_API_GATEWAY_URL ? `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/shop-api` :
+    'http://127.0.0.1:3004/shop-api';
 
   try {
     const urlObj = new URL(backendUrl);

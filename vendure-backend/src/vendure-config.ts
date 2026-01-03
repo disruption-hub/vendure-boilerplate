@@ -12,7 +12,6 @@ import { AdminUiPlugin } from '@vendure/admin-ui-plugin';
 import { StripePlugin } from '@vendure/payments-plugin/package/stripe';
 import 'dotenv/config';
 import path from 'path';
-import { LogtoAuthenticationStrategy } from './plugins/logto/logto-auth-strategy';
 import { ZKeyPlugin } from './plugins/zkey/zkey.plugin';
 import { ProxyTrustPlugin } from './plugins/proxy-trust.plugin';
 
@@ -76,8 +75,6 @@ export const config: VendureConfig = {
     authOptions: {
         tokenMethod: ['bearer', 'cookie'],
         shopAuthenticationStrategy: [
-
-            ...(process.env.LOGTO_ENDPOINT ? [new LogtoAuthenticationStrategy()] : []),
         ],
         superadminCredentials: {
             identifier: process.env.SUPERADMIN_USERNAME,
@@ -115,20 +112,17 @@ export const config: VendureConfig = {
                 type: 'string',
                 unique: true,
                 nullable: true,
+                public: true,
                 label: [{ languageCode: LanguageCode.en, value: 'Wallet Address' }],
             },
             {
-                name: 'logtoUserId',
+                name: 'zkeyInternalId',
                 type: 'string',
                 unique: true,
                 nullable: true,
+                public: true,
                 label: [{ languageCode: LanguageCode.en, value: 'ZKey Internal ID' }],
             },
-            {
-                name: 'logtoData',
-                type: 'text',
-                nullable: true,
-            }
         ]
     },
     plugins: [

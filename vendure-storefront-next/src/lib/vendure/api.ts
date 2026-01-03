@@ -7,7 +7,12 @@ function env(name: string) {
     return trimmed && trimmed.length ? trimmed : undefined;
 }
 
-const VENDURE_API_URL = env('VENDURE_SHOP_API_URL') || env('NEXT_PUBLIC_VENDURE_SHOP_API_URL') || 'http://localhost:3000/shop-api';
+// Update to prefer Gateway URL
+const API_GATEWAY_URL = env('API_GATEWAY_URL') || env('NEXT_PUBLIC_API_GATEWAY_URL');
+const DEFAULT_VENDURE_URL = API_GATEWAY_URL ? `${API_GATEWAY_URL}/shop-api` : 'http://localhost:3004/shop-api';
+
+const VENDURE_API_URL = env('VENDURE_SHOP_API_URL') || env('NEXT_PUBLIC_VENDURE_SHOP_API_URL') || DEFAULT_VENDURE_URL;
+
 // Must match your Vendure Channel token (it is not always the same as the channel code/name).
 const VENDURE_CHANNEL_TOKEN = env('VENDURE_CHANNEL_TOKEN') || env('NEXT_PUBLIC_VENDURE_CHANNEL_TOKEN') || '__default_channel__';
 const VENDURE_AUTH_TOKEN_HEADER = env('VENDURE_AUTH_TOKEN_HEADER') || 'vendure-auth-token';

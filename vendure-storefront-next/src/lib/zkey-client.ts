@@ -3,7 +3,8 @@
  * Handles authentication with the ZKey service
  */
 
-const ZKEY_BASE_URL = process.env.NEXT_PUBLIC_ZKEY_URL || 'http://localhost:3002';
+const API_GATEWAY_URL = process.env.NEXT_PUBLIC_API_GATEWAY_URL || 'http://localhost:3004';
+const ZKEY_BASE_URL = process.env.NEXT_PUBLIC_ZKEY_URL || API_GATEWAY_URL; // Default to Gateway if no specific ZKey URL matches
 const ZKEY_CLIENT_ID = process.env.NEXT_PUBLIC_ZKEY_CLIENT_ID;
 
 export interface ZKeyTokens {
@@ -83,6 +84,27 @@ export class ZKeyClient {
 
         if (!response.ok) {
             throw new Error('Failed to fetch profile');
+        }
+
+        return response.json();
+    }
+
+    /**
+     * Update user profile
+     */
+    async updateProfile(token: string, data: { firstName?: string; lastName?: string; phone?: string; walletAddress?: string }): Promise<ZKeyUser> {
+        const response = await fetch(`${this.baseUrl}/auth/profile`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            const error = await response.text();
+            throw new Error(`Profile update failed: ${error}`);
         }
 
         return response.json();

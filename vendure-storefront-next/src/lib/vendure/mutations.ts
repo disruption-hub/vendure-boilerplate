@@ -386,6 +386,9 @@ export const UpdateCustomerMutation = graphql(`
             lastName
             emailAddress
             phoneNumber
+            customFields {
+                walletAddress
+            }
         }
     }
 `);

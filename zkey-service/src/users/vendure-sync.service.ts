@@ -113,7 +113,7 @@ export class VendureSyncService {
     const query = `
       mutation Login($username: String!, $password: String!) {
         login(username: $username, password: $password) {
-          ... on currentUser {
+          ... on CurrentUser {
             id
           }
         }

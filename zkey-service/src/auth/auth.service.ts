@@ -306,11 +306,47 @@ export class AuthService {
         primaryEmail: true,
         emailVerified: true,
         phoneNumber: true,
+        phone: true,
         phoneVerified: true,
         walletAddress: true,
         avatar: true,
+        tenantId: true,
       },
     });
+  }
+
+  async updateProfile(userId: string, data: { firstName?: string; lastName?: string; phone?: string; walletAddress?: string }) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        firstName: data.firstName !== undefined ? data.firstName : user.firstName,
+        lastName: data.lastName !== undefined ? data.lastName : user.lastName,
+        phone: data.phone !== undefined ? data.phone : user.phone,
+        phoneNumber: data.phone !== undefined ? data.phone : user.phoneNumber, // Sync both fields
+        walletAddress: data.walletAddress !== undefined ? data.walletAddress : user.walletAddress,
+      },
+    });
+
+    this.logger.log(`[AuthService] Profile updated for user ${userId}. Triggering Vendure sync...`);
+
+    // Sync to Vendure
+    try {
+      if (this.vendureSync) {
+        await this.vendureSync.syncUser(updatedUser);
+      }
+    } catch (error) {
+      this.logger.error(`Failed to sync updated profile to Vendure: ${error.message}`);
+    }
+
+    return this.validateUser(userId);
   }
 
   // --- OTP Logic ---
@@ -320,6 +356,10 @@ export class AuthService {
     type: 'email' | 'phone',
     clientIdOrInteractionId: string,
   ) {
+    if (type !== 'email' && type !== 'phone') {
+      throw new BadRequestException('Invalid OTP type. Must be "email" or "phone".');
+    }
+
     let clientId = clientIdOrInteractionId;
 
     // Try to find if it's an interactionId first
@@ -434,6 +474,8 @@ export class AuthService {
   }
 
   async verifyOtp(identifier: string, code: string) {
+    // Find interaction specifically for this identifier and code
+    // This prevents race conditions where we might pick up someone else's OTP or an old one
     const interaction = await this.prisma.interaction.findFirst({
       where: {
         expiresAt: { gt: new Date() },
@@ -441,15 +483,25 @@ export class AuthService {
           path: ['type'],
           equals: 'otp',
         },
+        AND: [
+          {
+            details: {
+              path: ['identifier'],
+              equals: identifier,
+            },
+          },
+          {
+            details: {
+              path: ['code'],
+              equals: code,
+            },
+          }
+        ]
       },
       orderBy: { createdAt: 'desc' },
     });
 
-    if (
-      !interaction ||
-      (interaction.details as any).identifier !== identifier ||
-      (interaction.details as any).code !== code
-    ) {
+    if (!interaction) {
       throw new Error('Invalid or expired code');
     }
 
@@ -460,7 +512,7 @@ export class AuthService {
         include: { tenant: true },
       })
       : null;
-    const method = (interaction.details as any).method;
+    const method = (interaction.details as any).method; // 'email' or 'phone'
 
     // 1. Check for an EXISTING VERIFIED user first.
     // If one exists, we prioritize them and do NOT verify any pending users.
@@ -534,6 +586,15 @@ export class AuthService {
           phoneVerified: method === 'phone' ? true : user.phoneVerified,
         },
       });
+    }
+
+    // Sync verification status to Vendure
+    try {
+      if (this.vendureSync) {
+        await this.vendureSync.syncUser(user);
+      }
+    } catch (error) {
+      this.logger.error(`Failed to sync verified user to Vendure: ${error}`);
     }
 
     return this.generateTokens(user.id, app);

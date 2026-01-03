@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/booking-client"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String   @id @default(uuid())
+  zkeyId         String   @unique
+  email          String   @unique
+  firstName      String?
+  lastName       String?
+  stripeCustomerId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  passes         Pass[]
+  bookings       Booking[]
+}
+
+model ClassType {
+  id              String   @id @default(uuid())
+  name            String
+  description     String?
+  creditsRequired Int      @default(1)
+  
+  sessions        ClassSession[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ClassSession {
+  id              String   @id @default(uuid())
+  classTypeId     String
+  classType       ClassType @relation(fields: [classTypeId], references: [id])
+  
+  startTime       DateTime
+  endTime         DateTime
+  instructor      String?
+  capacity        Int      @default(20)
+  
+  bookings        Booking[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Pass {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  
+  creditsRemaining Int
+  expiryDate       DateTime?
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Booking {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  sessionId String
+  session   ClassSession @relation(fields: [sessionId], references: [id])
+  
+  status    BookingStatus @default(CONFIRMED)
+  checkedIn Boolean       @default(false)
+  checkedInAt DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+  WAITLISTED
+}

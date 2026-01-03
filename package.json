@@ -7,6 +7,7 @@
         "dev:all": "bash ./scripts/dev-all.sh",
         "dev:backend": "pnpm --filter vendure-boilerplate dev",
         "dev:storefront": "pnpm --filter nextjs-starter-vendure dev",
+        "dev:gateway": "pnpm --filter api-gateway start:dev",
         "build": "pnpm --filter \"*\" build",
         "start": "pnpm --filter vendure-boilerplate start"
     },
