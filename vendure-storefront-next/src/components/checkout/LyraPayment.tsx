@@ -57,36 +57,31 @@ export default function LyraPayment({ orderCode, onSuccess }: LyraPaymentProps) 
         }
     };
 
+    // Auto-initialize payment form on mount
+    useEffect(() => {
+        setupLyra();
+    }, []);
+
     return (
         <Card className="w-full">
             <CardHeader>
-                <CardTitle>Pay Securely</CardTitle>
+                <CardTitle>Complete Your Payment</CardTitle>
                 <CardDescription>
-                    Complete your payment using our secure payment form
+                    Enter your payment details below to complete your order
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-                {/* The Lyra library will inject the IFrame inside this div */}
-                <div id="lyra-payment-container">
-                    <div className="kr-smart-form"></div>
-                </div>
-
-                {!formReady && !loading && (
-                    <Button
-                        onClick={setupLyra}
-                        className="w-full"
-                        size="lg"
-                    >
-                        Initialize Payment Form
-                    </Button>
-                )}
-
                 {loading && (
                     <div className="flex items-center justify-center py-8">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                        <span className="ml-2">Loading secure payment fields...</span>
+                        <span className="ml-2">Loading secure payment form...</span>
                     </div>
                 )}
+
+                {/* The Lyra library will inject the IFrame inside this div */}
+                <div id="lyra-payment-container" className={loading ? 'hidden' : ''}>
+                    <div className="kr-smart-form"></div>
+                </div>
             </CardContent>
         </Card>
     );
