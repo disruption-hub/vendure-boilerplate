@@ -15,6 +15,7 @@ import path from 'path';
 import { ZKeyPlugin } from './plugins/zkey/zkey.plugin';
 import { ProxyTrustPlugin } from './plugins/proxy-trust.plugin';
 import { LyraPlugin } from './plugins/lyra-payment/lyra.plugin';
+import { RawBodyPlugin } from './plugins/raw-body.plugin';
 
 const isDev: Boolean = process.env.APP_ENV === 'dev';
 
@@ -140,6 +141,7 @@ export const config: VendureConfig = {
     plugins: [
         ProxyTrustPlugin,
         ZKeyPlugin,
+        RawBodyPlugin, // Must be before LyraPlugin to capture raw body
         LyraPlugin,
         AssetServerPlugin.init({
             route: 'assets',

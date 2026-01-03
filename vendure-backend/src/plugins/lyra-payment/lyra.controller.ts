@@ -29,15 +29,30 @@ export class LyraController {
     ) { }
 
     @Post('lyra-ipn')
-    async handleLyraWebhook(@Ctx() ctx: RequestContext, @Body() body: any, @Res() res: Response) {
+    async handleLyraWebhook(@Ctx() ctx: RequestContext, @Req() req: Request & { rawBody?: Buffer }, @Body() body: any, @Res() res: Response) {
         try {
             this.logger.log('Received Lyra IPN webhook');
 
-            // 1. Parse Lyra Data
-            const krAnswer = body['kr-answer']; // JSON String
+            // 1. Parse Lyra Data - Use rawBody for HMAC verification if available
+            let krAnswerForHmac: string;
+            const rawBody = req.rawBody;
+
+            if (rawBody && Buffer.isBuffer(rawBody)) {
+                // Extract kr-answer from the raw form-urlencoded body
+                const rawStr = rawBody.toString('utf8');
+                const params = new URLSearchParams(rawStr);
+                krAnswerForHmac = params.get('kr-answer') || '';
+                this.logger.log(`[Lyra Debug] Using raw body for HMAC. Raw length: ${rawBody.length}`);
+            } else {
+                // Fallback to parsed body (may have altered encoding)
+                krAnswerForHmac = typeof body['kr-answer'] === 'string' ? body['kr-answer'] : JSON.stringify(body['kr-answer']);
+                this.logger.warn('[Lyra Debug] No raw body available, using parsed body for HMAC');
+            }
+
+            const krAnswer = typeof body['kr-answer'] === 'string' ? body['kr-answer'] : JSON.stringify(body['kr-answer']);
             const krHash = body['kr-hash'];
 
-            if (!krAnswer || !krHash) {
+            if (!krAnswerForHmac || !krHash) {
                 this.logger.error('Missing kr-answer or kr-hash in webhook payload');
                 return res.status(400).send('Missing required fields');
             }
@@ -46,7 +61,9 @@ export class LyraController {
             krHash: ${krHash}
             krAnswer Type: ${typeof krAnswer}
             krAnswer Length: ${krAnswer?.length}
+            krAnswerForHmac Length: ${krAnswerForHmac?.length}
             krAnswer Start: ${String(krAnswer).substring(0, 50)}...`);
+
 
             const data = JSON.parse(krAnswer);
 
@@ -86,10 +103,10 @@ export class LyraController {
             const providedHash = String(krHash).trim();
             const normalizedProvided = providedHash.replace(/=+$/g, '');
 
-            // Helper to compute and check hash
+            // Helper to compute and check hash - uses krAnswerForHmac (raw bytes) for accurate verification
             const checkSignature = (key: string | Buffer, internalLabel: string): boolean => {
-                const computedHex = crypto.createHmac('sha256', key).update(krAnswer, 'utf8').digest('hex');
-                const computedBase64 = crypto.createHmac('sha256', key).update(krAnswer, 'utf8').digest('base64');
+                const computedHex = crypto.createHmac('sha256', key).update(krAnswerForHmac, 'utf8').digest('hex');
+                const computedBase64 = crypto.createHmac('sha256', key).update(krAnswerForHmac, 'utf8').digest('base64');
                 const computedBase64Url = computedBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
 
                 return normalizedProvided.toLowerCase() === computedHex.toLowerCase() ||
