@@ -14,12 +14,19 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { redirect } from "next/navigation";
 
 export async function initializeLyraPayment() {
-    // Transition order to ArrangingPayment
-    await mutate(
-        TransitionOrderToStateMutation,
-        { state: 'ArrangingPayment' },
-        { useAuthToken: true }
-    );
+    // Transition order to ArrangingPayment (if not already there)
+    try {
+        await mutate(
+            TransitionOrderToStateMutation,
+            { state: 'ArrangingPayment' },
+            { useAuthToken: true }
+        );
+    } catch (error: any) {
+        // Ignore error if already in ArrangingPayment state
+        if (!error.message?.includes('ArrangingPayment')) {
+            throw error;
+        }
+    }
 
     // Call Vendure to generate the formToken
     const { data } = await mutate(
