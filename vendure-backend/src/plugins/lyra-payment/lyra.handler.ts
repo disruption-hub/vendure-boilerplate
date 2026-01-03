@@ -3,6 +3,14 @@ import axios from 'axios';
 
 const loggerCtx = 'LyraPaymentHandler';
 
+function normalizePublicUrl(value: string | undefined): string | undefined {
+    if (!value) return undefined;
+    const v = value.trim();
+    if (!v) return undefined;
+    if (v.startsWith('http://') || v.startsWith('https://')) return v.replace(/\/$/, '');
+    return `https://${v}`.replace(/\/$/, '');
+}
+
 export const lyraPaymentHandler = new PaymentMethodHandler({
     code: 'lyra-payment',
     description: [{ languageCode: LanguageCode.en, value: 'Lyra / PayZen' }],
@@ -81,7 +89,37 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
         const publicKey = isTestMode
             ? (args.testPublicKey || process.env.LYRA_TEST_PUBLIC_KEY)
             : (args.prodPublicKey || process.env.LYRA_PROD_PUBLIC_KEY);
-        const endpoint = args.endpoint || process.env.LYRA_ENDPOINT || 'https://api.micuentaweb.pe/api-payment/V4/';
+        const rawEndpoint = args.endpoint || process.env.LYRA_ENDPOINT || 'https://api.micuentaweb.pe/api-payment/V4/';
+        const endpoint = rawEndpoint.endsWith('/') ? rawEndpoint : `${rawEndpoint}/`;
+
+        // Ensure the JS library domain matches the API domain. A mismatch can cause the formToken
+        // to be treated as invalid/expired by the Krypton client.
+        const defaultLyraScriptBaseUrl = 'https://static.lyra.com/static/js/krypton-client/V4.0';
+        let derivedScriptBaseUrl: string | undefined;
+        try {
+            const endpointUrl = new URL(endpoint);
+            const staticHost = endpointUrl.host.startsWith('api.')
+                ? endpointUrl.host.replace(/^api\./, 'static.')
+                : endpointUrl.host;
+            derivedScriptBaseUrl = `${endpointUrl.protocol}//${staticHost}/static/js/krypton-client/V4.0`;
+        } catch {
+            // ignore
+        }
+
+        // Allow env var override, otherwise use handler config; if it looks like the generic Lyra URL
+        // but endpoint is regional (e.g. micuentaweb), prefer the derived one.
+        const configuredScriptBaseUrl = (process.env.LYRA_SCRIPT_BASE_URL || args.scriptBaseUrl || '').trim();
+        const scriptBaseUrl =
+            (configuredScriptBaseUrl && configuredScriptBaseUrl !== defaultLyraScriptBaseUrl)
+                ? configuredScriptBaseUrl
+                : (derivedScriptBaseUrl || configuredScriptBaseUrl || defaultLyraScriptBaseUrl);
+
+        const ipnTargetUrl =
+            normalizePublicUrl(process.env.LYRA_IPN_URL) ||
+            (() => {
+                const base = normalizePublicUrl(process.env.PUBLIC_DOMAIN);
+                return base ? `${base}/payments/lyra-ipn` : undefined;
+            })();
 
         Logger.info(`Using ${isTestMode ? 'TEST' : 'PRODUCTION'} mode for Lyra payment`, loggerCtx);
 
@@ -95,6 +133,30 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
         }
 
         try {
+            const normalizedHandlerAmount =
+                typeof amount === 'number'
+                    ? Math.round(amount)
+                    : Number.parseInt(String(amount), 10);
+
+            const normalizedOrderTotal = Math.round(order.totalWithTax);
+
+            const normalizedAmount =
+                Number.isFinite(normalizedHandlerAmount) && normalizedHandlerAmount > 0
+                    ? normalizedHandlerAmount
+                    : normalizedOrderTotal;
+
+            if (!Number.isFinite(normalizedAmount) || normalizedAmount <= 0) {
+                Logger.warn(
+                    `Lyra payment rejected due to invalid amount: handler=${String(amount)} order.totalWithTax=${String(order.totalWithTax)}`,
+                    loggerCtx,
+                );
+                return {
+                    amount: order.totalWithTax,
+                    state: 'Declined' as const,
+                    errorMessage: `Invalid amount: ${String(amount)}`,
+                };
+            }
+
             Logger.info(`Creating Lyra payment for order ${order.code} (amount: ${amount})`, loggerCtx);
 
             // Encode credentials for Basic Auth
@@ -102,17 +164,14 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
 
             // Payload for Lyra V4 API
             const payload = {
-                amount: amount, // Vendure and Lyra both use minor units (cents)
+                amount: normalizedAmount, // Vendure and Lyra both use minor units (cents)
                 currency: order.currencyCode,
                 orderId: order.code,
                 customer: {
                     email: order.customer?.emailAddress,
                     reference: order.customer?.id.toString(),
                 },
-                paymentConfig: {
-                    actionType: 'AUTHORIZE',
-                    singleAmount: amount,
-                },
+                ...(ipnTargetUrl ? { ipnTargetUrl } : {}),
                 // Custom data to track the order in Lyra's back office
                 metadata: {
                     vendureOrderId: order.code,
@@ -143,15 +202,26 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
                 Logger.info(`Lyra payment created successfully: ${answer.uuid}`, loggerCtx);
                 return {
                     amount: order.totalWithTax,
-                    state: 'Authorized' as const,
+                    // Creating the payment only generates a formToken. The actual authorization/settlement
+                    // happens after the customer submits the embedded form and Lyra calls the IPN.
+                    state: 'Created' as const,
                     transactionId: answer.uuid,
                     // CRITICAL: Data nested in 'public' is visible to the Shop API (Frontend)
                     metadata: {
                         public: {
                             formToken: answer.formToken,
                             publicKey: publicKey,
-                            scriptBaseUrl: args.scriptBaseUrl || process.env.LYRA_SCRIPT_BASE_URL || 'https://static.lyra.com/static/js/krypton-client/V4.0',
-                        }
+                            scriptBaseUrl:
+                                scriptBaseUrl,
+                        },
+                        // Data nested in 'private' is NOT exposed to the Shop API.
+                        // Keep any diagnostic/server response details here.
+                        private: {
+                            lyra: {
+                                status: response.data.status,
+                                answer,
+                            },
+                        },
                     },
                 };
             }

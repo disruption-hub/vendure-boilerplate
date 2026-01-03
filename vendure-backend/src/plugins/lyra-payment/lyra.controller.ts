@@ -126,11 +126,9 @@ export class LyraController {
                 this.logger.warn(`[Lyra] Signature verification skipped (body parser modifies payload). Computed: ${computedHex.substring(0, 16)}..., Provided: ${normalizedProvided.substring(0, 16)}...`);
                 // Note: We cannot verify signature due to NestJS body parser modifying payload.
                 // Payment flow is still secure via order code validation.
+            } else {
+                this.logger.log(`[Lyra] Signature MATCHED using ${matchedKey} key.`);
             }
-
-            this.logger.log(`[Lyra Debug] Signature MATCHED using ${matchedKey} key.`);
-
-            this.logger.log(`Valid signature for order ${data.orderDetails?.orderId}`);
 
             // 4. Update Order Status
             const orderCode = data?.orderDetails?.orderId;
