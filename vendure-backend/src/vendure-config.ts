@@ -73,6 +73,25 @@ export const config: VendureConfig = {
             ],
             credentials: true,
         },
+        // Raw body capture middleware - runs BEFORE NestJS body parser
+        middleware: [
+            {
+                route: '/payments/lyra-ipn',
+                handler: (req: any, res: any, next: any) => {
+                    const chunks: Buffer[] = [];
+                    req.on('data', (chunk: Buffer) => chunks.push(chunk));
+                    req.on('end', () => {
+                        req.rawBody = Buffer.concat(chunks);
+                        console.log(`[RawBodyMiddleware] Captured ${req.rawBody.length} bytes for ${req.url}`);
+                        next();
+                    });
+                    req.on('error', (err: Error) => {
+                        console.error('[RawBodyMiddleware] Error:', err);
+                        next(err);
+                    });
+                },
+            },
+        ],
     },
     authOptions: {
         tokenMethod: ['bearer', 'cookie'],
