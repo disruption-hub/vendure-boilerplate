@@ -1,5 +1,5 @@
-import { Controller, Post, Body, Res, Logger } from '@nestjs/common';
-import type { Response } from 'express';
+import { Controller, Post, Body, Res, Req, Logger } from '@nestjs/common';
+import type { Response, Request } from 'express';
 import { PaymentMethodService, RequestContext, Ctx, OrderService, TransactionalConnection } from '@vendure/core';
 import * as crypto from 'crypto';
 
@@ -29,12 +29,27 @@ export class LyraController {
     ) { }
 
     @Post('lyra-ipn')
-    async handleLyraWebhook(@Ctx() ctx: RequestContext, @Body() body: any, @Res() res: Response) {
+    async handleLyraWebhook(@Ctx() ctx: RequestContext, @Req() req: Request & { rawBody?: string }, @Body() body: any, @Res() res: Response) {
         try {
             this.logger.log('Received Lyra IPN webhook');
 
-            // 1. Parse Lyra Data
-            const krAnswer = body['kr-answer']; // JSON String
+            // 1. Parse Lyra Data - try to use rawBody for signature verification
+            const rawBody = (req as any).rawBody;
+            let krAnswerForHmac: string | undefined;
+
+            // Extract kr-answer from raw body if available (preserves exact bytes for HMAC)
+            if (rawBody && typeof rawBody === 'string') {
+                // rawBody is form-urlencoded, parse it to get kr-answer
+                try {
+                    const params = new URLSearchParams(rawBody);
+                    krAnswerForHmac = params.get('kr-answer') || undefined;
+                    this.logger.log(`[Lyra Debug] Using raw body for HMAC. Length: ${rawBody.length}`);
+                } catch (e) {
+                    this.logger.warn(`[Lyra Debug] Failed to parse rawBody as form-urlencoded: ${e}`);
+                }
+            }
+
+            const krAnswer = krAnswerForHmac || body['kr-answer']; // Fallback to parsed body
             const krHash = body['kr-hash'];
 
             if (!krAnswer || !krHash) {

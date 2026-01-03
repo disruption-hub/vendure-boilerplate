@@ -72,6 +72,25 @@ export const config: VendureConfig = {
             ],
             credentials: true,
         },
+        middleware: [
+            {
+                route: '/payments/lyra-ipn',
+                handler: (req: any, res: any, next: any) => {
+                    // Store raw body for HMAC signature verification
+                    if (req.readable) {
+                        let data = '';
+                        req.setEncoding('utf8');
+                        req.on('data', (chunk: string) => { data += chunk; });
+                        req.on('end', () => {
+                            req.rawBody = data;
+                            next();
+                        });
+                    } else {
+                        next();
+                    }
+                },
+            },
+        ],
     },
     authOptions: {
         tokenMethod: ['bearer', 'cookie'],
@@ -103,6 +122,17 @@ export const config: VendureConfig = {
     },
     paymentOptions: {
         paymentMethodHandlers: [dummyPaymentHandler],
+        // Allow a no-op transition (Created -> Created) so a payment method can create a payment session
+        // (e.g. generate a formToken) without implying authorization/settlement.
+        customPaymentProcess: [
+            {
+                transitions: {
+                    Created: {
+                        to: ['Created'],
+                    },
+                },
+            } as any,
+        ],
     },
     // When adding or altering custom field definitions, the database will
     // need to be updated. See the "Migrations" section in README.md.
