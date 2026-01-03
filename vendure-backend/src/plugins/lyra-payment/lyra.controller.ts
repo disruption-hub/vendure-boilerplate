@@ -60,28 +60,25 @@ export class LyraController {
                 return res.status(400).send('Missing required fields');
             }
 
-            const data = JSON.parse(krAnswer);
+            // --- Multi-Variant Payload Generation ---
+            const payloadVariants: { label: string, data: string }[] = [{ label: 'As Extracted', data: krAnswer }];
+            try {
+                const unescaped = JSON.parse(`"${krAnswer}"`);
+                if (unescaped !== krAnswer) payloadVariants.push({ label: 'Unescaped JSON', data: unescaped });
+            } catch (e) { }
 
             // 2. Retrieve Lyra HMAC key from Vendure Config
             const methods = await this.paymentMethodService.findAll(ctx);
             const lyraMethod = methods.items.find(m => m.handler.code === 'lyra-payment');
-
             if (!lyraMethod) {
-                this.logger.error('Lyra payment method not found');
                 return res.status(500).send('Configuration Error');
             }
 
-            // Determine if we're in test mode
             const rawTestMode = lyraMethod.handler.args.find(a => a.name === 'testMode')?.value;
             const testMode = parseBoolean(rawTestMode, true);
 
-            const configuredTestKey = lyraMethod.handler.args.find(a => a.name === 'testHmacKey')?.value;
-            const envTestKey = process.env.LYRA_TEST_HMAC_KEY;
-            const testKey = (!configuredTestKey || isMaskedSecret(configuredTestKey) ? envTestKey : configuredTestKey)?.trim?.() ?? configuredTestKey;
-
-            const configuredProdKey = lyraMethod.handler.args.find(a => a.name === 'prodHmacKey')?.value;
-            const envProdKey = process.env.LYRA_PROD_HMAC_KEY;
-            const prodKey = (!configuredProdKey || isMaskedSecret(configuredProdKey) ? envProdKey : configuredProdKey)?.trim?.() ?? configuredProdKey;
+            const testKey = (process.env.LYRA_TEST_HMAC_KEY || lyraMethod.handler.args.find(a => a.name === 'testHmacKey')?.value || '').trim();
+            const prodKey = (process.env.LYRA_PROD_HMAC_KEY || lyraMethod.handler.args.find(a => a.name === 'prodHmacKey')?.value || '').trim();
 
             const keysToTry: { label: string, key: string }[] = [];
             if (testKey) keysToTry.push({ label: 'TEST', key: testKey });
@@ -92,64 +89,47 @@ export class LyraController {
                 return res.status(500).send('Configuration Error');
             }
 
-            // 3. Verify HMAC-SHA256 Signature
-            const providedHash = String(krHash).trim();
-            const normalizedProvided = providedHash.replace(/=+$/g, '');
+            // 3. Signature Laboratory: Try every combination
+            const normalizedProvided = String(krHash).trim().replace(/=+$/g, '');
+            let matchedResult = '';
 
-            // Helper to compute and check hash
-            const checkSignature = (key: string | Buffer, internalLabel: string): boolean => {
-                const computedHex = crypto.createHmac('sha256', key).update(krAnswer, 'utf8').digest('hex');
-                const computedBase64 = crypto.createHmac('sha256', key).update(krAnswer, 'utf8').digest('base64');
-                const computedBase64Url = computedBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+            for (const keyItem of keysToTry) {
+                const keyVariants: { label: string, key: string | Buffer }[] = [
+                    { label: 'UTF-8', key: keyItem.key }
+                ];
+                try {
+                    const hexBuf = Buffer.from(keyItem.key, 'hex');
+                    if (hexBuf.length > 0 && /^[0-9a-fA-F]+$/.test(keyItem.key)) keyVariants.push({ label: 'Hex', key: hexBuf });
+                } catch (e) { }
+                try {
+                    const base64Buf = Buffer.from(keyItem.key, 'base64');
+                    if (base64Buf.length > 0) keyVariants.push({ label: 'Base64', key: base64Buf });
+                } catch (e) { }
 
-                const matches = (computedHex === normalizedProvided ||
-                    computedBase64 === normalizedProvided ||
-                    computedBase64Url === normalizedProvided);
-
-                return matches;
-            };
-
-            let matchedKeyLabel = '';
-            for (const item of keysToTry) {
-                const keyStr = item.key || '';
-                this.logger.log(`[Lyra] Trying ${item.label} key (len: ${keyStr.length}, starts with: ${keyStr.substring(0, 4)}...)`);
-
-                // Try key as UTF-8 string
-                if (checkSignature(item.key, `${item.label} (UTF-8)`)) {
-                    matchedKeyLabel = `${item.label} (UTF-8)`;
-                    break;
+                for (const keyVariant of keyVariants) {
+                    for (const payloadVariant of payloadVariants) {
+                        const hmac = crypto.createHmac('sha256', keyVariant.key).update(payloadVariant.data, 'utf8');
+                        const computedHex = hmac.digest('hex');
+                        if (computedHex === normalizedProvided) {
+                            matchedResult = `${keyItem.label} Key (${keyVariant.label}) + Payload (${payloadVariant.label})`;
+                            break;
+                        }
+                    }
+                    if (matchedResult) break;
                 }
-
-                // Try key as Hex string
-                try {
-                    const keyBuf = Buffer.from(item.key, 'hex');
-                    if (keyBuf.length > 0 && checkSignature(keyBuf, `${item.label} (Hex)`)) {
-                        matchedKeyLabel = `${item.label} (Hex)`;
-                        break;
-                    }
-                } catch (e) { }
-
-                // Try key as Base64 string
-                try {
-                    const keyBuf = Buffer.from(item.key, 'base64');
-                    const isBase64 = /^[A-Za-z0-9+/]*={0,2}$/.test(item.key);
-                    if (isBase64 && keyBuf.length > 0 && checkSignature(keyBuf, `${item.label} (Base64)`)) {
-                        matchedKeyLabel = `${item.label} (Base64)`;
-                        break;
-                    }
-                } catch (e) { }
+                if (matchedResult) break;
             }
 
-            if (!matchedKeyLabel) {
-                const testKeyToLog = testKey || '';
-                const computedHex = testKeyToLog ? crypto.createHmac('sha256', testKeyToLog).update(krAnswer).digest('hex') : 'N/A';
-                this.logger.error(`[Lyra] Invalid signature. Provided: ${normalizedProvided.substring(0, 16)}..., Computed(UTF8-Test): ${computedHex.substring(0, 16)}...`);
-                this.logger.error(`[Lyra] Payload sample: ${krAnswer.substring(0, 60)}...`);
-                // Bypass 403 for one final log review
-                this.logger.warn('[Lyra] WARNING: Strict mode bypassed for one final trace');
+            if (!matchedResult) {
+                this.logger.error(`[Lyra] Signature FAILED after trying all variants.`);
+                this.logger.error(`[Lyra] Provided Hash: ${normalizedProvided.substring(0, 16)}...`);
+                this.logger.error(`[Lyra] Payload Sample: ${krAnswer.substring(0, 100)}...`);
+                this.logger.warn('[Lyra] WARNING: Strict mode bypassed for LABORATORY TRACE');
             } else {
-                this.logger.log(`[Lyra] Signature MATCHED using ${matchedKeyLabel} key`);
+                this.logger.log(`[Lyra] Signature SUCCESS! Match: ${matchedResult}`);
             }
+
+            const data = JSON.parse(payloadVariants.find(p => p.label === 'Unescaped JSON')?.data || krAnswer);
 
             // 4. Update Order Status
             const orderCode = data?.orderDetails?.orderId;
