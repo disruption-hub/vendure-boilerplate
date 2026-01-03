@@ -152,10 +152,22 @@ export class LyraController {
                 return res.status(400).send('Missing transaction id');
             }
 
-            const payment = order.payments?.find(p => p.transactionId === transactionUuid);
+            let payment = order.payments?.find(p => p.transactionId === transactionUuid);
 
             if (!payment) {
-                this.logger.warn(`Payment not found for transaction ${transactionUuid}`);
+                // Fallback: If the payment was created but has no transaction ID yet (common with Lyra form tokens),
+                // find the 'Created' payment for this order.
+                payment = order.payments?.find(p => p.state === 'Created');
+
+                if (payment) {
+                    this.logger.log(`Found 'Created' payment ${payment.id} for order ${order.code}. Updating transactionId to ${transactionUuid}.`);
+                    payment.transactionId = transactionUuid;
+                    await this.connection.getRepository(ctx, 'Payment').save(payment);
+                }
+            }
+
+            if (!payment) {
+                this.logger.warn(`Payment not found for transaction ${transactionUuid} and no 'Created' payment found.`);
                 return res.status(200).send('OK');
             }
 
