@@ -7,25 +7,53 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
     code: 'lyra-payment',
     description: [{ languageCode: LanguageCode.en, value: 'Lyra / PayZen' }],
     args: {
-        username: {
-            type: 'string',
-            label: [{ languageCode: LanguageCode.en, value: 'Site ID (Username)' }],
-            description: [{ languageCode: LanguageCode.en, value: 'Your Lyra Site ID' }]
+        testMode: {
+            type: 'boolean',
+            defaultValue: true,
+            label: [{ languageCode: LanguageCode.en, value: 'Test Mode' }],
+            description: [{ languageCode: LanguageCode.en, value: 'Enable test mode (use test credentials)' }]
         },
-        password: {
+        // Test credentials
+        testUsername: {
             type: 'string',
-            label: [{ languageCode: LanguageCode.en, value: 'Test/Prod Password' }],
-            description: [{ languageCode: LanguageCode.en, value: 'Your Lyra API password' }]
+            label: [{ languageCode: LanguageCode.en, value: 'Test Site ID' }],
+            description: [{ languageCode: LanguageCode.en, value: 'Test environment Site ID' }]
         },
-        publicKey: {
+        testPassword: {
             type: 'string',
-            label: [{ languageCode: LanguageCode.en, value: 'Public Key' }],
-            description: [{ languageCode: LanguageCode.en, value: 'Your Lyra public key for frontend' }]
+            label: [{ languageCode: LanguageCode.en, value: 'Test Password' }],
+            description: [{ languageCode: LanguageCode.en, value: 'Test environment API password' }]
         },
-        hmacKey: {
+        testPublicKey: {
             type: 'string',
-            label: [{ languageCode: LanguageCode.en, value: 'HMAC Key' }],
-            description: [{ languageCode: LanguageCode.en, value: 'Your Lyra HMAC key for webhook verification' }]
+            label: [{ languageCode: LanguageCode.en, value: 'Test Public Key' }],
+            description: [{ languageCode: LanguageCode.en, value: 'Test environment public key' }]
+        },
+        testHmacKey: {
+            type: 'string',
+            label: [{ languageCode: LanguageCode.en, value: 'Test HMAC Key' }],
+            description: [{ languageCode: LanguageCode.en, value: 'Test environment HMAC key' }]
+        },
+        // Production credentials
+        prodUsername: {
+            type: 'string',
+            label: [{ languageCode: LanguageCode.en, value: 'Production Site ID' }],
+            description: [{ languageCode: LanguageCode.en, value: 'Production environment Site ID' }]
+        },
+        prodPassword: {
+            type: 'string',
+            label: [{ languageCode: LanguageCode.en, value: 'Production Password' }],
+            description: [{ languageCode: LanguageCode.en, value: 'Production environment API password' }]
+        },
+        prodPublicKey: {
+            type: 'string',
+            label: [{ languageCode: LanguageCode.en, value: 'Production Public Key' }],
+            description: [{ languageCode: LanguageCode.en, value: 'Production environment public key' }]
+        },
+        prodHmacKey: {
+            type: 'string',
+            label: [{ languageCode: LanguageCode.en, value: 'Production HMAC Key' }],
+            description: [{ languageCode: LanguageCode.en, value: 'Production environment HMAC key' }]
         },
         endpoint: {
             type: 'string',
@@ -36,10 +64,20 @@ export const lyraPaymentHandler = new PaymentMethodHandler({
     },
 
     createPayment: async (ctx, order, amount, args, metadata): Promise<CreatePaymentResult | CreatePaymentErrorResult> => {
-        const username = args.username || process.env.LYRA_SITE_ID;
-        const password = args.password || process.env.LYRA_PASSWORD;
-        const publicKey = args.publicKey || process.env.LYRA_PUBLIC_KEY;
+        // Determine which credentials to use based on test mode
+        const isTestMode = args.testMode ?? true;
+        const username = isTestMode
+            ? (args.testUsername || process.env.LYRA_TEST_SITE_ID)
+            : (args.prodUsername || process.env.LYRA_PROD_SITE_ID);
+        const password = isTestMode
+            ? (args.testPassword || process.env.LYRA_TEST_PASSWORD)
+            : (args.prodPassword || process.env.LYRA_PROD_PASSWORD);
+        const publicKey = isTestMode
+            ? (args.testPublicKey || process.env.LYRA_TEST_PUBLIC_KEY)
+            : (args.prodPublicKey || process.env.LYRA_PROD_PUBLIC_KEY);
         const endpoint = args.endpoint || process.env.LYRA_ENDPOINT || 'https://api.micuentaweb.pe/api-payment/V4/';
+
+        Logger.info(`Using ${isTestMode ? 'TEST' : 'PRODUCTION'} mode for Lyra payment`, loggerCtx);
 
         if (!username || !password) {
             Logger.error('Lyra credentials not configured', loggerCtx);

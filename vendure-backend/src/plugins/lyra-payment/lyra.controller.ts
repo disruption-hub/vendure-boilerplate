@@ -29,7 +29,7 @@ export class LyraController {
 
             const data = JSON.parse(krAnswer);
 
-            // 2. Retrieve your Lyra Password from Vendure Config
+            // 2. Retrieve Lyra HMAC key from Vendure Config
             const methods = await this.paymentMethodService.findAll(ctx);
             const lyraMethod = methods.items.find(m => m.handler.code === 'lyra-payment');
 
@@ -38,16 +38,20 @@ export class LyraController {
                 return res.status(500).send('Configuration Error');
             }
 
-            const password = lyraMethod.handler.args.find(a => a.name === 'password')?.value;
+            // Determine if we're in test mode
+            const testMode = lyraMethod.handler.args.find(a => a.name === 'testMode')?.value ?? true;
+            const hmacKeyField = testMode ? 'testHmacKey' : 'prodHmacKey';
+            const hmacKey = lyraMethod.handler.args.find(a => a.name === hmacKeyField)?.value
+                || process.env[testMode ? 'LYRA_TEST_HMAC_KEY' : 'LYRA_PROD_HMAC_KEY'];
 
-            if (!password) {
-                this.logger.error('Lyra password not configured');
+            if (!hmacKey) {
+                this.logger.error(`Lyra HMAC key not configured for ${testMode ? 'TEST' : 'PRODUCTION'} mode`);
                 return res.status(500).send('Configuration Error');
             }
 
             // 3. Verify HMAC-SHA256 Signature
             const calculatedHash = crypto
-                .createHmac('sha256', password)
+                .createHmac('sha256', hmacKey)
                 .update(krAnswer)
                 .digest('hex');
 
