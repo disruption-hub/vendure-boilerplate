@@ -1,6 +1,4 @@
 import { PluginCommonModule, VendurePlugin } from '@vendure/core';
-import { MiddlewareConsumer, NestModule, RequestMethod } from '@nestjs/common';
-import { RawBodyMiddleware } from './raw-body.middleware';
 import { lyraPaymentHandler } from './lyra.handler';
 import { LyraController } from './lyra.controller';
 import gql from 'graphql-tag';
@@ -35,10 +33,4 @@ import { LyraShopResolver } from './lyra-shop.resolver';
         return config;
     },
 })
-export class LyraPlugin implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer
-            .apply(RawBodyMiddleware)
-            .forRoutes('*');
-    }
-}
+export class LyraPlugin { }

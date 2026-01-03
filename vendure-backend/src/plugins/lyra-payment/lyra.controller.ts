@@ -31,31 +31,26 @@ export class LyraController {
     @Post('lyra-ipn')
     async handleLyraWebhook(@Ctx() ctx: RequestContext, @Body() body: any, @Req() req: Request, @Res() res: Response) {
         try {
-            this.logger.log(`Received Lyra IPN webhook. Path: ${req.path}, URL: ${req.url}`);
-
-            // Diagnostic: Inspect body structure
-            const bodyKeys = Object.keys(body || {});
-            const bodyType = Array.isArray(body) ? 'array' : typeof body;
-            this.logger.log(`[Lyra] Body type: ${bodyType}, Keys: ${bodyKeys.join(', ')}`);
+            this.logger.log(`Received Lyra IPN webhook`);
 
             const rawBody = (req as any).rawBody;
             let krAnswer: string;
             let krHash: string;
 
             if (Buffer.isBuffer(rawBody)) {
-                this.logger.log(`[Lyra] SUCCESS: Processing rawBody Buffer (length: ${rawBody.length})`);
+                this.logger.log(`[Lyra] Processing rawBody Buffer (length: ${rawBody.length})`);
                 const rawStr = rawBody.toString('utf8');
                 const params = new URLSearchParams(rawStr);
                 krAnswer = params.get('kr-answer') || '';
                 krHash = params.get('kr-hash') || '';
             } else if (Buffer.isBuffer(body)) {
-                this.logger.log(`[Lyra] OK: Processing request body Buffer (length: ${body.length})`);
+                this.logger.log(`[Lyra] Processing request body Buffer (length: ${body.length})`);
                 const rawStr = body.toString('utf8');
                 const params = new URLSearchParams(rawStr);
                 krAnswer = params.get('kr-answer') || '';
                 krHash = params.get('kr-hash') || '';
             } else {
-                this.logger.warn(`[Lyra] FAIL: rawBody is ${typeof rawBody}, body is ${bodyType}. Signature will likely fail.`);
+                this.logger.warn(`[Lyra] Missing rawBody buffer (using parsed body - signature might fail)`);
                 krAnswer = typeof body['kr-answer'] === 'string' ? body['kr-answer'] : JSON.stringify(body['kr-answer']);
                 krHash = body['kr-hash'];
             }
@@ -65,7 +60,6 @@ export class LyraController {
                 return res.status(400).send('Missing required fields');
             }
 
-            this.logger.log(`[Lyra] Payload for HMAC (length: ${krAnswer.length}): ${krAnswer.substring(0, 50)}...`);
             const data = JSON.parse(krAnswer);
 
             // 2. Retrieve Lyra HMAC key from Vendure Config
@@ -108,40 +102,35 @@ export class LyraController {
                 const computedBase64 = crypto.createHmac('sha256', key).update(krAnswer, 'utf8').digest('base64');
                 const computedBase64Url = computedBase64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
 
-                return normalizedProvided.toLowerCase() === computedHex.toLowerCase() ||
-                    normalizedProvided === computedBase64 ||
-                    normalizedProvided === computedBase64Url;
+                const matches = (computedHex === normalizedProvided ||
+                    computedBase64 === normalizedProvided ||
+                    computedBase64Url === normalizedProvided);
+
+                return matches;
             };
 
-            let isValid = false;
-            let matchedKey = '';
-
-            for (const { label, key } of keysToTry) {
+            let matchedKeyLabel = '';
+            for (const item of keysToTry) {
                 // Try UTF-8
-                if (checkSignature(key, `${label} (UTF-8)`)) {
-                    isValid = true;
-                    matchedKey = `${label} (UTF-8)`;
+                if (checkSignature(item.key, `${item.label} (UTF-8)`)) {
+                    matchedKeyLabel = `${item.label} (UTF-8)`;
                     break;
                 }
                 // Try Base64
                 try {
-                    const keyBuffer = Buffer.from(key, 'base64');
-                    if (keyBuffer.length > 0 && checkSignature(keyBuffer, `${label} (Base64)`)) {
-                        isValid = true;
-                        matchedKey = `${label} (Base64)`;
+                    const keyBuffer = Buffer.from(item.key, 'base64');
+                    if (keyBuffer.length > 0 && checkSignature(keyBuffer, `${item.label} (Base64)`)) {
+                        matchedKeyLabel = `${item.label} (Base64)`;
                         break;
                     }
                 } catch (e) { }
             }
 
-            if (!isValid) {
-                // Log failure detail for debugging
-                const keyToLog = testMode ? testKey : prodKey;
-                const computedHex = keyToLog ? crypto.createHmac('sha256', keyToLog).update(krAnswer, 'utf8').digest('hex') : 'N/A';
-                this.logger.error(`[Lyra] Invalid signature. Computed: ${computedHex.substring(0, 16)}..., Provided: ${normalizedProvided.substring(0, 16)}...`);
-                return res.status(403).send('Invalid Signature');
+            if (!matchedKeyLabel) {
+                this.logger.error(`[Lyra] Invalid signature. Provided: ${krHash.substring(0, 16)}...`);
+                return res.status(403).send('Invalid signature');
             } else {
-                this.logger.log(`[Lyra] Signature MATCHED using ${matchedKey} key.`);
+                this.logger.log(`[Lyra] Signature MATCHED using ${matchedKeyLabel} key`);
             }
 
             // 4. Update Order Status
