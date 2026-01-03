@@ -17,6 +17,33 @@ import { ProxyTrustPlugin } from './plugins/proxy-trust.plugin';
 import { LyraPlugin } from './plugins/lyra-payment/lyra.plugin';
 import express from 'express';
 
+// --- GLOBAL MONKEY PATCH TO CAPTURE RAW BODY ---
+// This ensures that whenever Express or NestJS calls json() or urlencoded() fillers,
+// we inject a 'verify' function to capture the raw request buffer into req.rawBody.
+const patchBodyParser = (target: any) => {
+    if (!target) return;
+    ['json', 'urlencoded'].forEach(methodName => {
+        const originalMethod = target[methodName];
+        if (typeof originalMethod !== 'function') return;
+        target[methodName] = (options: any = {}) => {
+            const originalVerify = options.verify;
+            options.verify = (req: any, res: any, buf: Buffer) => {
+                if (buf && buf.length) {
+                    req.rawBody = buf;
+                }
+                if (typeof originalVerify === 'function') originalVerify(req, res, buf);
+            };
+            return originalMethod(options);
+        };
+    });
+};
+patchBodyParser(express);
+try {
+    patchBodyParser(require('body-parser'));
+} catch (e) {
+    // body-parser not directly available, that's fine
+}
+
 const isDev: Boolean = process.env.APP_ENV === 'dev';
 
 const sgMail = require('@sendgrid/mail');
@@ -73,37 +100,6 @@ export const config: VendureConfig = {
             ],
             credentials: true,
         },
-        middleware: [
-            {
-                route: '/payments/lyra-ipn',
-                handler: (req: any, res: any, next: any) => {
-                    // Capture raw bytes and bypass global body-parser
-                    express.raw({
-                        type: '*/*',
-                        verify: (req: any, res, buf) => {
-                            req.rawBody = buf;
-                        }
-                    })(req, res, (err: any) => {
-                        if (err) return next(err);
-
-                        // If we captured a buffer, manually parse it if it's form-urlencoded
-                        // This prevents Vendure's global urlencoded body-parser from hanging
-                        const contentType = req.headers['content-type'] || '';
-                        if (contentType.includes('application/x-www-form-urlencoded') && Buffer.isBuffer(req.body)) {
-                            const rawStr = req.body.toString('utf8');
-                            const params = new URLSearchParams(rawStr);
-                            const parsedBody: any = {};
-                            params.forEach((value, key) => {
-                                parsedBody[key] = value;
-                            });
-                            req.body = parsedBody;
-                            req._body = true; // Mark as parsed for standard body-parser
-                        }
-                        next();
-                    });
-                },
-            },
-        ],
     },
     authOptions: {
         tokenMethod: ['bearer', 'cookie'],
