@@ -45,11 +45,25 @@ function createRemoteExecutor(url: string) {
       driver: ApolloDriver,
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        const vendureUrl = configService.get<string>('VENDURE_SHOP_API_URL') || 'http://localhost:3000/shop-api';
-        const bookingUrl = configService.get<string>('BOOKING_SERVICE_URL') || 'http://localhost:3005/graphql';
+        const normalizeUrl = (url: string, suffix: string) => {
+          if (!url) return url;
+          // If the URL already ends with the suffix, or has a path after the domain, trust it
+          // Otherwise, if it's just a domain/origin, append the suffix
+          const urlObj = new URL(url);
+          if (urlObj.pathname === '/' || urlObj.pathname === '') {
+            return `${url.replace(/\/$/, '')}${suffix}`;
+          }
+          return url;
+        };
 
-        console.log('[AppModule] Vendure URL:', vendureUrl);
-        console.log('[AppModule] Booking URL:', bookingUrl);
+        const rawVendureUrl = configService.get<string>('VENDURE_SHOP_API_URL') || 'http://localhost:3000/shop-api';
+        const rawBookingUrl = configService.get<string>('BOOKING_SERVICE_URL') || 'http://localhost:3005/graphql';
+
+        const vendureUrl = normalizeUrl(rawVendureUrl, '/shop-api');
+        const bookingUrl = normalizeUrl(rawBookingUrl, '/graphql');
+
+        console.log('[AppModule] Vendure URL (normalized):', vendureUrl);
+        console.log('[AppModule] Booking URL (normalized):', bookingUrl);
 
         const vendureExecutor = createRemoteExecutor(vendureUrl);
         const bookingExecutor = createRemoteExecutor(bookingUrl);
