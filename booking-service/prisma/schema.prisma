@@ -25,6 +25,18 @@ model User {
   updatedAt      DateTime @updatedAt
 }
 
+enum VenueType {
+  SITE    // A physical building/address
+  UNIT    // A business unit within a site (e.g. Yoga Studio)
+  VIRTUAL // An online-only presence
+}
+
+enum NetworkType {
+  COMPLEX    // Vertical grouping (The Building)
+  NETWORK    // Horizontal grouping (The Franchise)
+  FEDERATION // Ad-hoc partnership (Access sharing)
+}
+
 model Venue {
   id           String   @id @default(uuid())
   name         String
@@ -32,9 +44,25 @@ model Venue {
   address      String?
   timezone     String   @default("UTC")
   openingHours Json?    // Structure: { mon: { open: "09:00", close: "18:00" }, ... }
+  amenities    Json?    // e.g. ["wifi", "parking", "lockers", "showers"]
+  type         VenueType @default(UNIT)
   
   spaces       Space[]
   
+  profileId    String?
+  profile      BookingProfile? @relation(fields: [profileId], references: [id])
+
+  // Hierarchy
+  parentId     String?
+  parent       Venue?    @relation("VenueHierarchy", fields: [parentId], references: [id])
+  children     Venue[]   @relation("VenueHierarchy")
+
+  // Horizontal Groups (Federations)
+  networks     VenueNetwork[] @relation("VenueToNetwork")
+
+  // Pass Validity
+  validPasses  PassTemplate[] @relation("PassVenueValidity")
+
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -45,10 +73,22 @@ model Space {
   venue        Venue    @relation(fields: [venueId], references: [id])
   
   name         String
+  type         String   @default("room") // e.g. "yoga_studio", "cowork", "room"
   capacity     Int      @default(1)
   amenities    Json?    // e.g. ["yoga_mats", "projector"]
   
   sessions     Session[]
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SpacePreset {
+  id           String   @id @default(uuid())
+  name         String   // e.g. "Standard Yoga Studio"
+  type         String   // e.g. "yoga_studio"
+  capacity     Int      @default(1)
+  amenities    Json?    // e.g. ["yoga_mats", "sound_system"]
   
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -64,6 +104,9 @@ model ServiceProvider {
   
   services     Service[]
   sessions     SessionProvider[]
+
+  profileId    String?
+  profile      BookingProfile? @relation(fields: [profileId], references: [id])
   
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -155,6 +198,8 @@ model PassTemplate {
   
   // Restrictions
   validForCategories      ServiceCategory[] @relation("PassTemplateCategories")
+  validForNetworks        VenueNetwork[]    @relation("PassNetworkValidity")
+  validForVenues          Venue[]           @relation("PassVenueValidity")
   
   passes                  Pass[]
   
@@ -215,4 +260,35 @@ enum BookingStatus {
   CONFIRMED
   CANCELLED
   WAITLISTED
+}
+
+model BookingProfile {
+  id           String   @id @default(uuid())
+  slug         String   @unique // e.g. "yoga-studio", "hotel"
+  name         String   // e.g. "Yoga Studio"
+  description  String?
+  
+  // Configuration
+  metrics      Json?    // Dashboard metrics config
+  uiConfig     Json?    // UI branding/labels
+  
+  // Relations
+  venues       Venue[]
+  providers    ServiceProvider[]
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model VenueNetwork {
+  id           String   @id @default(uuid())
+  name         String
+  description  String?
+  type         NetworkType @default(NETWORK)
+  
+  venues       Venue[] @relation("VenueToNetwork")
+  validPasses  PassTemplate[] @relation("PassNetworkValidity")
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

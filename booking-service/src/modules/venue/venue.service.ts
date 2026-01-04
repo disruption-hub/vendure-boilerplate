@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/booking-client';
 
 @Injectable()
 export class VenueService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   create(data: Prisma.VenueCreateInput) {
     return this.prisma.venue.create({ data });
@@ -12,14 +12,26 @@ export class VenueService {
 
   findAll() {
     return this.prisma.venue.findMany({
-      include: { spaces: true },
+      include: {
+        spaces: true,
+        networks: true,
+        parent: true,
+        children: true,
+        profile: true
+      },
     });
   }
 
   findOne(id: string) {
     return this.prisma.venue.findUnique({
       where: { id },
-      include: { spaces: true },
+      include: {
+        spaces: true,
+        networks: true,
+        parent: true,
+        children: true,
+        profile: true
+      },
     });
   }
 
@@ -49,6 +61,34 @@ export class VenueService {
   findSpaces(venueId: string) {
     return this.prisma.space.findMany({
       where: { venueId },
+    });
+  }
+
+  updateSpace(id: string, data: Prisma.SpaceUpdateInput) {
+    return this.prisma.space.update({
+      where: { id },
+      data,
+    });
+  }
+
+  removeSpace(id: string) {
+    return this.prisma.space.delete({
+      where: { id },
+    });
+  }
+
+  // Space Preset Logic
+  createSpacePreset(data: Prisma.SpacePresetCreateInput) {
+    return this.prisma.spacePreset.create({ data });
+  }
+
+  findAllSpacePresets() {
+    return this.prisma.spacePreset.findMany();
+  }
+
+  removeSpacePreset(id: string) {
+    return this.prisma.spacePreset.delete({
+      where: { id },
     });
   }
 }

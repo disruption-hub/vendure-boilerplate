@@ -17,6 +17,26 @@ export class PassService {
     });
   }
 
+  findOneTemplate(id: string) {
+    return this.prisma.passTemplate.findUnique({
+      where: { id },
+      include: { validForCategories: true },
+    });
+  }
+
+  updateTemplate(id: string, data: Prisma.PassTemplateUpdateInput) {
+    return this.prisma.passTemplate.update({
+      where: { id },
+      data,
+    });
+  }
+
+  removeTemplate(id: string) {
+    return this.prisma.passTemplate.delete({
+      where: { id },
+    });
+  }
+
   // User Passes
   createPass(data: Prisma.PassCreateInput) {
     return this.prisma.pass.create({ data });

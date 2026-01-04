@@ -43,6 +43,7 @@ export class JwtAuthGuard implements CanActivate {
       request.user = {
         zkeyId: payload.sub, // 'sub' is standard for subject ID
         email: payload.email,
+        roles: payload.roles || [],
       };
       return true;
     } catch (e) {

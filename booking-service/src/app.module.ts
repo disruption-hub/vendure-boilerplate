@@ -15,6 +15,8 @@ import { ServiceModule } from './modules/service/service.module';
 import { ServiceProviderModule } from './modules/service-provider/service-provider.module';
 import { ScheduleModule } from './modules/schedule/schedule.module';
 import { PassModule } from './modules/pass/pass.module';
+import { BookingProfileModule } from './modules/booking-profile/booking-profile.module';
+import { VenueNetworkModule } from './modules/venue-network/venue-network.module';
 
 @Module({
   imports: [
@@ -35,9 +37,12 @@ import { PassModule } from './modules/pass/pass.module';
     ServiceModule,
     ServiceProviderModule,
     ScheduleModule,
+    ScheduleModule,
     PassModule,
+    BookingProfileModule,
+    VenueNetworkModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

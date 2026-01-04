@@ -4,9 +4,11 @@ import { BookingsController } from './bookings.controller';
 import { BookingsResolver } from '../../graphql/bookings.resolver';
 import { PrismaModule } from '../prisma/prisma.module';
 
+import { ScheduleModule } from '../schedule/schedule.module';
+
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, ScheduleModule],
   controllers: [BookingsController],
   providers: [BookingsService, BookingsResolver],
 })
-export class BookingsModule {}
+export class BookingsModule { }
