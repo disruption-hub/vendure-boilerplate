@@ -1,7 +1,7 @@
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Package, User, MapPin, Calendar } from 'lucide-react';
+import { Package, User, MapPin, Calendar, Wallet } from 'lucide-react';
 import { noIndexRobots } from '@/lib/metadata';
 
 export const metadata: Metadata = {
@@ -14,6 +14,7 @@ export const revalidate = 0;
 const navItems = [
     { href: '/account/orders', label: 'Orders', icon: Package },
     { href: '/account/bookings', label: 'Bookings', icon: Calendar },
+    { href: '/account/wallet', label: 'Wallet', icon: Wallet },
     { href: '/account/addresses', label: 'Addresses', icon: MapPin },
     { href: '/account/profile', label: 'Profile', icon: User },
 ];

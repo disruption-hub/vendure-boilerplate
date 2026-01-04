@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/booking-client';
 
 @Injectable()
 export class PassService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   // Templates
   createTemplate(data: Prisma.PassTemplateCreateInput) {
@@ -22,9 +22,9 @@ export class PassService {
     return this.prisma.pass.create({ data });
   }
 
-  findUserPasses(userId: string) {
+  findUserPasses(zkeyId: string) {
     return this.prisma.pass.findMany({
-      where: { userId },
+      where: { user: { zkeyId } },
       include: { template: true },
     });
   }

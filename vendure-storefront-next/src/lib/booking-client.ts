@@ -31,6 +31,23 @@ export interface Session {
     maxCapacity: number;
 }
 
+export interface PassTemplate {
+    id: string;
+    name: string;
+    type: 'PACK' | 'MEMBERSHIP';
+    creditsAmount?: number;
+    unlimited: boolean;
+}
+
+export interface Pass {
+    id: string;
+    template: PassTemplate;
+    status: 'ACTIVE' | 'EXPIRED' | 'REVOKED';
+    creditsRemaining?: number;
+    expiryDate?: string;
+    createdAt: string;
+}
+
 // Client
 export class BookingClient {
     private getClient(token?: string) {
@@ -59,6 +76,29 @@ export class BookingClient {
         `;
         const data = await this.getClient(token).request<{ myBookings: Booking[] }>(query);
         return data.myBookings;
+    }
+
+    async getMyPasses(token: string): Promise<Pass[]> {
+        const query = gql`
+            query GetMyPasses {
+                myPasses {
+                    id
+                    status
+                    creditsRemaining
+                    expiryDate
+                    createdAt
+                    template {
+                        id
+                        name
+                        type
+                        creditsAmount
+                        unlimited
+                    }
+                }
+            }
+        `;
+        const data = await this.getClient(token).request<{ myPasses: Pass[] }>(query);
+        return data.myPasses;
     }
 
     async cancelBooking(token: string, bookingId: string) {

@@ -73,3 +73,44 @@ export class Booking {
   @Field()
   createdAt: Date;
 }
+@ObjectType()
+export class PassTemplate {
+  @Field(() => ID)
+  id: string;
+
+  @Field()
+  name: string;
+
+  @Field()
+  type: string; // 'PACK' | 'MEMBERSHIP'
+
+  @Field(() => Int, { nullable: true })
+  creditsAmount?: number;
+
+  @Field()
+  unlimited: boolean;
+
+  @Field(() => Int, { nullable: true })
+  validDurationDays?: number;
+}
+
+@ObjectType()
+export class Pass {
+  @Field(() => ID)
+  id: string;
+
+  @Field(() => PassTemplate)
+  template: PassTemplate;
+
+  @Field()
+  status: string; // 'ACTIVE' | 'EXPIRED' | 'REVOKED'
+
+  @Field(() => Int, { nullable: true })
+  creditsRemaining?: number;
+
+  @Field({ nullable: true })
+  expiryDate?: Date;
+
+  @Field()
+  createdAt: Date;
+}
