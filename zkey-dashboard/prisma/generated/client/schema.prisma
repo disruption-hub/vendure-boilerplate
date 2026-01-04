@@ -84,10 +84,11 @@ model User {
   phoneVerified Boolean   @default(false)
   walletAddress String?   @unique
   passwordHash  String?
-  role          String    @default("user")
+  roles         String[]  @default(["user"])
   avatar        String?
   customData    Json?
   tenantId      String?
+  vendureId     String? // Bi-directional sync ID
   deletedAt     DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

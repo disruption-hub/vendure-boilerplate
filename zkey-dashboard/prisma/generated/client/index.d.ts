@@ -4004,9 +4004,9 @@ export namespace Prisma {
     phoneVerified: boolean | null
     walletAddress: string | null
     passwordHash: string | null
-    role: string | null
     avatar: string | null
     tenantId: string | null
+    vendureId: string | null
     deletedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4023,9 +4023,9 @@ export namespace Prisma {
     phoneVerified: boolean | null
     walletAddress: string | null
     passwordHash: string | null
-    role: string | null
     avatar: string | null
     tenantId: string | null
+    vendureId: string | null
     deletedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4042,10 +4042,11 @@ export namespace Prisma {
     phoneVerified: number
     walletAddress: number
     passwordHash: number
-    role: number
+    roles: number
     avatar: number
     customData: number
     tenantId: number
+    vendureId: number
     deletedAt: number
     createdAt: number
     updatedAt: number
@@ -4064,9 +4065,9 @@ export namespace Prisma {
     phoneVerified?: true
     walletAddress?: true
     passwordHash?: true
-    role?: true
     avatar?: true
     tenantId?: true
+    vendureId?: true
     deletedAt?: true
     createdAt?: true
     updatedAt?: true
@@ -4083,9 +4084,9 @@ export namespace Prisma {
     phoneVerified?: true
     walletAddress?: true
     passwordHash?: true
-    role?: true
     avatar?: true
     tenantId?: true
+    vendureId?: true
     deletedAt?: true
     createdAt?: true
     updatedAt?: true
@@ -4102,10 +4103,11 @@ export namespace Prisma {
     phoneVerified?: true
     walletAddress?: true
     passwordHash?: true
-    role?: true
+    roles?: true
     avatar?: true
     customData?: true
     tenantId?: true
+    vendureId?: true
     deletedAt?: true
     createdAt?: true
     updatedAt?: true
@@ -4195,10 +4197,11 @@ export namespace Prisma {
     phoneVerified: boolean
     walletAddress: string | null
     passwordHash: string | null
-    role: string
+    roles: string[]
     avatar: string | null
     customData: JsonValue | null
     tenantId: string | null
+    vendureId: string | null
     deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -4232,10 +4235,11 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: boolean
     passwordHash?: boolean
-    role?: boolean
+    roles?: boolean
     avatar?: boolean
     customData?: boolean
     tenantId?: boolean
+    vendureId?: boolean
     deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -4257,10 +4261,11 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: boolean
     passwordHash?: boolean
-    role?: boolean
+    roles?: boolean
     avatar?: boolean
     customData?: boolean
     tenantId?: boolean
+    vendureId?: boolean
     deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -4278,10 +4283,11 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: boolean
     passwordHash?: boolean
-    role?: boolean
+    roles?: boolean
     avatar?: boolean
     customData?: boolean
     tenantId?: boolean
+    vendureId?: boolean
     deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -4299,16 +4305,17 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: boolean
     passwordHash?: boolean
-    role?: boolean
+    roles?: boolean
     avatar?: boolean
     customData?: boolean
     tenantId?: boolean
+    vendureId?: boolean
     deletedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "primaryEmail" | "emailVerified" | "phone" | "phoneNumber" | "phoneVerified" | "walletAddress" | "passwordHash" | "role" | "avatar" | "customData" | "tenantId" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "firstName" | "lastName" | "primaryEmail" | "emailVerified" | "phone" | "phoneNumber" | "phoneVerified" | "walletAddress" | "passwordHash" | "roles" | "avatar" | "customData" | "tenantId" | "vendureId" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     refreshTokens?: boolean | User$refreshTokensArgs<ExtArgs>
     identities?: boolean | User$identitiesArgs<ExtArgs>
@@ -4342,10 +4349,11 @@ export namespace Prisma {
       phoneVerified: boolean
       walletAddress: string | null
       passwordHash: string | null
-      role: string
+      roles: string[]
       avatar: string | null
       customData: Prisma.JsonValue | null
       tenantId: string | null
+      vendureId: string | null
       deletedAt: Date | null
       createdAt: Date
       updatedAt: Date
@@ -4786,10 +4794,11 @@ export namespace Prisma {
     readonly phoneVerified: FieldRef<"User", 'Boolean'>
     readonly walletAddress: FieldRef<"User", 'String'>
     readonly passwordHash: FieldRef<"User", 'String'>
-    readonly role: FieldRef<"User", 'String'>
+    readonly roles: FieldRef<"User", 'String[]'>
     readonly avatar: FieldRef<"User", 'String'>
     readonly customData: FieldRef<"User", 'Json'>
     readonly tenantId: FieldRef<"User", 'String'>
+    readonly vendureId: FieldRef<"User", 'String'>
     readonly deletedAt: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
@@ -9705,10 +9714,11 @@ export namespace Prisma {
     phoneVerified: 'phoneVerified',
     walletAddress: 'walletAddress',
     passwordHash: 'passwordHash',
-    role: 'role',
+    roles: 'roles',
     avatar: 'avatar',
     customData: 'customData',
     tenantId: 'tenantId',
+    vendureId: 'vendureId',
     deletedAt: 'deletedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -10140,10 +10150,11 @@ export namespace Prisma {
     phoneVerified?: BoolFilter<"User"> | boolean
     walletAddress?: StringNullableFilter<"User"> | string | null
     passwordHash?: StringNullableFilter<"User"> | string | null
-    role?: StringFilter<"User"> | string
+    roles?: StringNullableListFilter<"User">
     avatar?: StringNullableFilter<"User"> | string | null
     customData?: JsonNullableFilter<"User">
     tenantId?: StringNullableFilter<"User"> | string | null
+    vendureId?: StringNullableFilter<"User"> | string | null
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -10164,10 +10175,11 @@ export namespace Prisma {
     phoneVerified?: SortOrder
     walletAddress?: SortOrderInput | SortOrder
     passwordHash?: SortOrderInput | SortOrder
-    role?: SortOrder
+    roles?: SortOrder
     avatar?: SortOrderInput | SortOrder
     customData?: SortOrderInput | SortOrder
     tenantId?: SortOrderInput | SortOrder
+    vendureId?: SortOrderInput | SortOrder
     deletedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10191,10 +10203,11 @@ export namespace Prisma {
     phoneNumber?: StringNullableFilter<"User"> | string | null
     phoneVerified?: BoolFilter<"User"> | boolean
     passwordHash?: StringNullableFilter<"User"> | string | null
-    role?: StringFilter<"User"> | string
+    roles?: StringNullableListFilter<"User">
     avatar?: StringNullableFilter<"User"> | string | null
     customData?: JsonNullableFilter<"User">
     tenantId?: StringNullableFilter<"User"> | string | null
+    vendureId?: StringNullableFilter<"User"> | string | null
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -10215,10 +10228,11 @@ export namespace Prisma {
     phoneVerified?: SortOrder
     walletAddress?: SortOrderInput | SortOrder
     passwordHash?: SortOrderInput | SortOrder
-    role?: SortOrder
+    roles?: SortOrder
     avatar?: SortOrderInput | SortOrder
     customData?: SortOrderInput | SortOrder
     tenantId?: SortOrderInput | SortOrder
+    vendureId?: SortOrderInput | SortOrder
     deletedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -10241,10 +10255,11 @@ export namespace Prisma {
     phoneVerified?: BoolWithAggregatesFilter<"User"> | boolean
     walletAddress?: StringNullableWithAggregatesFilter<"User"> | string | null
     passwordHash?: StringNullableWithAggregatesFilter<"User"> | string | null
-    role?: StringWithAggregatesFilter<"User"> | string
+    roles?: StringNullableListFilter<"User">
     avatar?: StringNullableWithAggregatesFilter<"User"> | string | null
     customData?: JsonNullableWithAggregatesFilter<"User">
     tenantId?: StringNullableWithAggregatesFilter<"User"> | string | null
+    vendureId?: StringNullableWithAggregatesFilter<"User"> | string | null
     deletedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -10803,9 +10818,10 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: string | null
     passwordHash?: string | null
-    role?: string
+    roles?: UserCreaterolesInput | string[]
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10826,10 +10842,11 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: string | null
     passwordHash?: string | null
-    role?: string
+    roles?: UserCreaterolesInput | string[]
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: string | null
+    vendureId?: string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10849,9 +10866,10 @@ export namespace Prisma {
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
+    roles?: UserUpdaterolesInput | string[]
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10872,10 +10890,11 @@ export namespace Prisma {
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
+    roles?: UserUpdaterolesInput | string[]
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendureId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10895,10 +10914,11 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: string | null
     passwordHash?: string | null
-    role?: string
+    roles?: UserCreaterolesInput | string[]
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: string | null
+    vendureId?: string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10915,9 +10935,10 @@ export namespace Prisma {
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
+    roles?: UserUpdaterolesInput | string[]
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10934,10 +10955,11 @@ export namespace Prisma {
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
+    roles?: UserUpdaterolesInput | string[]
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendureId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11601,10 +11623,11 @@ export namespace Prisma {
     phoneVerified?: SortOrder
     walletAddress?: SortOrder
     passwordHash?: SortOrder
-    role?: SortOrder
+    roles?: SortOrder
     avatar?: SortOrder
     customData?: SortOrder
     tenantId?: SortOrder
+    vendureId?: SortOrder
     deletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11621,9 +11644,9 @@ export namespace Prisma {
     phoneVerified?: SortOrder
     walletAddress?: SortOrder
     passwordHash?: SortOrder
-    role?: SortOrder
     avatar?: SortOrder
     tenantId?: SortOrder
+    vendureId?: SortOrder
     deletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -11640,9 +11663,9 @@ export namespace Prisma {
     phoneVerified?: SortOrder
     walletAddress?: SortOrder
     passwordHash?: SortOrder
-    role?: SortOrder
     avatar?: SortOrder
     tenantId?: SortOrder
+    vendureId?: SortOrder
     deletedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -12034,6 +12057,10 @@ export namespace Prisma {
     update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutApplicationsInput, TenantUpdateWithoutApplicationsInput>, TenantUncheckedUpdateWithoutApplicationsInput>
   }
 
+  export type UserCreaterolesInput = {
+    set: string[]
+  }
+
   export type RefreshTokenCreateNestedManyWithoutUserInput = {
     create?: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput> | RefreshTokenCreateWithoutUserInput[] | RefreshTokenUncheckedCreateWithoutUserInput[]
     connectOrCreate?: RefreshTokenCreateOrConnectWithoutUserInput | RefreshTokenCreateOrConnectWithoutUserInput[]
@@ -12080,6 +12107,11 @@ export namespace Prisma {
     connectOrCreate?: UserSessionCreateOrConnectWithoutUserInput | UserSessionCreateOrConnectWithoutUserInput[]
     createMany?: UserSessionCreateManyUserInputEnvelope
     connect?: UserSessionWhereUniqueInput | UserSessionWhereUniqueInput[]
+  }
+
+  export type UserUpdaterolesInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -12592,9 +12624,10 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: string | null
     passwordHash?: string | null
-    role?: string
+    roles?: UserCreaterolesInput | string[]
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12614,9 +12647,10 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: string | null
     passwordHash?: string | null
-    role?: string
+    roles?: UserCreaterolesInput | string[]
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12743,10 +12777,11 @@ export namespace Prisma {
     phoneVerified?: BoolFilter<"User"> | boolean
     walletAddress?: StringNullableFilter<"User"> | string | null
     passwordHash?: StringNullableFilter<"User"> | string | null
-    role?: StringFilter<"User"> | string
+    roles?: StringNullableListFilter<"User">
     avatar?: StringNullableFilter<"User"> | string | null
     customData?: JsonNullableFilter<"User">
     tenantId?: StringNullableFilter<"User"> | string | null
+    vendureId?: StringNullableFilter<"User"> | string | null
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -13105,9 +13140,10 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: string | null
     passwordHash?: string | null
-    role?: string
+    roles?: UserCreaterolesInput | string[]
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13127,10 +13163,11 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: string | null
     passwordHash?: string | null
-    role?: string
+    roles?: UserCreaterolesInput | string[]
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: string | null
+    vendureId?: string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13165,9 +13202,10 @@ export namespace Prisma {
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
+    roles?: UserUpdaterolesInput | string[]
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13187,10 +13225,11 @@ export namespace Prisma {
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
+    roles?: UserUpdaterolesInput | string[]
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendureId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13209,9 +13248,10 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: string | null
     passwordHash?: string | null
-    role?: string
+    roles?: UserCreaterolesInput | string[]
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13231,10 +13271,11 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: string | null
     passwordHash?: string | null
-    role?: string
+    roles?: UserCreaterolesInput | string[]
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: string | null
+    vendureId?: string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13334,9 +13375,10 @@ export namespace Prisma {
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
+    roles?: UserUpdaterolesInput | string[]
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13356,10 +13398,11 @@ export namespace Prisma {
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
+    roles?: UserUpdaterolesInput | string[]
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendureId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13433,9 +13476,10 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: string | null
     passwordHash?: string | null
-    role?: string
+    roles?: UserCreaterolesInput | string[]
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13455,10 +13499,11 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: string | null
     passwordHash?: string | null
-    role?: string
+    roles?: UserCreaterolesInput | string[]
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: string | null
+    vendureId?: string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13522,9 +13567,10 @@ export namespace Prisma {
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
+    roles?: UserUpdaterolesInput | string[]
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13544,10 +13590,11 @@ export namespace Prisma {
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
+    roles?: UserUpdaterolesInput | string[]
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
     tenantId?: NullableStringFieldUpdateOperationsInput | string | null
+    vendureId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13625,9 +13672,10 @@ export namespace Prisma {
     phoneVerified?: boolean
     walletAddress?: string | null
     passwordHash?: string | null
-    role?: string
+    roles?: UserCreaterolesInput | string[]
     avatar?: string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: string | null
     deletedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13727,9 +13775,10 @@ export namespace Prisma {
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
+    roles?: UserUpdaterolesInput | string[]
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13749,9 +13798,10 @@ export namespace Prisma {
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
+    roles?: UserUpdaterolesInput | string[]
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13771,9 +13821,10 @@ export namespace Prisma {
     phoneVerified?: BoolFieldUpdateOperationsInput | boolean
     walletAddress?: NullableStringFieldUpdateOperationsInput | string | null
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: StringFieldUpdateOperationsInput | string
+    roles?: UserUpdaterolesInput | string[]
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     customData?: NullableJsonNullValueInput | InputJsonValue
+    vendureId?: NullableStringFieldUpdateOperationsInput | string | null
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

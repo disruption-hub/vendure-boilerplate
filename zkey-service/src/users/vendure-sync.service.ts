@@ -48,6 +48,7 @@ export class VendureSyncService {
           await this.prisma.user.update({
             where: { id: user.id },
             data: { vendureId: vendureId },
+            select: { id: true }
           });
         }
       }

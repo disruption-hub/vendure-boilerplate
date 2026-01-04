@@ -32,8 +32,8 @@ async function getVendureConfigForTenant(tenantId?: string | null): Promise<Vend
     return undefined;
 }
 
-export async function getUsers(page: number = 1, limit: number = 10, search?: string) {
-    const skip = (page - 1) * limit;
+export async function getUsers(page: number = 1, pageSize: number = 10, search?: string) {
+    const skip = (page - 1) * pageSize;
 
     // Build where clause
     const where: any = { deletedAt: null };
@@ -47,26 +47,49 @@ export async function getUsers(page: number = 1, limit: number = 10, search?: st
         ];
     }
 
-    const [users, total] = await Promise.all([
-        prisma.user.findMany({
-            where,
-            skip,
-            take: limit,
-            orderBy: { createdAt: 'desc' },
-            include: { tenant: true },
-        }),
-        prisma.user.count({ where }),
-    ]);
+    try {
+        const [users, total] = await Promise.all([
+            prisma.user.findMany({
+                where,
+                skip,
+                take: pageSize,
+                orderBy: { createdAt: 'desc' },
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    primaryEmail: true,
+                    phoneNumber: true,
+                    phone: true,
+                    walletAddress: true,
+                    roles: true,
+                    emailVerified: true,
+                    phoneVerified: true,
+                    createdAt: true,
+                    tenant: {
+                        select: {
+                            id: true,
+                            name: true,
+                        }
+                    }
+                },
+            }),
+            prisma.user.count({ where }),
+        ]);
 
-    return {
-        data: users,
-        pagination: {
-            total,
-            page,
-            limit,
-            totalPages: Math.ceil(total / limit),
-        },
-    };
+        return {
+            data: users,
+            pagination: {
+                total,
+                page,
+                limit: pageSize,
+                totalPages: Math.ceil(total / pageSize),
+            },
+        };
+    } catch (error) {
+        console.error("[getUsers] Error:", error);
+        throw error;
+    }
 }
 
 export async function getTenants() {
@@ -82,7 +105,7 @@ export async function createUser(data: {
     lastName?: string;
     phoneNumber?: string;
     walletAddress?: string;
-    role?: string;
+    roles?: string[];
     tenantId?: string;
     password: string;
 }) {
@@ -115,12 +138,13 @@ export async function createUser(data: {
                 lastName: data.lastName,
                 phoneNumber: data.phoneNumber,
                 walletAddress: data.walletAddress || null,
-                role: data.role || 'user',
+                roles: data.roles || ['user'],
                 tenantId: data.tenantId,
                 passwordHash,
                 emailVerified: false,
                 phoneVerified: false,
             },
+            select: { id: true, primaryEmail: true, firstName: true, lastName: true, phoneNumber: true, walletAddress: true, tenantId: true }
         })
         : await prisma.user.create({
             data: {
@@ -129,12 +153,13 @@ export async function createUser(data: {
                 lastName: data.lastName,
                 phoneNumber: data.phoneNumber,
                 walletAddress: data.walletAddress || null,
-                role: data.role || 'user',
+                roles: data.roles || ['user'],
                 tenantId: data.tenantId,
                 passwordHash,
                 emailVerified: false,
                 phoneVerified: false,
             },
+            select: { id: true, primaryEmail: true, firstName: true, lastName: true, phoneNumber: true, walletAddress: true, tenantId: true }
         });
 
     try {
@@ -167,9 +192,12 @@ export async function updateUser(id: string, data: {
     lastName?: string;
     phoneNumber?: string;
     walletAddress?: string;
-    role?: string;
+    roles?: string[];
 }) {
-    const existing = await prisma.user.findFirst({ where: { id, deletedAt: null } });
+    const existing = await prisma.user.findFirst({
+        where: { id, deletedAt: null },
+        select: { id: true, firstName: true, lastName: true, phoneNumber: true, walletAddress: true, roles: true, tenantId: true, primaryEmail: true }
+    });
     if (!existing) throw new Error('User not found');
     if (!existing.primaryEmail) throw new Error('User is missing primaryEmail');
 
@@ -178,7 +206,7 @@ export async function updateUser(id: string, data: {
         lastName: data.lastName ?? existing.lastName,
         phoneNumber: data.phoneNumber ?? existing.phoneNumber,
         walletAddress: data.walletAddress !== undefined ? (data.walletAddress || null) : existing.walletAddress,
-        role: data.role ?? existing.role,
+        roles: data.roles ?? (existing as any).roles,
     };
 
     try {
@@ -205,8 +233,9 @@ export async function updateUser(id: string, data: {
             lastName: next.lastName,
             phoneNumber: next.phoneNumber,
             walletAddress: next.walletAddress,
-            role: next.role,
+            roles: next.roles,
         },
+        select: { id: true }
     });
 
     revalidatePath('/users');
@@ -214,7 +243,10 @@ export async function updateUser(id: string, data: {
 }
 
 export async function deleteUser(id: string) {
-    const existing = await prisma.user.findFirst({ where: { id, deletedAt: null } });
+    const existing = await prisma.user.findFirst({
+        where: { id, deletedAt: null },
+        select: { id: true, tenantId: true, primaryEmail: true }
+    });
     if (!existing) throw new Error('User not found');
 
     try {
@@ -229,6 +261,7 @@ export async function deleteUser(id: string) {
     const user = await prisma.user.update({
         where: { id },
         data: { deletedAt: new Date() },
+        select: { id: true }
     });
 
     revalidatePath('/users');
@@ -236,7 +269,10 @@ export async function deleteUser(id: string) {
 }
 
 export async function verifyUser(id: string) {
-    const userToVerify = await prisma.user.findUnique({ where: { id } });
+    const userToVerify = await prisma.user.findUnique({
+        where: { id },
+        select: { id: true, deletedAt: true, emailVerified: true, phoneVerified: true, primaryEmail: true, phoneNumber: true, tenantId: true }
+    });
     if (!userToVerify) throw new Error('User not found');
 
     if (userToVerify.deletedAt) {
@@ -272,6 +308,7 @@ export async function verifyUser(id: string) {
             emailVerified: true,
             phoneVerified: !!userToVerify.phoneNumber // Verify phone if present
         },
+        select: { id: true }
     });
 
     revalidatePath('/users');

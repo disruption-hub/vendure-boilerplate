@@ -1,6 +1,7 @@
 'use server';
 
-import { mutate } from '@/lib/vendure/api';
+import { GetActiveOrderQuery } from '@/lib/vendure/queries';
+import { query, mutate } from '@/lib/vendure/api';
 import {
     RemoveFromCartMutation,
     AdjustCartItemMutation,
@@ -162,5 +163,18 @@ export async function unlockCart() {
     const ok = await transitionActiveOrderToState('AddingItems');
     revalidateTag('cart', { expire: 0 });
     revalidateTag('active-order', { expire: 0 });
+    revalidateTag('active-order', { expire: 0 });
     return ok;
+}
+
+export async function getCart() {
+    try {
+        const result = await query(GetActiveOrderQuery, undefined, {
+            useAuthToken: true,
+            tags: ['cart']
+        });
+        return result.data?.activeOrder;
+    } catch (e) {
+        return null;
+    }
 }

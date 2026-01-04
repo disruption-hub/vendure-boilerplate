@@ -9,19 +9,22 @@ export default async function AdminDashboard() {
         return <div>Please log in (Admin) to view dashboard.</div>;
     }
 
-    const bookings = await bookingClient.getAllBookings(token).catch(e => {
-        console.error(e);
-        return [];
-    });
+    const [bookings, venues, networks] = await Promise.all([
+        bookingClient.getAllBookings(token).catch(e => { console.error(e); return []; }),
+        bookingClient.getAllVenues().catch(e => { console.error(e); return []; }),
+        bookingClient.getAllVenueNetworks(token).catch(e => { console.error(e); return []; })
+    ]);
 
     const totalBookings = bookings.length;
     const activeUsers = new Set(bookings.map(b => b.user?.firstName || 'Unknown')).size;
+    const totalNodes = venues.length;
+    const totalFederations = networks.length;
 
     return (
         <div className="space-y-6">
             <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-4">
                 <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
@@ -32,10 +35,26 @@ export default async function AdminDashboard() {
                 </Card>
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">Active Booking Users</CardTitle>
+                        <CardTitle className="text-sm font-medium">Active Users</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{activeUsers}</div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">Active Nodes</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{totalNodes}</div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">Federations</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{totalFederations}</div>
                     </CardContent>
                 </Card>
             </div>

@@ -44,15 +44,16 @@ export class UsersService {
         take: limit,
         select: {
           id: true,
-          primaryEmail: true,
           firstName: true,
           lastName: true,
-          phone: true,
-          role: true,
-          emailVerified: true,
-          walletAddress: true,
+          primaryEmail: true,
+          phoneNumber: true,
+          roles: true,
           createdAt: true,
-          updatedAt: true,
+          tenantId: true,
+          updatedAt: true, // Re-added updatedAt as it was in the original select
+          emailVerified: true, // Re-added emailVerified as it was in the original select
+          walletAddress: true, // Re-added walletAddress as it was in the original select
         },
         orderBy: { createdAt: 'desc' },
       }),
@@ -79,7 +80,7 @@ export class UsersService {
         firstName: true,
         lastName: true,
         phone: true,
-        role: true,
+        roles: true,
         emailVerified: true,
         walletAddress: true,
         createdAt: true,
@@ -100,7 +101,7 @@ export class UsersService {
       firstName?: string;
       lastName?: string;
       phone?: string;
-      role?: string;
+      roles?: string[];
       walletAddress?: string;
       password: string;
     },
@@ -109,6 +110,7 @@ export class UsersService {
     // Check if email already exists
     const existingUser = await this.prisma.user.findFirst({
       where: { primaryEmail: data.primaryEmail, tenantId },
+      select: { id: true }
     });
 
     if (existingUser) {
@@ -125,7 +127,7 @@ export class UsersService {
         lastName: data.lastName,
         phone: data.phone,
         walletAddress: data.walletAddress,
-        role: data.role || 'user',
+        roles: data.roles || ['user'],
         passwordHash,
         tenantId,
         emailVerified: false,
@@ -136,7 +138,7 @@ export class UsersService {
         firstName: true,
         lastName: true,
         phone: true,
-        role: true,
+        roles: true,
         emailVerified: true,
         walletAddress: true,
         createdAt: true,
@@ -157,7 +159,7 @@ export class UsersService {
       firstName?: string;
       lastName?: string;
       phone?: string;
-      role?: string;
+      roles?: string[];
       walletAddress?: string;
     },
     tenantId: string,
@@ -172,7 +174,7 @@ export class UsersService {
         lastName: data.lastName,
         phone: data.phone,
         walletAddress: data.walletAddress,
-        role: data.role,
+        roles: data.roles,
       },
       select: {
         id: true,
@@ -180,7 +182,7 @@ export class UsersService {
         firstName: true,
         lastName: true,
         phone: true,
-        role: true,
+        roles: true,
         emailVerified: true,
         walletAddress: true,
         updatedAt: true,
@@ -201,8 +203,9 @@ export class UsersService {
 
     // Soft delete
     await this.prisma.user.update({
-      where: { id },
+      where: { id: id },
       data: { deletedAt: new Date() },
+      select: { id: true }
     });
 
     return { message: 'User deleted successfully' };

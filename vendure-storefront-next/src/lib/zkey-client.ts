@@ -22,6 +22,7 @@ export interface ZKeyUser {
     phoneVerified: boolean;
     walletAddress?: string | null;
     avatar: string | null;
+    roles: string[];
 }
 
 export class ZKeyClient {

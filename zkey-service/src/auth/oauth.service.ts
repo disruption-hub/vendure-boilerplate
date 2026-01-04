@@ -233,6 +233,7 @@ export class OAuthService {
     // Query ALL users with this email in this tenant
     const users = await this.prisma.user.findMany({
       where: { primaryEmail: email, tenantId, deletedAt: null },
+      select: { id: true, passwordHash: true, emailVerified: true },
     });
 
     if (users.length === 0) return null;
@@ -372,6 +373,7 @@ export class OAuthService {
       name: user?.firstName
         ? `${user.firstName} ${user.lastName || ''}`.trim()
         : undefined,
+      roles: user?.roles || ['user'],
     };
     return this.jwtService.sign(payload);
   }

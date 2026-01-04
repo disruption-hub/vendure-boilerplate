@@ -68,6 +68,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const customerRes = await fetch('/api/auth/customer', { cache: 'no-store' });
             const customerJson = await customerRes.json().catch(() => null);
             const customer = customerRes.ok ? customerJson?.customer : null;
+
+            // Always fetch ZKey profile or extract roles from token if possible
+            // For now, let's fetch it to be sure of the roles
+            const zkeyProfile = await OIDCClient.getUserProfile(tokens.access_token);
+            const userRoles = zkeyProfile.roles || ['user'];
+
             if (customer) {
                 setUser({
                     id: customer.id,
@@ -75,6 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     lastName: customer.lastName,
                     primaryEmail: customer.emailAddress,
                     phoneNumber: customer.phoneNumber,
+                    roles: userRoles,
                 });
             } else {
                 // Fallback to ZKey profile
@@ -96,6 +103,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     const customerRes = await fetch('/api/auth/customer', { cache: 'no-store' });
                     const customerJson = await customerRes.json().catch(() => null);
                     const customer = customerRes.ok ? customerJson?.customer : null;
+
+                    const token = Cookies.get(TOKEN_COOKIE_NAME);
+                    let userRoles = ['user'];
+                    if (token) {
+                        const zkeyProfile = await OIDCClient.getUserProfile(token);
+                        userRoles = zkeyProfile.roles || [zkeyProfile.role] || ['user'];
+                    }
+
                     if (customer) {
                         setUser({
                             id: customer.id,
@@ -103,6 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                             lastName: customer.lastName,
                             primaryEmail: customer.emailAddress,
                             phoneNumber: customer.phoneNumber,
+                            roles: userRoles,
                         });
                         setIsAuthenticated(true);
                         return;

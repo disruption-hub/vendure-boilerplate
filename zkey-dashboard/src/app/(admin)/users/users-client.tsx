@@ -13,7 +13,7 @@ interface User {
     phone?: string | null;
     phoneNumber?: string | null;
     walletAddress?: string | null;
-    role: string;
+    roles: string[];
     emailVerified: boolean;
     phoneVerified: boolean;
     tenant?: {
@@ -46,8 +46,15 @@ export default function UsersClient({
     const loadUsers = async (page: number = 1, searchQuery?: string) => {
         try {
             const data = await getUsers(page, 10, searchQuery);
-            setUsers(data.data);
-            setPagination(data.pagination);
+            const usersWithRoles = data.data.map(u => ({
+                ...u,
+                roles: (u as any).roles || []
+            }));
+            setUsers(usersWithRoles as User[]);
+            setPagination({
+                ...data.pagination,
+                limit: data.pagination.limit
+            });
         } catch (error) {
             toast.error('Failed to load users');
         }
@@ -145,7 +152,7 @@ export default function UsersClient({
             <div className="bg-white rounded-2xl border shadow-sm">
                 <div className="overflow-x-auto rounded-2xl">
                     <table className="w-full min-w-[1000px]">
-                    <thead className="bg-slate-50 border-b">
+                        <thead className="bg-slate-50 border-b">
                             <tr className="border-b bg-slate-50/30">
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-left">User</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-left">Role</th>
@@ -155,81 +162,81 @@ export default function UsersClient({
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-left">Tenant</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right sticky right-0 bg-slate-50/95 backdrop-blur border-l">Actions</th>
                             </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                        {users.map((user) => (
-                            <tr key={user.id} className="hover:bg-slate-50 transition-colors">
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
-                                            {getInitials(user)}
+                        </thead>
+                        <tbody className="divide-y">
+                            {users.map((user) => (
+                                <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
+                                                {getInitials(user)}
+                                            </div>
+                                            <div>
+                                                <div className="font-semibold">{user.firstName} {user.lastName}</div>
+                                                <div className="text-slate-500 font-normal">{user.primaryEmail || '-'}</div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <div className="font-semibold">{user.firstName} {user.lastName}</div>
-                                            <div className="text-slate-500 font-normal">{user.primaryEmail || '-'}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 capitalize">
-                                    {user.role}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                                    {user.phoneNumber || user.phone || '-'}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                                    {user.walletAddress ? (
-                                        <span className="font-mono text-xs">{user.walletAddress}</span>
-                                    ) : (
-                                        '-'
-                                    )}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    {user.emailVerified || user.phoneVerified ? (
-                                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
-                                            Verified
-                                        </span>
-                                    ) : (
-                                        <span className="px-2 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-700">
-                                            Pending
-                                        </span>
-                                    )}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                                    {user.tenant?.name || '-'}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right sticky right-0 bg-white border-l">
-                                    <div className="flex items-center justify-end gap-2">
-                                        {!(user.emailVerified || user.phoneVerified) && (
-                                            <button
-                                                onClick={() => handleVerify(user)}
-                                                className="px-3 py-2 text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition"
-                                                title="Verify User"
-                                            >
-                                                <CheckCircle className="w-4 h-4" />
-                                            </button>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 capitalize">
+                                        {user.roles?.join(', ') || '-'}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                                        {user.phoneNumber || user.phone || '-'}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                                        {user.walletAddress ? (
+                                            <span className="font-mono text-xs">{user.walletAddress}</span>
+                                        ) : (
+                                            '-'
                                         )}
-                                        <button
-                                            onClick={() => {
-                                                setSelectedUser(user);
-                                                setIsEditOpen(true);
-                                            }}
-                                            className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition"
-                                        >
-                                            <Pencil className="w-4 h-4" />
-                                            <span>Edit</span>
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(user)}
-                                            className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                            <span>Delete</span>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        {user.emailVerified || user.phoneVerified ? (
+                                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
+                                                Verified
+                                            </span>
+                                        ) : (
+                                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-700">
+                                                Pending
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                                        {user.tenant?.name || '-'}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-right sticky right-0 bg-white border-l">
+                                        <div className="flex items-center justify-end gap-2">
+                                            {!(user.emailVerified || user.phoneVerified) && (
+                                                <button
+                                                    onClick={() => handleVerify(user)}
+                                                    className="px-3 py-2 text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition"
+                                                    title="Verify User"
+                                                >
+                                                    <CheckCircle className="w-4 h-4" />
+                                                </button>
+                                            )}
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedUser(user);
+                                                    setIsEditOpen(true);
+                                                }}
+                                                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition"
+                                            >
+                                                <Pencil className="w-4 h-4" />
+                                                <span>Edit</span>
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(user)}
+                                                className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                                <span>Delete</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
                     </table>
                 </div>
 
@@ -248,8 +255,8 @@ export default function UsersClient({
                             key={page}
                             onClick={() => loadUsers(page, search)}
                             className={`px-4 py-2 rounded-lg font-medium transition ${page === pagination.page
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                                 }`}
                         >
                             {page}
@@ -305,17 +312,17 @@ function UserDialog({
         lastName: user?.lastName || '',
         phoneNumber: user?.phoneNumber || user?.phone || '',
         walletAddress: user?.walletAddress || '',
-        role: user?.role || 'user',
+        roles: user?.roles || ['user'],
         tenantId: user?.tenant?.id || '',
         password: '',
     });
-    
+
     // Fetch tenants for dropdown
-    const [tenants, setTenants] = useState<{id: string, name: string}[]>([]);
-    
+    const [tenants, setTenants] = useState<{ id: string, name: string }[]>([]);
+
     useEffect(() => {
         if (isOpen && !user) {
-             getTenants().then(setTenants).catch(() => {});
+            getTenants().then(setTenants).catch(() => { });
         }
     }, [isOpen, user]);
 
@@ -328,7 +335,7 @@ function UserDialog({
                 lastName: formData.lastName,
                 phoneNumber: formData.phoneNumber,
                 walletAddress: formData.walletAddress,
-                role: formData.role,
+                roles: formData.roles,
             }
             : formData;
 
@@ -398,17 +405,27 @@ function UserDialog({
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Role</label>
-                        <select
-                            value={formData.role}
-                            onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                            className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
-                        </select>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Roles</label>
+                        <div className="flex flex-wrap gap-4 p-4 border rounded-xl bg-slate-50">
+                            {['user', 'admin', 'teacher', 'system-admin', 'venue-network-admin'].map((r) => (
+                                <label key={r} className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.roles.includes(r)}
+                                        onChange={(e) => {
+                                            const newRoles = e.target.checked
+                                                ? [...formData.roles, r]
+                                                : formData.roles.filter((role) => role !== r);
+                                            setFormData({ ...formData, roles: newRoles });
+                                        }}
+                                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+                                    />
+                                    <span className="text-sm font-medium text-slate-700 capitalize">{r}</span>
+                                </label>
+                            ))}
+                        </div>
                     </div>
-                    
+
                     {!user && (
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-2">Tenant</label>

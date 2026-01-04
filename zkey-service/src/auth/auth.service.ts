@@ -71,7 +71,7 @@ export class AuthService {
     if (cleanEmail) {
       const existing = await this.prisma.user.findFirst({
         where: { primaryEmail: cleanEmail, tenantId: resolvedTenantId },
-        select: { id: true, deletedAt: true },
+        select: { id: true, deletedAt: true, primaryEmail: true },
       });
       if (existing) {
         if (existing.deletedAt) restoreUserId = existing.id;
@@ -82,7 +82,7 @@ export class AuthService {
     if (cleanPhone) {
       const existing = await this.prisma.user.findFirst({
         where: { phoneNumber: cleanPhone, tenantId: resolvedTenantId },
-        select: { id: true, deletedAt: true },
+        select: { id: true, deletedAt: true, phoneNumber: true },
       });
       if (existing) {
         if (existing.deletedAt) {
@@ -144,7 +144,7 @@ export class AuthService {
 
       const existingWallet = await this.prisma.user.findFirst({
         where: { walletAddress: cleanWallet },
-        select: { id: true, deletedAt: true, tenantId: true },
+        select: { id: true, deletedAt: true, tenantId: true, walletAddress: true },
       });
       if (existingWallet) {
         if (
@@ -183,6 +183,16 @@ export class AuthService {
           phoneVerified: false,
           tenantId: resolvedTenantId,
         },
+        select: {
+          id: true,
+          primaryEmail: true,
+          firstName: true,
+          lastName: true,
+          phoneNumber: true,
+          walletAddress: true,
+          tenantId: true,
+          roles: true,
+        }
       })
       : await this.prisma.user.create({
         data: {
@@ -206,7 +216,17 @@ export class AuthService {
               },
             }
             : {}),
-        } as any,
+        },
+        select: {
+          id: true,
+          primaryEmail: true,
+          firstName: true,
+          lastName: true,
+          phoneNumber: true,
+          walletAddress: true,
+          tenantId: true,
+          roles: true,
+        }
       });
 
     if (restoreUserId && cleanWallet) {
@@ -275,6 +295,14 @@ export class AuthService {
 
     const user = await this.prisma.user.findFirst({
       where: { primaryEmail: email, tenantId: resolvedTenantId, deletedAt: null },
+      select: {
+        id: true,
+        passwordHash: true,
+        emailVerified: true,
+        phoneVerified: true,
+        tenantId: true,
+        roles: true,
+      }
     });
 
     if (!user || !user.passwordHash) {
@@ -311,6 +339,7 @@ export class AuthService {
         walletAddress: true,
         avatar: true,
         tenantId: true,
+        roles: true,
       },
     });
   }
@@ -318,6 +347,7 @@ export class AuthService {
   async updateProfile(userId: string, data: { firstName?: string; lastName?: string; phone?: string; walletAddress?: string }) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
+      select: { id: true, firstName: true, lastName: true, phone: true, phoneNumber: true, walletAddress: true, tenantId: true }
     });
 
     if (!user) {
@@ -333,6 +363,7 @@ export class AuthService {
         phoneNumber: data.phone !== undefined ? data.phone : user.phoneNumber, // Sync both fields
         walletAddress: data.walletAddress !== undefined ? data.walletAddress : user.walletAddress,
       },
+      select: { id: true, firstName: true, lastName: true, phone: true, phoneNumber: true, walletAddress: true, tenantId: true, roles: true, primaryEmail: true }
     });
 
     this.logger.log(`[AuthService] Profile updated for user ${userId}. Triggering Vendure sync...`);
@@ -390,6 +421,7 @@ export class AuthService {
           { phone: identifier },
         ],
       },
+      select: { id: true, primaryEmail: true, phoneNumber: true, phone: true }
     });
 
     if (!user) {
@@ -525,6 +557,7 @@ export class AuthService {
           { phoneNumber: identifier, phoneVerified: true },
         ],
       },
+      select: { id: true, emailVerified: true, phoneVerified: true, primaryEmail: true, tenantId: true, roles: true }
     });
 
     if (verifiedUser) {
@@ -539,6 +572,7 @@ export class AuthService {
         OR: [{ primaryEmail: identifier }, { phoneNumber: identifier }],
       },
       orderBy: { createdAt: 'desc' },
+      select: { id: true, emailVerified: true, phoneVerified: true, primaryEmail: true, tenantId: true, roles: true }
     });
 
     if (!user) {
@@ -552,6 +586,7 @@ export class AuthService {
           OR: [{ primaryEmail: identifier }, { phoneNumber: identifier }],
         },
         orderBy: { createdAt: 'desc' },
+        select: { id: true, primaryEmail: true, phoneNumber: true, tenantId: true, emailVerified: true, phoneVerified: true }
       });
 
       if (deleted) {
@@ -562,6 +597,7 @@ export class AuthService {
             emailVerified: method === 'email' ? true : deleted.emailVerified,
             phoneVerified: method === 'phone' ? true : deleted.phoneVerified,
           },
+          select: { id: true, emailVerified: true, phoneVerified: true, primaryEmail: true, tenantId: true, roles: true }
         });
       } else {
         // Implicit registration
@@ -575,6 +611,7 @@ export class AuthService {
             lastName: 'User',
             tenantId: app.tenantId,
           },
+          select: { id: true, emailVerified: true, phoneVerified: true, primaryEmail: true, tenantId: true, roles: true }
         });
       }
     } else {
@@ -585,6 +622,7 @@ export class AuthService {
           emailVerified: method === 'email' ? true : user.emailVerified,
           phoneVerified: method === 'phone' ? true : user.phoneVerified,
         },
+        select: { id: true, emailVerified: true, phoneVerified: true, primaryEmail: true, tenantId: true, roles: true }
       });
     }
 
@@ -659,10 +697,14 @@ export class AuthService {
       await this.prisma.user.update({
         where: { id: user.id },
         data: { walletAddress: address },
+        select: { id: true }
       });
 
       // Fetch updated user for sync
-      const updatedUser = await this.prisma.user.findUnique({ where: { id: user.id } });
+      const updatedUser = await this.prisma.user.findUnique({
+        where: { id: user.id },
+        select: { id: true, walletAddress: true, tenantId: true, roles: true, primaryEmail: true, firstName: true, lastName: true }
+      });
       try {
         if (this.vendureSync && updatedUser) {
           await this.vendureSync.syncUser(updatedUser);
@@ -761,6 +803,7 @@ export class AuthService {
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: { walletAddress: null },
+      select: { id: true, primaryEmail: true, walletAddress: true, vendureId: true, roles: true, firstName: true, lastName: true, tenantId: true }
     });
 
     this.logger.log(`Unlinked wallet for user ${userId}. Profile: ${JSON.stringify({
@@ -801,6 +844,7 @@ export class AuthService {
         id: { not: userId },
         deletedAt: null,
       },
+      select: { id: true }
     });
 
     if (existing) {
@@ -811,6 +855,7 @@ export class AuthService {
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: { walletAddress: address },
+      select: { id: true, primaryEmail: true, walletAddress: true, vendureId: true, roles: true, firstName: true, lastName: true, tenantId: true }
     });
 
     // 3. Create identity
@@ -842,7 +887,16 @@ export class AuthService {
   }
 
   async generateTokens(userId: string, app?: any) {
-    const accessToken = this.jwtService.sign({ sub: userId });
+    this.logger.log(`[AuthService] Generating tokens for user ${userId} (deployment verified)`);
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { roles: true, primaryEmail: true }
+    });
+    const accessToken = this.jwtService.sign({
+      sub: userId,
+      roles: user?.roles || [],
+      email: user?.primaryEmail
+    });
 
     const ttlDays = app?.refreshTokenTtl || 7;
     const expiresAt = new Date(Date.now() + ttlDays * 24 * 60 * 60 * 1000);
@@ -854,7 +908,10 @@ export class AuthService {
         userId,
         tenantId:
           app?.tenantId ||
-          ((await this.prisma.user.findUnique({ where: { id: userId } }))
+          ((await this.prisma.user.findUnique({
+            where: { id: userId },
+            select: { tenantId: true }
+          }))
             ?.tenantId as string),
         sid: uuidv4(),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // Default 24h session

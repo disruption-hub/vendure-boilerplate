@@ -1,14 +1,15 @@
 'use client';
 
-import {useState, useMemo, useTransition} from 'react';
-import {usePathname, useRouter, useSearchParams} from 'next/navigation';
-import {Button} from '@/components/ui/button';
-import {Label} from '@/components/ui/label';
-import {RadioGroup, RadioGroupItem} from '@/components/ui/radio-group';
-import {ShoppingCart, CheckCircle2} from 'lucide-react';
-import {addToCart} from '@/app/product/[slug]/actions';
-import {toast} from 'sonner';
-import {Price} from '@/components/commerce/price';
+import { useState, useMemo, useTransition } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ShoppingCart, CheckCircle2 } from 'lucide-react';
+import { addToCart } from '@/app/product/[slug]/actions';
+import { toast } from 'sonner';
+import { Price } from '@/components/commerce/price';
+import { useCart } from '@/contexts/cart-context';
 
 interface ProductInfoProps {
     product: {
@@ -47,12 +48,13 @@ interface ProductInfoProps {
     searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export function ProductInfo({product, searchParams}: ProductInfoProps) {
+export function ProductInfo({ product, searchParams }: ProductInfoProps) {
     const pathname = usePathname();
     const router = useRouter();
     const currentSearchParams = useSearchParams();
     const [isPending, startTransition] = useTransition();
     const [isAdded, setIsAdded] = useState(false);
+    const { openCart, refreshCart } = useCart();
 
     // Initialize selected options from URL
     const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
@@ -106,7 +108,7 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
             // Update URL with option code
             const params = new URLSearchParams(currentSearchParams);
             params.set(group.code, option.code);
-            router.push(`${pathname}?${params.toString()}`, {scroll: false});
+            router.push(`${pathname}?${params.toString()}`, { scroll: false });
         }
     };
 
@@ -124,6 +126,9 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
 
                 // Reset the added state after 2 seconds
                 setTimeout(() => setIsAdded(false), 2000);
+
+                await refreshCart();
+                openCart();
             } else {
                 toast.error('Error', {
                     description: result.error || 'Failed to add item to cart',
@@ -142,14 +147,14 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                 <h1 className="text-3xl font-bold">{product.name}</h1>
                 {selectedVariant && (
                     <p className="text-2xl font-bold mt-2">
-                        <Price value={selectedVariant.priceWithTax}/>
+                        <Price value={selectedVariant.priceWithTax} />
                     </p>
                 )}
             </div>
 
             {/* Product Description */}
             <div className="prose prose-sm max-w-none">
-                <div dangerouslySetInnerHTML={{__html: product.description}}/>
+                <div dangerouslySetInnerHTML={{ __html: product.description }} />
             </div>
 
             {/* Option Groups */}
@@ -208,12 +213,12 @@ export function ProductInfo({product, searchParams}: ProductInfoProps) {
                 >
                     {isAdded ? (
                         <>
-                            <CheckCircle2 className="mr-2 h-5 w-5"/>
+                            <CheckCircle2 className="mr-2 h-5 w-5" />
                             Added to Cart
                         </>
                     ) : (
                         <>
-                            <ShoppingCart className="mr-2 h-5 w-5"/>
+                            <ShoppingCart className="mr-2 h-5 w-5" />
                             {isPending
                                 ? 'Adding...'
                                 : !selectedVariant && product.optionGroups.length > 0

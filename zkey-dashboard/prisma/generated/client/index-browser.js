@@ -168,10 +168,11 @@ exports.Prisma.UserScalarFieldEnum = {
   phoneVerified: 'phoneVerified',
   walletAddress: 'walletAddress',
   passwordHash: 'passwordHash',
-  role: 'role',
+  roles: 'roles',
   avatar: 'avatar',
   customData: 'customData',
   tenantId: 'tenantId',
+  vendureId: 'vendureId',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

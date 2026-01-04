@@ -8,6 +8,8 @@ import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SITE_NAME, SITE_URL } from "@/lib/metadata";
 import { AuthProvider } from "@/components/auth/auth-provider";
+import { CartProvider } from "@/contexts/cart-context";
+import { CartDrawer } from "@/components/cart/cart-drawer";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -81,10 +83,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             >
                 <ThemeProvider>
                     <AuthProvider>
-                        <Navbar />
-                        {children}
-                        <Footer />
-                        <Toaster />
+                        <CartProvider>
+                            <Navbar />
+                            {children}
+                            <CartDrawer />
+                            <Footer />
+                            <Toaster />
+                        </CartProvider>
                     </AuthProvider>
                 </ThemeProvider>
 

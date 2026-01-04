@@ -11,36 +11,27 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-const navItems = [
-    { href: '/account/orders', label: 'Orders', icon: Package },
-    { href: '/account/bookings', label: 'Bookings', icon: Calendar },
-    { href: '/account/wallet', label: 'Wallet', icon: Wallet },
-    { href: '/account/addresses', label: 'Addresses', icon: MapPin },
-    { href: '/account/profile', label: 'Profile', icon: User },
-];
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
+import { getZKeyAuthToken } from "@/lib/auth"
+import { zkeyClient } from "@/lib/zkey-client"
 
-export default async function AccountLayout({ children }: LayoutProps<'/account'>) {
+export default async function AccountLayout({ children }: { children: React.ReactNode }) {
+    const token = await getZKeyAuthToken();
+    const user = token ? await zkeyClient.getProfile(token).catch(() => null) : null;
+
     return (
-        <div className="container mx-auto px-4 py-30">
-            <div className="flex gap-8">
-                <aside className="w-64 shrink-0">
-                    <nav className="space-y-1">
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-md hover:bg-gray-100 transition-colors"
-                            >
-                                <item.icon className="h-5 w-5" />
-                                {item.label}
-                            </Link>
-                        ))}
-                    </nav>
-                </aside>
-                <main className="flex-1">
+        <SidebarProvider>
+            <AppSidebar user={user} />
+            <main className="flex-1 w-full flex flex-col min-h-screen">
+                <div className="p-4 border-b flex items-center gap-4">
+                    <SidebarTrigger />
+                    <h1 className="font-semibold text-lg">My Account</h1>
+                </div>
+                <div className="p-4 flex-1">
                     {children}
-                </main>
-            </div>
-        </div>
+                </div>
+            </main>
+        </SidebarProvider>
     );
 }

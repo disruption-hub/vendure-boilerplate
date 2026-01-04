@@ -83,7 +83,7 @@ model User {
   phoneVerified  Boolean        @default(false)
   walletAddress  String?        @unique
   passwordHash   String?
-  role           String         @default("user")
+  roles          String[]       @default(["user"])
   avatar         String?
   customData     Json?
   tenantId       String?
