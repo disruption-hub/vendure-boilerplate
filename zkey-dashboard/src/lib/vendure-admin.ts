@@ -8,7 +8,7 @@ export type VendureAdminConfig = {
     superadminPassword?: string;
 };
 
-const DEFAULT_ADMIN_API_URL = 'http://localhost:3000/admin-api';
+const DEFAULT_ADMIN_API_URL = 'http://localhost:3006/admin-api';
 const DEFAULT_AUTH_TOKEN_HEADER = 'vendure-auth-token';
 
 const tokenCache = new Map<string, string>();

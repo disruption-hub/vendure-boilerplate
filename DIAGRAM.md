@@ -35,12 +35,12 @@ graph TD
     User --> SF
     User --> DB
 
-    SF -- "API Requests" --> AG
-    DB -- "Auth/User Data" --> ZS
+    SF -- "Shop/Auth API" --> AG
+    DB -- "Admin/Auth API" --> AG
 
-    AG -- "/shop-api" --> VB
+    AG -- "/shop-api, /admin-api" --> VB
     AG -- "/auth, /users" --> ZS
-    AG -- "/classes, /bookings" --> BS
+    AG -- "/classes, /bookings, /graphql" --> BS
 
     VB -- "Persistence" --> RV
     ZS -- "Persistence" --> RF
@@ -58,5 +58,5 @@ graph TD
 
 ## Architectural Highlights
 - **Service Isolation**: Each core domain (`Vendure`, `Zkey`, `Booking`) has its own dedicated microservice and independent PostgreSQL database to ensure data integrity and scalability.
-- **Unified Gateway**: `api-gateway` acts as the single entry point for the Storefront, routing traffic based on path prefixes.
+- **Unified Gateway**: `api-gateway` (Port 3006) acts as the **sole entry point** for all system interactions. It unifies the Vendure Shop/Admin APIs, ZKey Auth, and Booking Service GraphQL via a single domain.
 - **Microservices Communication**: Services are containerized and deployed on Railway, utilizing internal networking for low-latency communication.

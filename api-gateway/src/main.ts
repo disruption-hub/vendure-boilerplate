@@ -18,16 +18,26 @@ async function bootstrap() {
   // Enable body parsing for the GraphQL endpoint (required for Schema Stitching)
   app.use('/graphql', json());
 
-  // Proxy to Vendure Backend
+  // Proxy to Vendure Backend (Shop API)
   // VENDURE_SHOP_API_URL should be the base URL e.g. http://localhost:3000/shop-api
   const vendureUrl = configService.get<string>('VENDURE_SHOP_API_URL') || 'http://127.0.0.1:3000/shop-api';
-  // We want to proxy /shop-api requests to the Vendure Backend
-  // Note: We mount on root and use pathFilter to avoid Nest/Express stripping the prefix
+  const vendureBase = vendureUrl.replace(/\/shop-api$/, '');
+
+  // Proxy /shop-api
   app.use(
     createProxyMiddleware({
-      target: vendureUrl.replace(/\/shop-api$/, ''), // Point to root of Vendure
+      target: vendureBase,
       changeOrigin: true,
-      pathFilter: '/shop-api', // Match /shop-api requests
+      pathFilter: '/shop-api',
+    }),
+  );
+
+  // Proxy /admin-api
+  app.use(
+    createProxyMiddleware({
+      target: vendureBase,
+      changeOrigin: true,
+      pathFilter: '/admin-api',
     }),
   );
 
