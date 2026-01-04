@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AppController } from './app.controller';
@@ -43,9 +43,16 @@ function createRemoteExecutor(url: string) {
     DashboardModule,
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      useFactory: async () => {
-        const vendureExecutor = createRemoteExecutor('http://localhost:3000/shop-api');
-        const bookingExecutor = createRemoteExecutor('http://localhost:3005/graphql');
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const vendureUrl = configService.get<string>('VENDURE_SHOP_API_URL') || 'http://localhost:3000/shop-api';
+        const bookingUrl = configService.get<string>('BOOKING_SERVICE_URL') || 'http://localhost:3005/graphql';
+
+        console.log('[AppModule] Vendure URL:', vendureUrl);
+        console.log('[AppModule] Booking URL:', bookingUrl);
+
+        const vendureExecutor = createRemoteExecutor(vendureUrl);
+        const bookingExecutor = createRemoteExecutor(bookingUrl);
 
         return {
           schema: stitchSchemas({

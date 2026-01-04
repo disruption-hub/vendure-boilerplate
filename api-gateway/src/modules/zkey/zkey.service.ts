@@ -10,6 +10,7 @@ export class ZKeyService {
         private readonly configService: ConfigService,
     ) {
         this.baseUrl = this.configService.get<string>('ZKEY_SERVICE_URL') || 'http://localhost:3002';
+        console.log(`[ZKeyService] Initializing with Base URL: ${this.baseUrl}`);
     }
 
     async getProfile(token: string): Promise<ZKeyUser> {
