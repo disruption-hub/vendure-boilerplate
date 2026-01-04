@@ -9,7 +9,7 @@ function env(name: string) {
 
 // Update to prefer Gateway URL
 const API_GATEWAY_URL = env('API_GATEWAY_URL') || env('NEXT_PUBLIC_API_GATEWAY_URL');
-const DEFAULT_VENDURE_URL = API_GATEWAY_URL ? `${API_GATEWAY_URL}/shop-api` : 'http://localhost:3004/shop-api';
+const DEFAULT_VENDURE_URL = API_GATEWAY_URL ? `${API_GATEWAY_URL}/shop-api` : 'http://localhost:3006/shop-api';
 
 const VENDURE_API_URL = env('VENDURE_SHOP_API_URL') || env('NEXT_PUBLIC_VENDURE_SHOP_API_URL') || DEFAULT_VENDURE_URL;
 

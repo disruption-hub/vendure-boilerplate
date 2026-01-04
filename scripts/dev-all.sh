@@ -42,7 +42,7 @@ exec pnpm exec concurrently \
   "pnpm -C zkey-dashboard dev" \
   "PORT=3002 pnpm -C zkey-service start:dev" \
   "PORT=3005 pnpm -C booking-service start:dev" \
-  "pnpm --filter api-gateway start:dev" \
+  "bash -c 'echo \"[Gateway] Waiting for services...\"; until curl -s -f http://localhost:3000/health > /dev/null; do sleep 1; done; until curl -s -f http://localhost:3005/ > /dev/null; do sleep 1; done; until curl -s -f http://localhost:3002/ > /dev/null; do sleep 1; done; echo \"[Gateway] Services ready, starting...\"; pnpm --filter api-gateway start:dev'" \
   --kill-others \
   --names "VENDURE,STOREFRONT,ZKEY_DASH,ZKEY_SVC,BOOKING,GATEWAY" \
   --prefix-colors "blue,magenta,cyan,green,red,yellow"

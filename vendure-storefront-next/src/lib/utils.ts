@@ -21,7 +21,7 @@ export function getVendureImageUrl(url: string | undefined): string {
   const backendUrl = process.env.NEXT_PUBLIC_VENDURE_SHOP_API_URL ||
     process.env.VENDURE_SHOP_API_URL ||
     process.env.NEXT_PUBLIC_API_GATEWAY_URL ? `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/shop-api` :
-    'http://127.0.0.1:3004/shop-api';
+    'http://127.0.0.1:3006/shop-api';
 
   try {
     const urlObj = new URL(backendUrl);

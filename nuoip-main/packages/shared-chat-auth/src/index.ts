@@ -9,6 +9,7 @@ import type {
 
 export type ChatAuthErrorCode =
   | 'CONFIG_NOT_FOUND'
+  | 'DATABASE_NOT_READY'
   | 'INVALID_PHONE'
   | 'RATE_LIMITED'
   | 'INVALID_CODE'

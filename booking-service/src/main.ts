@@ -11,7 +11,9 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
-      urls: [configService.get<string>('RABBITMQ_URL') || 'amqp://localhost:5672'],
+      urls: [
+        configService.get<string>('RABBITMQ_URL') || 'amqp://localhost:5672',
+      ],
       queue: configService.get<string>('RABBITMQ_QUEUE') || 'booking_queue',
       queueOptions: {
         durable: true,
@@ -20,8 +22,11 @@ async function bootstrap() {
   });
 
   // Start microservices in background (don't block HTTP)
-  app.startAllMicroservices().catch(err => {
-    console.error('Failed to connect to RabbitMQ, sync will be unavailable:', err.message);
+  app.startAllMicroservices().catch((err) => {
+    console.error(
+      'Failed to connect to RabbitMQ, sync will be unavailable:',
+      err.message,
+    );
   });
 
   const port = configService.get<string>('PORT') || 3005;

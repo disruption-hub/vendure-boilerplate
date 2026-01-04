@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import { json } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bodyParser: false });
@@ -13,6 +14,9 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
+
+  // Enable body parsing for the GraphQL endpoint (required for Schema Stitching)
+  app.use('/graphql', json());
 
   // Proxy to Vendure Backend
   // VENDURE_SHOP_API_URL should be the base URL e.g. http://localhost:3000/shop-api
@@ -47,6 +51,6 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(configService.get<string>('PORT') || 3004);
+  await app.listen(configService.get<string>('PORT') || 3006);
 }
 bootstrap();

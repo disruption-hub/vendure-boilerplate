@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-const API_GATEWAY_URL = process.env.API_GATEWAY_URL || 'http://localhost:3004';
+const API_GATEWAY_URL = process.env.API_GATEWAY_URL || 'http://localhost:3006';
 
 export async function GET(request: Request) {
     try {

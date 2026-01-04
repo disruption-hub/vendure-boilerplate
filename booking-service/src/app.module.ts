@@ -1,5 +1,11 @@
 import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+import {
+  ApolloFederationDriver,
+  ApolloFederationDriverConfig,
+} from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
+import type { Request } from 'express';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SyncModule } from './modules/sync/sync.module';
@@ -13,6 +19,16 @@ import { PassModule } from './modules/pass/pass.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    GraphQLModule.forRoot<ApolloFederationDriverConfig>({
+      driver: ApolloFederationDriver,
+      autoSchemaFile: {
+        federation: 2,
+      },
+      path: '/graphql',
+      playground: true,
+      introspection: true,
+      context: ({ req }: { req: Request }) => ({ req }),
+    }),
     SyncModule,
     BookingsModule,
     VenueModule,
@@ -24,4 +40,4 @@ import { PassModule } from './modules/pass/pass.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

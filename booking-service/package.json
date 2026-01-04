@@ -20,10 +20,14 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@apollo/server": "4.11.3",
+    "@apollo/subgraph": "^2.12.2",
+    "@nestjs/apollo": "13.1.0",
     "@nestjs/bull": "^11.0.4",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/graphql": "13.1.0",
     "@nestjs/microservices": "^11.1.11",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
@@ -32,6 +36,7 @@
     "amqp-connection-manager": "^5.0.0",
     "amqplib": "^0.10.9",
     "bull": "^4.16.5",
+    "graphql": "16.12.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pg": "8.16.3",

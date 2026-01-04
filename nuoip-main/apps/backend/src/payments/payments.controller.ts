@@ -13,6 +13,11 @@ import {
 import { Response } from 'express'
 import { PrismaService } from '../prisma/prisma.service'
 import { AdminSystemSettingsService, type LyraSettings } from '../admin/system-settings.service'
+import {
+  computeLyraFormTokenFingerprint,
+  isReusableLyraFormToken,
+  withUpdatedLyraFormTokenContext,
+} from './lyra-form-token-context'
 
 function generateToken(length = 24) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -810,6 +815,14 @@ export class PaymentsController {
         )
       }
 
+      const expectedFingerprint = computeLyraFormTokenFingerprint({
+        mode,
+        apiBaseUrl: credentials.apiBaseUrl,
+        scriptBaseUrl,
+        publicKey,
+        apiUser: credentials.apiUser,
+      })
+
       // Extract payment details and config
       const amountCents = link.amountCents
       const currency = link.currency.toUpperCase()
@@ -824,7 +837,13 @@ export class PaymentsController {
       let formToken = link.formToken
       const formTokenExpiresAt = link.formTokenExpiresAt
       const now = new Date()
-      const isFormTokenValid = formToken && formTokenExpiresAt && formTokenExpiresAt > now
+      const isFormTokenValid = isReusableLyraFormToken({
+        formToken,
+        formTokenExpiresAt,
+        now,
+        expectedContext: { mode, fingerprint: expectedFingerprint },
+        metadata: link.metadata,
+      })
 
       if (!isFormTokenValid) {
         console.log('[createLyraFormForPaymentLink] Generating new formToken via Lyra API...')
@@ -953,11 +972,18 @@ export class PaymentsController {
           const expiresAt = new Date()
           expiresAt.setMinutes(expiresAt.getMinutes() + 15)
 
+          const nextMetadata = withUpdatedLyraFormTokenContext(link.metadata, {
+            mode,
+            fingerprint: expectedFingerprint,
+            generatedAt: now.toISOString(),
+          })
+
           await this.prisma.paymentLink.update({
             where: { id: link.id },
             data: {
               formToken,
               formTokenExpiresAt: expiresAt,
+              metadata: nextMetadata as any,
             },
           })
 

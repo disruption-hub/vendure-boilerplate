@@ -3,29 +3,29 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class SyncService {
-    private readonly logger = new Logger(SyncService.name);
+  private readonly logger = new Logger(SyncService.name);
 
-    constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
-    async handleUserCreated(payload: any) {
-        this.logger.log(`Received user.created event: ${JSON.stringify(payload)}`);
+  async handleUserCreated(payload: any) {
+    this.logger.log(`Received user.created event: ${JSON.stringify(payload)}`);
 
-        // Create user in Booking DB
-        await this.prisma.user.upsert({
-            where: { zkeyId: payload.id },
-            update: {
-                email: payload.email,
-                firstName: payload.firstName,
-                lastName: payload.lastName,
-            },
-            create: {
-                zkeyId: payload.id,
-                email: payload.email,
-                firstName: payload.firstName,
-                lastName: payload.lastName,
-            },
-        });
+    // Create user in Booking DB
+    await this.prisma.user.upsert({
+      where: { zkeyId: payload.id },
+      update: {
+        email: payload.email,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+      },
+      create: {
+        zkeyId: payload.id,
+        email: payload.email,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+      },
+    });
 
-        this.logger.log(`User synced: ${payload.email}`);
-    }
+    this.logger.log(`User synced: ${payload.email}`);
+  }
 }

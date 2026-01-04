@@ -3,7 +3,7 @@
  * Handles authentication with the ZKey service
  */
 
-const API_GATEWAY_URL = process.env.NEXT_PUBLIC_API_GATEWAY_URL || 'http://localhost:3004';
+const API_GATEWAY_URL = process.env.NEXT_PUBLIC_API_GATEWAY_URL || 'http://localhost:3006';
 const ZKEY_BASE_URL = process.env.NEXT_PUBLIC_ZKEY_URL || API_GATEWAY_URL; // Default to Gateway if no specific ZKey URL matches
 const ZKEY_CLIENT_ID = process.env.NEXT_PUBLIC_ZKEY_CLIENT_ID;
 

@@ -1,4 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
 
 /**
@@ -10,34 +11,42 @@ import { Observable } from 'rxjs';
  */
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-    canActivate(
-        context: ExecutionContext,
-    ): boolean | Promise<boolean> | Observable<boolean> {
-        const request = context.switchToHttp().getRequest();
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const gqlContext = GqlExecutionContext.create(context).getContext<{
+      req?: any;
+    }>();
+    const request = gqlContext?.req ?? context.switchToHttp().getRequest();
 
-        // Check for Authorization header
-        const authHeader = request.headers.authorization;
-        if (!authHeader) return false;
-
-        // Bearer <token>
-        const token = authHeader.split(' ')[1];
-        if (!token) return false;
-
-        // DECODE WITHOUT VERIFICATION for dev/prototype speed
-        // Ideally we should use @nestjs/jwt and verify against ZKey's public key
-        try {
-            const payloadBase64 = token.split('.')[1];
-            const payloadJson = Buffer.from(payloadBase64, 'base64').toString();
-            const payload = JSON.parse(payloadJson);
-
-            // Attach user to request
-            request.user = {
-                zkeyId: payload.sub, // 'sub' is standard for subject ID
-                email: payload.email
-            };
-            return true;
-        } catch (e) {
-            return false;
-        }
+    if (!request || !request.headers) {
+      return false;
     }
+
+    // Check for Authorization header
+    const authHeader =
+      request.headers.authorization || request.headers.Authorization;
+    if (!authHeader) return false;
+
+    // Bearer <token>
+    const token = authHeader.split(' ')[1];
+    if (!token) return false;
+
+    // DECODE WITHOUT VERIFICATION for dev/prototype speed
+    // Ideally we should use @nestjs/jwt and verify against ZKey's public key
+    try {
+      const payloadBase64 = token.split('.')[1];
+      const payloadJson = Buffer.from(payloadBase64, 'base64').toString();
+      const payload = JSON.parse(payloadJson);
+
+      // Attach user to request
+      request.user = {
+        zkeyId: payload.sub, // 'sub' is standard for subject ID
+        email: payload.email,
+      };
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

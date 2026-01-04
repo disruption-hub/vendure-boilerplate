@@ -394,7 +394,7 @@ export class ChatOtpService {
       })
     } catch (error) {
       if (error instanceof ChatAuthError) {
-        const sessionIds = phoneUser.sessions?.map(session => session.id) ?? []
+        const sessionIds = phoneUser.chatbot_phone_sessions?.map(session => session.id) ?? []
         if (sessionIds.length) {
           void this.prisma.chatbotPhoneSession
             .updateMany({
@@ -421,7 +421,7 @@ export class ChatOtpService {
 
     const refreshedPhoneUser = await this.prisma.chatbotPhoneUser.findUnique({ where: { id: phoneUser.id } })
     const userRecord = refreshedPhoneUser ?? phoneUser
-    const activeSession = phoneUser.sessions?.[0] ?? null
+    const activeSession = phoneUser.chatbot_phone_sessions?.[0] ?? null
 
     let validatedSession: ChatOtpVerifyResponse | null = null
 
@@ -1000,7 +1000,7 @@ export class ChatOtpService {
       finalSession = await this.prisma.chatbotPhoneSession.update({
         where: { id: session.id },
         data: updates,
-        include: { user: true },
+        include: { chatbotPhoneUser: true },
       })
     } else {
       await this.prisma.chatbotPhoneSession.update({
@@ -1015,7 +1015,7 @@ export class ChatOtpService {
     })
 
     const refreshedPhoneUser = await this.prisma.chatbotPhoneUser.findUnique({ where: { id: session.userId } })
-    const userRecord = refreshedPhoneUser ?? session.user
+    const userRecord = refreshedPhoneUser ?? session.chatbotPhoneUser
 
     return {
       success: true,

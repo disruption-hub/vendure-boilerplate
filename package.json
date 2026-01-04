@@ -24,6 +24,7 @@
             "@nestjs/core",
             "@prisma/engines",
             "@swc/core",
+            "ts-jest",
             "bcrypt",
             "esbuild",
             "prisma",
