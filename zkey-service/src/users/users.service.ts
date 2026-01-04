@@ -127,7 +127,7 @@ export class UsersService {
         lastName: data.lastName,
         phone: data.phone,
         walletAddress: data.walletAddress,
-        roles: data.roles || ['user'],
+        roles: data.roles || ['standard'],
         passwordHash,
         tenantId,
         emailVerified: false,

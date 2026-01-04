@@ -5,15 +5,7 @@ import { BookingProfileService } from './booking-profile.service';
 import { BookingProfile } from '../../graphql/types';
 import GraphQLJSON from 'graphql-type-json';
 import { Prisma } from '@prisma/booking-client';
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
-
-export const GqlUser = createParamDecorator(
-    (data: unknown, context: ExecutionContext) => {
-        const ctx = GqlExecutionContext.create(context);
-        return ctx.getContext().req.user;
-    },
-);
+import { GqlUser } from '../../graphql/decorators';
 
 @Resolver(() => BookingProfile)
 export class BookingProfileResolver {
@@ -38,13 +30,20 @@ export class BookingProfileResolver {
         if (!user.roles.includes('system-admin')) {
             throw new Error('Forbidden: System Admin only');
         }
-        return this.bookingProfileService.create({
-            name,
-            slug,
-            description,
-            metrics: metrics ?? Prisma.JsonNull,
-            uiConfig: uiConfig ?? Prisma.JsonNull,
-        });
+        try {
+            return await this.bookingProfileService.create({
+                name,
+                slug,
+                description,
+                metrics: metrics ?? Prisma.JsonNull,
+                uiConfig: uiConfig ?? Prisma.JsonNull,
+            });
+        } catch (error: any) {
+            if (error.code === 'P2002') {
+                throw new Error(`Conflict: A blueprint with slug "${slug}" already exists`);
+            }
+            throw new Error(`Failed to create blueprint: ${error.message}`);
+        }
     }
 
     @Mutation(() => BookingProfile)
@@ -68,5 +67,17 @@ export class BookingProfileResolver {
             metrics: metrics ?? undefined,
             uiConfig: uiConfig ?? undefined,
         });
+    }
+
+    @Mutation(() => BookingProfile)
+    @UseGuards(JwtAuthGuard)
+    async deleteBookingProfile(
+        @GqlUser() user: any,
+        @Args('id') id: string,
+    ) {
+        if (!user.roles.includes('system-admin')) {
+            throw new Error('Forbidden: System Admin only');
+        }
+        return this.bookingProfileService.remove(id);
     }
 }

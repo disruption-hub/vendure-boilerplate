@@ -15,6 +15,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { getZKeyAuthToken } from "@/lib/auth"
 import { zkeyClient } from "@/lib/zkey-client"
+import { DashboardSwitcher } from "@/components/layout/dashboard-switcher"
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
     const token = await getZKeyAuthToken();
@@ -26,7 +27,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
             <main className="flex-1 w-full flex flex-col min-h-screen">
                 <div className="p-4 border-b flex items-center gap-4">
                     <SidebarTrigger />
-                    <h1 className="font-semibold text-lg">My Account</h1>
+                    <DashboardSwitcher user={user} />
                 </div>
                 <div className="p-4 flex-1">
                     {children}

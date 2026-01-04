@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Pencil, Network, Globe, MapPin } from "lucide-react"
+import { Plus, Pencil, Network, Globe, MapPin, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -91,6 +91,19 @@ export default function VenueNetworksPage() {
         }
     }
 
+    const handleDelete = async (id: string) => {
+        if (!confirm("Are you sure you want to delete this network?")) return
+        try {
+            const token = await getZKeyAuthToken()
+            if (!token) return
+            await bookingClient.deleteVenueNetwork(token, id)
+            toast.success("Network deleted successfully")
+            fetchNetworks()
+        } catch (error) {
+            toast.error("Failed to delete network")
+        }
+    }
+
     const openEdit = (network: VenueNetwork) => {
         setEditingNetwork(network)
         setName(network.name)
@@ -118,13 +131,13 @@ export default function VenueNetworksPage() {
                             <Plus className="mr-2 h-4 w-4" /> Create Network
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="sm:max-w-[550px]">
                         <form onSubmit={handleCreate}>
                             <DialogHeader>
                                 <DialogTitle>Create Venue Network</DialogTitle>
                                 <DialogDescription>Define a new federation for shared passes.</DialogDescription>
                             </DialogHeader>
-                            <div className="space-y-4 py-4">
+                            <div className="grid grid-cols-2 gap-4 py-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">Name</label>
                                     <Input placeholder="e.g. World Wellness Network" value={name} onChange={e => setName(e.target.value)} required />
@@ -132,18 +145,18 @@ export default function VenueNetworksPage() {
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">Type</label>
                                     <select
-                                        className="w-full p-2 border rounded-md"
+                                        className="w-full p-2 border rounded-md text-sm"
                                         value={type}
                                         onChange={e => setType(e.target.value as any)}
                                     >
                                         <option value="COMPLEX">Complex (Logical Grouping)</option>
-                                        <option value="NETWORK">Standard Network (Shared Resources)</option>
-                                        <option value="FEDERATION">Federation (Cross-Group sharing)</option>
+                                        <option value="NETWORK">Standard Network</option>
+                                        <option value="FEDERATION">Federation</option>
                                     </select>
                                 </div>
-                                <div className="space-y-2">
+                                <div className="space-y-2 col-span-2">
                                     <label className="text-sm font-medium">Description</label>
-                                    <Textarea placeholder="Describe the federation purpose..." value={description} onChange={e => setDescription(e.target.value)} />
+                                    <Textarea placeholder="Describe the federation purpose..." value={description} onChange={e => setDescription(e.target.value)} rows={4} />
                                 </div>
                             </div>
                             <DialogFooter>
@@ -214,9 +227,14 @@ export default function VenueNetworksPage() {
                                         <TableCell>{network.type}</TableCell>
                                         <TableCell className="max-w-xs truncate">{network.description || "-"}</TableCell>
                                         <TableCell className="text-right">
-                                            <Button variant="ghost" size="sm" onClick={() => openEdit(network)}>
-                                                <Pencil className="h-4 w-4" />
-                                            </Button>
+                                            <div className="flex justify-end gap-2">
+                                                <Button variant="ghost" size="sm" onClick={() => openEdit(network)}>
+                                                    <Pencil className="h-4 w-4" />
+                                                </Button>
+                                                <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDelete(network.id)}>
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))
@@ -227,13 +245,13 @@ export default function VenueNetworksPage() {
             </Card>
 
             <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                <DialogContent>
+                <DialogContent className="sm:max-w-[550px]">
                     <form onSubmit={handleUpdate}>
                         <DialogHeader>
                             <DialogTitle>Edit Venue Network</DialogTitle>
                             <DialogDescription>Modify the federation configuration.</DialogDescription>
                         </DialogHeader>
-                        <div className="space-y-4 py-4">
+                        <div className="grid grid-cols-2 gap-4 py-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Name</label>
                                 <Input value={name} onChange={e => setName(e.target.value)} required />
@@ -241,7 +259,7 @@ export default function VenueNetworksPage() {
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Type</label>
                                 <select
-                                    className="w-full p-2 border rounded-md"
+                                    className="w-full p-2 border rounded-md text-sm"
                                     value={type}
                                     onChange={e => setType(e.target.value as any)}
                                 >
@@ -250,9 +268,9 @@ export default function VenueNetworksPage() {
                                     <option value="FEDERATION">Federation</option>
                                 </select>
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-2 col-span-2">
                                 <label className="text-sm font-medium">Description</label>
-                                <Textarea value={description} onChange={e => setDescription(e.target.value)} />
+                                <Textarea value={description} onChange={e => setDescription(e.target.value)} rows={4} />
                             </div>
                         </div>
                         <DialogFooter>

@@ -16,7 +16,7 @@ async function bootstrap() {
   });
 
   // Enable body parsing for the GraphQL endpoint (required for Schema Stitching)
-  app.use('/graphql', json());
+  app.use('/graphql', json({ limit: '5mb' }));
 
   // Proxy to Vendure Backend (Shop API)
   // VENDURE_SHOP_API_URL should be the base URL e.g. http://localhost:3000/shop-api

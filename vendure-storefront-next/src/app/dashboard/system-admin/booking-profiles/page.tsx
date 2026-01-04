@@ -91,6 +91,19 @@ export default function BookingProfilesPage() {
         }
     }
 
+    const handleDelete = async (id: string) => {
+        if (!confirm("Are you sure you want to delete this profile?")) return
+        try {
+            const token = await getZKeyAuthToken()
+            if (!token) return
+            await bookingClient.deleteBookingProfile(token, id)
+            toast.success("Profile deleted successfully")
+            fetchProfiles()
+        } catch (error) {
+            toast.error("Failed to delete profile")
+        }
+    }
+
     const openEdit = (profile: BookingProfile) => {
         setEditingProfile(profile)
         setName(profile.name)
@@ -118,13 +131,13 @@ export default function BookingProfilesPage() {
                             <Plus className="mr-2 h-4 w-4" /> Create Blueprint
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="sm:max-w-[550px]">
                         <form onSubmit={handleCreate}>
                             <DialogHeader>
                                 <DialogTitle>Create Node Blueprint</DialogTitle>
                                 <DialogDescription>Define a new business vertical template.</DialogDescription>
                             </DialogHeader>
-                            <div className="space-y-4 py-4">
+                            <div className="grid grid-cols-2 gap-4 py-4">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium">Name</label>
                                     <Input placeholder="e.g. Yoga Studio" value={name} onChange={e => setName(e.target.value)} required />
@@ -133,9 +146,9 @@ export default function BookingProfilesPage() {
                                     <label className="text-sm font-medium">Slug</label>
                                     <Input placeholder="e.g. yoga-studio" value={slug} onChange={e => setSlug(e.target.value)} required />
                                 </div>
-                                <div className="space-y-2">
+                                <div className="space-y-2 col-span-2">
                                     <label className="text-sm font-medium">Description</label>
-                                    <Textarea placeholder="Describe the profile purpose..." value={description} onChange={e => setDescription(e.target.value)} />
+                                    <Textarea placeholder="Describe the profile purpose..." value={description} onChange={e => setDescription(e.target.value)} rows={4} />
                                 </div>
                             </div>
                             <DialogFooter>
@@ -206,9 +219,14 @@ export default function BookingProfilesPage() {
                                         <TableCell><code className="bg-muted px-1 py-0.5 rounded">{profile.slug}</code></TableCell>
                                         <TableCell className="max-w-xs truncate">{profile.description || "-"}</TableCell>
                                         <TableCell className="text-right">
-                                            <Button variant="ghost" size="sm" onClick={() => openEdit(profile)}>
-                                                <Pencil className="h-4 w-4" />
-                                            </Button>
+                                            <div className="flex justify-end gap-2">
+                                                <Button variant="ghost" size="sm" onClick={() => openEdit(profile)}>
+                                                    <Pencil className="h-4 w-4" />
+                                                </Button>
+                                                <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleDelete(profile.id)}>
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))
@@ -219,13 +237,13 @@ export default function BookingProfilesPage() {
             </Card>
 
             <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                <DialogContent>
+                <DialogContent className="sm:max-w-[550px]">
                     <form onSubmit={handleUpdate}>
                         <DialogHeader>
                             <DialogTitle>Edit Booking Profile</DialogTitle>
                             <DialogDescription>Modify the vertical configuration.</DialogDescription>
                         </DialogHeader>
-                        <div className="space-y-4 py-4">
+                        <div className="grid grid-cols-2 gap-4 py-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Name</label>
                                 <Input value={name} onChange={e => setName(e.target.value)} required />
@@ -234,9 +252,9 @@ export default function BookingProfilesPage() {
                                 <label className="text-sm font-medium">Slug</label>
                                 <Input value={slug} onChange={e => setSlug(e.target.value)} required />
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-2 col-span-2">
                                 <label className="text-sm font-medium">Description</label>
-                                <Textarea value={description} onChange={e => setDescription(e.target.value)} />
+                                <Textarea value={description} onChange={e => setDescription(e.target.value)} rows={4} />
                             </div>
                         </div>
                         <DialogFooter>

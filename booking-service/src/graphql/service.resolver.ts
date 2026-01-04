@@ -3,6 +3,7 @@ import { UseGuards } from '@nestjs/common';
 import { ServiceService } from '../modules/service/service.service';
 import { Service } from './types';
 import { JwtAuthGuard } from '../modules/auth/jwt-auth.guard';
+import { GqlUser } from './decorators';
 
 @Resolver(() => Service)
 export class ServiceResolver {
@@ -21,11 +22,15 @@ export class ServiceResolver {
     @Mutation(() => Service)
     @UseGuards(JwtAuthGuard)
     async createService(
+        @GqlUser() user: any,
         @Args('name') name: string,
         @Args('description', { nullable: true }) description?: string,
         @Args('duration', { nullable: true }) duration?: number,
         @Args('price', { nullable: true }) price?: number,
     ) {
+        if (!user.roles.some((r: string) => ['system-admin', 'booking-admin', 'admin'].includes(r))) {
+            throw new Error('Forbidden: Admin access required');
+        }
         return this.serviceService.create({
             name,
             description,
@@ -37,12 +42,16 @@ export class ServiceResolver {
     @Mutation(() => Service)
     @UseGuards(JwtAuthGuard)
     async updateService(
+        @GqlUser() user: any,
         @Args('id') id: string,
         @Args('name', { nullable: true }) name?: string,
         @Args('description', { nullable: true }) description?: string,
         @Args('duration', { nullable: true }) duration?: number,
         @Args('price', { nullable: true }) price?: number,
     ) {
+        if (!user.roles.some((r: string) => ['system-admin', 'booking-admin', 'admin'].includes(r))) {
+            throw new Error('Forbidden: Admin access required');
+        }
         return this.serviceService.update(id, {
             name,
             description,
@@ -53,7 +62,13 @@ export class ServiceResolver {
 
     @Mutation(() => Boolean)
     @UseGuards(JwtAuthGuard)
-    async deleteService(@Args('id') id: string) {
+    async deleteService(
+        @GqlUser() user: any,
+        @Args('id') id: string
+    ) {
+        if (!user.roles.some((r: string) => ['system-admin', 'booking-admin', 'admin'].includes(r))) {
+            throw new Error('Forbidden: Admin access required');
+        }
         await this.serviceService.remove(id);
         return true;
     }

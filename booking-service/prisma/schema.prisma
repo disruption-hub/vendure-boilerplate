@@ -37,6 +37,32 @@ enum NetworkType {
   FEDERATION // Ad-hoc partnership (Access sharing)
 }
 
+enum BookingMode {
+  CAPACITY
+  SLOT
+  ENTIRE
+  HYBRID
+}
+
+enum SlotType {
+  MAT
+  BED
+  DESK
+  SEAT
+  OTHER
+}
+
+enum BookingType {
+  GENERAL
+  SLOT_SPECIFIC
+  ENTIRE_SPACE
+}
+
+enum AccessMethod {
+  IN_PERSON
+  VIRTUAL
+}
+
 model Venue {
   id           String   @id @default(uuid())
   name         String
@@ -59,10 +85,13 @@ model Venue {
 
   // Horizontal Groups (Federations)
   networks     VenueNetwork[] @relation("VenueToNetwork")
-
+ 
   // Pass Validity
   validPasses  PassTemplate[] @relation("PassVenueValidity")
-
+ 
+  // Teacher Qualifications
+  qualifiedProviders ServiceProvider[] @relation("ProviderVenueQualifications")
+ 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -77,10 +106,42 @@ model Space {
   capacity     Int      @default(1)
   amenities    Json?    // e.g. ["yoga_mats", "projector"]
   
-  sessions     Session[]
+  // Advanced Booking Config
+  activeBookingMode BookingMode @default(CAPACITY)
+  totalSlots        Int         @default(0)
   
+  // Pricing
+  basePrice         Decimal?    @db.Decimal(10, 2)
+  slotPrice         Decimal?    @db.Decimal(10, 2)
+  entireSpacePrice   Decimal?    @db.Decimal(10, 2)
+  
+  sessions     Session[]
+  slots        SpaceSlot[]
+ 
+  // Teacher Qualifications
+  qualifiedProviders ServiceProvider[] @relation("ProviderSpaceQualifications")
+ 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model SpaceSlot {
+  id              String   @id @default(uuid())
+  spaceId         String
+  space           Space    @relation(fields: [spaceId], references: [id])
+  
+  slotIdentifier  String   // e.g. "Mat 1", "Bed 3A"
+  slotType        SlotType @default(MAT)
+  position        Int?     // For visual mapping
+  
+  attributes      Json?    // e.g. { bunkType: "lower", nearWindow: true }
+  pricingModifier Decimal  @default(1.0) @db.Decimal(10, 2)
+  isPremium       Boolean  @default(false)
+  
+  bookings        Booking[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model SpacePreset {
@@ -107,7 +168,11 @@ model ServiceProvider {
 
   profileId    String?
   profile      BookingProfile? @relation(fields: [profileId], references: [id])
-  
+ 
+  // Qualifications
+  qualifiedVenues Venue[] @relation("ProviderVenueQualifications")
+  qualifiedSpaces Space[] @relation("ProviderSpaceQualifications")
+ 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -163,8 +228,29 @@ model Session {
   startTime       DateTime
   endTime         DateTime
   
-  // Overrides
-  maxCapacity     Int       // Defaults to Space validity or custom
+  // Booking Control
+  bookingMode     BookingMode @default(CAPACITY)
+  
+  // Capacity Tracking
+  maxCapacity       Int       // Defaults to Space validity or custom
+  availableCapacity Int?      // For CAPACITY mode
+  
+  totalSlots        Int       @default(0)
+  availableSlots    Int       @default(0)
+  
+  // Pricing Overrides
+  basePrice         Decimal?  @db.Decimal(10, 2)
+  slotPrice         Decimal?  @db.Decimal(10, 2)
+  
+  // Entire Space Option
+  allowEntireSpaceBooking Boolean @default(false)
+  entireSpaceBooked       Boolean @default(false)
+  entireSpacePrice        Decimal? @db.Decimal(10, 2)
+  
+  // Virtual Access
+  virtualPlatform         String?
+  virtualAccessDetails    Json?
+
   bufferOverride  Int?      // Overrides service buffer settings
   
   bookings        Booking[]
@@ -246,6 +332,17 @@ model Booking {
   
   status    BookingStatus @default(CONFIRMED)
   
+  // New Booking Mode Details
+  bookingType       BookingType @default(GENERAL)
+  bookableSlotId    String?
+  slot              SpaceSlot?  @relation(fields: [bookableSlotId], references: [id])
+  
+  quantity          Int         @default(1)
+  priceCharged      Decimal?    @db.Decimal(10, 2)
+  
+  accessMethod      AccessMethod @default(IN_PERSON)
+  virtualAccessInfo Json?
+
   checkedIn Boolean       @default(false)
   checkedInAt DateTime?
   

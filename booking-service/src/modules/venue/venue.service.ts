@@ -91,4 +91,26 @@ export class VenueService {
       where: { id },
     });
   }
+
+  // Space Slot Logic
+  createSpaceSlot(spaceId: string, data: Omit<Prisma.SpaceSlotCreateInput, 'space'>) {
+    return this.prisma.spaceSlot.create({
+      data: {
+        ...data,
+        space: { connect: { id: spaceId } },
+      },
+    });
+  }
+
+  findSpaceSlots(spaceId: string) {
+    return this.prisma.spaceSlot.findMany({
+      where: { spaceId },
+    });
+  }
+
+  removeSpaceSlot(id: string) {
+    return this.prisma.spaceSlot.delete({
+      where: { id },
+    });
+  }
 }

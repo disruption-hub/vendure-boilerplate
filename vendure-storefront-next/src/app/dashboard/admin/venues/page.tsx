@@ -40,6 +40,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/components/ui/tabs"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 export default function VenuesPage() {
     const [venues, setVenues] = useState<any[]>([])
@@ -209,142 +216,155 @@ export default function VenuesPage() {
                             <Plus className="mr-2 h-4 w-4" /> Create New Venue
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
-                        <DialogHeader>
+                    <DialogContent className="sm:max-w-[800px] p-0">
+                        <DialogHeader className="px-6 pt-6">
                             <DialogTitle>Create New Venue</DialogTitle>
                             <DialogDescription>Add a new venue to your system.</DialogDescription>
                         </DialogHeader>
-                        <form onSubmit={handleCreateVenue} className="space-y-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Venue Name</label>
-                                <Input
-                                    placeholder="e.g. Downtown Studio"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    required
-                                />
-                            </div>
+                        <form onSubmit={handleCreateVenue}>
+                            <ScrollArea className="max-h-[70vh] px-6">
+                                <Tabs defaultValue="basic" className="w-full">
+                                    <TabsList className="grid w-full grid-cols-3 mb-4">
+                                        <TabsTrigger value="basic">Basic Info</TabsTrigger>
+                                        <TabsTrigger value="federation">Associations</TabsTrigger>
+                                        <TabsTrigger value="ops">Operations</TabsTrigger>
+                                    </TabsList>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium">Node Type</label>
-                                    <Select value={type} onValueChange={(v: any) => setType(v)}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select type..." />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="SITE">Physical Site (Building)</SelectItem>
-                                            <SelectItem value="UNIT">Business Unit (Studio/Office)</SelectItem>
-                                            <SelectItem value="VIRTUAL">Virtual presence</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium">Booking Profile (Blueprint)</label>
-                                    <Select value={profileId} onValueChange={setProfileId}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select profile..." />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="none">None</SelectItem>
-                                            {profiles.map(p => (
-                                                <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
+                                    <TabsContent value="basic" className="space-y-4 pb-4">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Venue Name</label>
+                                                <Input
+                                                    placeholder="e.g. Downtown Studio"
+                                                    value={name}
+                                                    onChange={(e) => setName(e.target.value)}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Node Type</label>
+                                                <Select value={type} onValueChange={(v: any) => setType(v)}>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select type..." />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="SITE">Physical Site (Building)</SelectItem>
+                                                        <SelectItem value="UNIT">Business Unit (Studio/Office)</SelectItem>
+                                                        <SelectItem value="VIRTUAL">Virtual presence</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium">Vertical Hierarchy (Parent Node)</label>
-                                    <Select value={parentId} onValueChange={setParentId}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select parent..." />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="none">None (Root Node)</SelectItem>
-                                            {venues.map(v => (
-                                                <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium">Timezone</label>
-                                    <Select value={timezone} onValueChange={setTimezone}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select timezone" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="UTC">UTC (Coordinated Universal Time)</SelectItem>
-                                            <SelectItem value="America/New_York">New York (EST/EDT)</SelectItem>
-                                            <SelectItem value="America/Chicago">Chicago (CST/CDT)</SelectItem>
-                                            <SelectItem value="America/Denver">Denver (MST/MDT)</SelectItem>
-                                            <SelectItem value="America/Los_Angeles">Los Angeles (PST/PDT)</SelectItem>
-                                            <SelectItem value="Europe/London">London (GMT/BST)</SelectItem>
-                                            <SelectItem value="Europe/Paris">Paris (CET/CEST)</SelectItem>
-                                            <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium">Address</label>
+                                            <Input
+                                                placeholder="123 Main St, City"
+                                                value={address}
+                                                onChange={(e) => setAddress(e.target.value)}
+                                            />
+                                        </div>
 
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Horizontal Federations (Networks)</label>
-                                <div className="flex flex-wrap gap-2 p-2 border rounded-md min-h-[40px]">
-                                    {networks.map(n => (
-                                        <Badge
-                                            key={n.id}
-                                            variant={networkIds.includes(n.id) ? "default" : "outline"}
-                                            className="cursor-pointer"
-                                            onClick={() => {
-                                                setNetworkIds(prev =>
-                                                    prev.includes(n.id) ? prev.filter(id => id !== n.id) : [...prev, n.id]
-                                                )
-                                            }}
-                                        >
-                                            {n.name}
-                                        </Badge>
-                                    ))}
-                                    {networks.length === 0 && <span className="text-xs text-muted-foreground italic">No networks available.</span>}
-                                </div>
-                            </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium">Description</label>
+                                            <Textarea
+                                                placeholder="Describe your venue..."
+                                                value={description}
+                                                onChange={(e) => setDescription(e.target.value)}
+                                                rows={3}
+                                            />
+                                        </div>
 
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Description</label>
-                                <Textarea
-                                    placeholder="Describe your venue..."
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                />
-                            </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium">Timezone</label>
+                                            <Select value={timezone} onValueChange={setTimezone}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select timezone" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="UTC">UTC (Coordinated Universal Time)</SelectItem>
+                                                    {/* ... shortcuts ... */}
+                                                    <SelectItem value="America/New_York">New York (EST/EDT)</SelectItem>
+                                                    <SelectItem value="Europe/London">London (GMT/BST)</SelectItem>
+                                                    <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </TabsContent>
 
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Address</label>
-                                <Input
-                                    placeholder="123 Main St, City"
-                                    value={address}
-                                    onChange={(e) => setAddress(e.target.value)}
-                                />
-                            </div>
+                                    <TabsContent value="federation" className="space-y-4 pb-4">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Blueprint (Profile)</label>
+                                                <Select value={profileId} onValueChange={setProfileId}>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select profile..." />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="none">None</SelectItem>
+                                                        {profiles.map(p => (
+                                                            <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium">Parent Node</label>
+                                                <Select value={parentId} onValueChange={setParentId}>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select parent..." />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="none">None (Root Node)</SelectItem>
+                                                        {venues.map(v => (
+                                                            <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        </div>
 
-                            <OperationalHoursEditor
-                                value={openingHours}
-                                onChange={setOpeningHours}
-                            />
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium">Horizontal Federations (Networks)</label>
+                                            <div className="flex flex-wrap gap-2 p-3 border rounded-lg bg-muted/20 min-h-[60px]">
+                                                {networks.map(n => (
+                                                    <Badge
+                                                        key={n.id}
+                                                        variant={networkIds.includes(n.id) ? "default" : "outline"}
+                                                        className="cursor-pointer transition-colors"
+                                                        onClick={() => {
+                                                            setNetworkIds(prev =>
+                                                                prev.includes(n.id) ? prev.filter(id => id !== n.id) : [...prev, n.id]
+                                                            )
+                                                        }}
+                                                    >
+                                                        {n.name}
+                                                    </Badge>
+                                                ))}
+                                                {networks.length === 0 && <span className="text-xs text-muted-foreground italic">No networks available.</span>}
+                                            </div>
+                                        </div>
+                                    </TabsContent>
 
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Amenities</label>
-                                <AmenitiesInput
-                                    value={amenities}
-                                    onChange={setAmenities}
-                                    placeholder="Add amenities (e.g. WiFi, Parking)"
-                                />
-                            </div>
+                                    <TabsContent value="ops" className="space-y-6 pb-4">
+                                        <OperationalHoursEditor
+                                            value={openingHours}
+                                            onChange={setOpeningHours}
+                                        />
 
-                            <DialogFooter>
-                                <Button type="submit">Create Venue</Button>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium">Amenities</label>
+                                            <AmenitiesInput
+                                                value={amenities}
+                                                onChange={setAmenities}
+                                                placeholder="Add amenities (e.g. WiFi, Parking)"
+                                            />
+                                        </div>
+                                    </TabsContent>
+                                </Tabs>
+                            </ScrollArea>
+                            <DialogFooter className="p-6 border-t">
+                                <Button type="submit" className="w-full sm:w-auto">Create Venue</Button>
                             </DialogFooter>
                         </form>
                     </DialogContent>
@@ -389,139 +409,149 @@ export default function VenuesPage() {
             </Card>
 
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                <DialogContent>
-                    <DialogHeader>
+                <DialogContent className="sm:max-w-[800px] p-0">
+                    <DialogHeader className="px-6 pt-6">
                         <DialogTitle>Edit Venue</DialogTitle>
-                        <DialogDescription>
-                            Update the venue details.
-                        </DialogDescription>
+                        <DialogDescription>Update the venue details for "{editName}".</DialogDescription>
                     </DialogHeader>
-                    <form onSubmit={handleUpdateVenue} className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Venue Name</label>
-                            <Input
-                                value={editName}
-                                onChange={(e) => setEditName(e.target.value)}
-                                required
-                            />
-                        </div>
+                    <form onSubmit={handleUpdateVenue}>
+                        <ScrollArea className="max-h-[70vh] px-6">
+                            <Tabs defaultValue="basic" className="w-full">
+                                <TabsList className="grid w-full grid-cols-3 mb-4">
+                                    <TabsTrigger value="basic">Basic Info</TabsTrigger>
+                                    <TabsTrigger value="federation">Associations</TabsTrigger>
+                                    <TabsTrigger value="ops">Operations</TabsTrigger>
+                                </TabsList>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Node Type</label>
-                                <Select value={editType} onValueChange={(v: any) => setEditType(v)}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select type..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="SITE">Physical Site (Building)</SelectItem>
-                                        <SelectItem value="UNIT">Business Unit (Studio/Office)</SelectItem>
-                                        <SelectItem value="VIRTUAL">Virtual presence</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Booking Profile</label>
-                                <Select value={editProfileId} onValueChange={setEditProfileId}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select profile..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="none">None</SelectItem>
-                                        {profiles.map(p => (
-                                            <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
+                                <TabsContent value="basic" className="space-y-4 pb-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium">Venue Name</label>
+                                            <Input
+                                                value={editName}
+                                                onChange={(e) => setEditName(e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium">Node Type</label>
+                                            <Select value={editType} onValueChange={(v: any) => setEditType(v)}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select type..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="SITE">Physical Site (Building)</SelectItem>
+                                                    <SelectItem value="UNIT">Business Unit (Studio/Office)</SelectItem>
+                                                    <SelectItem value="VIRTUAL">Virtual presence</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Parent Node</label>
-                                <Select value={editParentId} onValueChange={setEditParentId}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select parent..." />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="none">None (Root Node)</SelectItem>
-                                        {venues.filter(v => v.id !== editingVenue?.id).map(v => (
-                                            <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Timezone</label>
-                                <Select value={editTimezone} onValueChange={setEditTimezone}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select timezone" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="UTC">UTC (Coordinated Universal Time)</SelectItem>
-                                        <SelectItem value="America/New_York">New York (EST/EDT)</SelectItem>
-                                        <SelectItem value="America/Chicago">Chicago (CST/CDT)</SelectItem>
-                                        <SelectItem value="America/Denver">Denver (MST/MDT)</SelectItem>
-                                        <SelectItem value="America/Los_Angeles">Los Angeles (PST/PDT)</SelectItem>
-                                        <SelectItem value="Europe/London">London (GMT/BST)</SelectItem>
-                                        <SelectItem value="Europe/Paris">Paris (CET/CEST)</SelectItem>
-                                        <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Address</label>
+                                        <Input
+                                            value={editAddress}
+                                            onChange={(e) => setEditAddress(e.target.value)}
+                                        />
+                                    </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Horizontal Federations (Networks)</label>
-                            <div className="flex flex-wrap gap-2 p-2 border rounded-md min-h-[40px]">
-                                {networks.map(n => (
-                                    <Badge
-                                        key={n.id}
-                                        variant={editNetworkIds.includes(n.id) ? "default" : "outline"}
-                                        className="cursor-pointer"
-                                        onClick={() => {
-                                            setEditNetworkIds(prev =>
-                                                prev.includes(n.id) ? prev.filter(id => id !== n.id) : [...prev, n.id]
-                                            )
-                                        }}
-                                    >
-                                        {n.name}
-                                    </Badge>
-                                ))}
-                            </div>
-                        </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Description</label>
+                                        <Textarea
+                                            value={editDescription}
+                                            onChange={(e) => setEditDescription(e.target.value)}
+                                            rows={3}
+                                        />
+                                    </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Description</label>
-                            <Textarea
-                                value={editDescription}
-                                onChange={(e) => setEditDescription(e.target.value)}
-                            />
-                        </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Timezone</label>
+                                        <Select value={editTimezone} onValueChange={setEditTimezone}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select timezone" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="UTC">UTC (Coordinated Universal Time)</SelectItem>
+                                                <SelectItem value="America/New_York">New York (EST/EDT)</SelectItem>
+                                                <SelectItem value="Europe/London">London (GMT/BST)</SelectItem>
+                                                <SelectItem value="Asia/Tokyo">Tokyo (JST)</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </TabsContent>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Address</label>
-                            <Input
-                                value={editAddress}
-                                onChange={(e) => setEditAddress(e.target.value)}
-                            />
-                        </div>
+                                <TabsContent value="federation" className="space-y-4 pb-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium">Blueprint (Profile)</label>
+                                            <Select value={editProfileId} onValueChange={setEditProfileId}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select profile..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="none">None</SelectItem>
+                                                    {profiles.map(p => (
+                                                        <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium">Parent Node</label>
+                                            <Select value={editParentId} onValueChange={setEditParentId}>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select parent..." />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="none">None (Root Node)</SelectItem>
+                                                    {venues.filter(v => v.id !== editingVenue?.id).map(v => (
+                                                        <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
 
-                        <OperationalHoursEditor
-                            value={editOpeningHours}
-                            onChange={setEditOpeningHours}
-                        />
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Horizontal Federations (Networks)</label>
+                                        <div className="flex flex-wrap gap-2 p-3 border rounded-lg bg-muted/20 min-h-[60px]">
+                                            {networks.map(n => (
+                                                <Badge
+                                                    key={n.id}
+                                                    variant={editNetworkIds.includes(n.id) ? "default" : "outline"}
+                                                    className="cursor-pointer transition-colors"
+                                                    onClick={() => {
+                                                        setEditNetworkIds(prev =>
+                                                            prev.includes(n.id) ? prev.filter(id => id !== n.id) : [...prev, n.id]
+                                                        )
+                                                    }}
+                                                >
+                                                    {n.name}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </TabsContent>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Amenities</label>
-                            <AmenitiesInput
-                                value={editAmenities}
-                                onChange={setEditAmenities}
-                                placeholder="Add amenities..."
-                            />
-                        </div>
+                                <TabsContent value="ops" className="space-y-6 pb-4">
+                                    <OperationalHoursEditor
+                                        value={editOpeningHours}
+                                        onChange={setEditOpeningHours}
+                                    />
 
-                        <DialogFooter>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium">Amenities</label>
+                                        <AmenitiesInput
+                                            value={editAmenities}
+                                            onChange={setEditAmenities}
+                                            placeholder="Add amenities..."
+                                        />
+                                    </div>
+                                </TabsContent>
+                            </Tabs>
+                        </ScrollArea>
+                        <DialogFooter className="p-6 border-t">
                             <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
                                 Cancel
                             </Button>

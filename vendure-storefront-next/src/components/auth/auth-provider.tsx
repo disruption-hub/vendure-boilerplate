@@ -69,10 +69,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const customerJson = await customerRes.json().catch(() => null);
             const customer = customerRes.ok ? customerJson?.customer : null;
 
-            // Always fetch ZKey profile or extract roles from token if possible
-            // For now, let's fetch it to be sure of the roles
             const zkeyProfile = await OIDCClient.getUserProfile(tokens.access_token);
-            const userRoles = zkeyProfile.roles || ['user'];
+            const userRoles = zkeyProfile.roles || ['standard'];
 
             if (customer) {
                 setUser({
@@ -105,10 +103,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     const customer = customerRes.ok ? customerJson?.customer : null;
 
                     const token = Cookies.get(TOKEN_COOKIE_NAME);
-                    let userRoles = ['user'];
+                    let userRoles = ['standard'];
                     if (token) {
                         const zkeyProfile = await OIDCClient.getUserProfile(token);
-                        userRoles = zkeyProfile.roles || [zkeyProfile.role] || ['user'];
+                        userRoles = zkeyProfile.roles || [zkeyProfile.role] || ['standard'];
                     }
 
                     if (customer) {

@@ -1,6 +1,6 @@
 import { GraphQLClient, gql } from 'graphql-request';
 
-const API_GATEWAY_URL = process.env.NEXT_PUBLIC_API_GATEWAY_URL || 'http://localhost:3006';
+const API_GATEWAY_URL = process.env.NEXT_PUBLIC_API_GATEWAY_URL || 'http://localhost:3004';
 const GRAPHQL_ENDPOINT = `${API_GATEWAY_URL}/graphql`;
 
 // Types (Mirroring Backend GraphQL Types)
@@ -90,6 +90,14 @@ export interface VenueNetwork {
     type: 'COMPLEX' | 'NETWORK' | 'FEDERATION';
 }
 
+export interface ServiceProvider {
+    id: string;
+    bio?: string;
+    specialties?: string[];
+    services?: any[];
+    user?: any;
+    profile?: BookingProfile;
+}
 
 export class BookingClient {
     private getClient(token?: string) {
@@ -415,10 +423,30 @@ export class BookingClient {
         const query = gql`
             query GetAllServices {
                 allServices {
-                id
-                name
+                    id
+                    name
+                    description
+                    durationMinutes
+                    defaultPrice
+                    category {
+                        id
+                        name
+                    }
+                    sessions {
+                        id
+                        startTime
+                        endTime
+                        space {
+                            id
+                            name
+                            venue {
+                                id
+                                name
+                            }
+                        }
+                    }
+                }
             }
-        }
         `;
         const data = await this.getClient().request<{ allServices: any[] }>(query);
         return data.allServices;
@@ -659,7 +687,7 @@ export class BookingClient {
         uiConfig?: any;
     }) {
         const mutation = gql`
-            mutation CreateBookingProfile($name: String!, $slug: String!, $description: String, $metrics: JSONObject, $uiConfig: JSONObject) {
+            mutation CreateBookingProfile($name: String!, $slug: String!, $description: String, $metrics: JSON, $uiConfig: JSON) {
             createBookingProfile(name: $name, slug: $slug, description: $description, metrics: $metrics, uiConfig: $uiConfig) {
                 id
                 name
@@ -678,7 +706,7 @@ export class BookingClient {
         uiConfig?: any;
     }) {
         const mutation = gql`
-            mutation UpdateBookingProfile($id: String!, $name: String, $slug: String, $description: String, $metrics: JSONObject, $uiConfig: JSONObject) {
+            mutation UpdateBookingProfile($id: String!, $name: String, $slug: String, $description: String, $metrics: JSON, $uiConfig: JSON) {
             updateBookingProfile(id: $id, name: $name, slug: $slug, description: $description, metrics: $metrics, uiConfig: $uiConfig) {
                 id
                 name
@@ -733,6 +761,57 @@ export class BookingClient {
                 name
             }
         }
+        `;
+        return this.getClient(token).request(mutation, input);
+    }
+
+    async deleteBookingProfile(token: string, id: string) {
+        const mutation = gql`
+            mutation DeleteBookingProfile($id: String!) {
+                deleteBookingProfile(id: $id) {
+                    id
+                }
+            }
+        `;
+        return this.getClient(token).request(mutation, { id });
+    }
+
+    async deleteVenueNetwork(token: string, id: string) {
+        const mutation = gql`
+            mutation DeleteVenueNetwork($id: String!) {
+                deleteVenueNetwork(id: $id) {
+                    id
+                }
+            }
+        `;
+        return this.getClient(token).request(mutation, { id });
+    }
+
+    async getMyProviderProfile(token: string): Promise<ServiceProvider | null> {
+        const query = gql`
+            query MyProviderProfile {
+                myProviderProfile {
+                    id
+                    bio
+                    specialties
+                    user { id firstName lastName }
+                    profile { id name }
+                }
+            }
+        `;
+        const data = await this.getClient(token).request<{ myProviderProfile: ServiceProvider | null }>(query);
+        return data.myProviderProfile;
+    }
+
+    async updateMyProviderProfile(token: string, input: { bio?: string; specialties?: string[] }) {
+        const mutation = gql`
+            mutation UpdateMyProviderProfile($bio: String, $specialties: [String!]) {
+                updateMyProviderProfile(bio: $bio, specialties: $specialties) {
+                    id
+                    bio
+                    specialties
+                }
+            }
         `;
         return this.getClient(token).request(mutation, input);
     }

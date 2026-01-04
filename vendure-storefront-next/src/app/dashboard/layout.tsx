@@ -1,5 +1,6 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
+import { DashboardSwitcher } from "@/components/layout/dashboard-switcher"
 
 import { getZKeyAuthToken } from "@/lib/auth"
 import { zkeyClient } from "@/lib/zkey-client"
@@ -18,7 +19,7 @@ export default async function DashboardLayout({
             <main className="flex-1 w-full flex flex-col">
                 <div className="p-4 border-b flex items-center gap-4">
                     <SidebarTrigger />
-                    <h1 className="font-semibold text-lg">Dashboard</h1>
+                    <DashboardSwitcher user={user} />
                 </div>
                 <div className="p-4 flex-1">
                     {children}

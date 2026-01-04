@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/booking-client';
 
 @Injectable()
 export class ServiceService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   create(data: Prisma.ServiceCreateInput) {
     return this.prisma.service.create({ data });
@@ -12,7 +12,15 @@ export class ServiceService {
 
   findAll() {
     return this.prisma.service.findMany({
-      include: { category: true, provider: true },
+      include: {
+        category: true,
+        provider: { include: { user: true } },
+        sessions: {
+          include: {
+            space: { include: { venue: true } }
+          }
+        }
+      },
     });
   }
 

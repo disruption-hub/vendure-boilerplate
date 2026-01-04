@@ -312,7 +312,7 @@ function UserDialog({
         lastName: user?.lastName || '',
         phoneNumber: user?.phoneNumber || user?.phone || '',
         walletAddress: user?.walletAddress || '',
-        roles: user?.roles || ['user'],
+        roles: user?.roles || ['standard'],
         tenantId: user?.tenant?.id || '',
         password: '',
     });
@@ -407,7 +407,7 @@ function UserDialog({
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">Roles</label>
                         <div className="flex flex-wrap gap-4 p-4 border rounded-xl bg-slate-50">
-                            {['user', 'admin', 'teacher', 'system-admin', 'venue-network-admin'].map((r) => (
+                            {['standard', 'provider', 'admin', 'booking-admin', 'system-admin'].map((r) => (
                                 <label key={r} className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="checkbox"
@@ -420,7 +420,12 @@ function UserDialog({
                                         }}
                                         className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
                                     />
-                                    <span className="text-sm font-medium text-slate-700 capitalize">{r}</span>
+                                    <span className="text-sm font-medium text-slate-700 capitalize">
+                                        {r === 'admin' ? 'Unit Admin (Spaces)' :
+                                            r === 'booking-admin' ? 'Booking Admin (Networks)' :
+                                                r === 'provider' ? 'Service Provider (Teacher/Coach)' :
+                                                    r === 'system-admin' ? 'System Admin (Templates)' : 'Standard User'}
+                                    </span>
                                 </label>
                             ))}
                         </div>

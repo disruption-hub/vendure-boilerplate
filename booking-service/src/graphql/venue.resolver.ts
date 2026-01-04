@@ -1,9 +1,10 @@
 import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent, InputType, Field } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { VenueService } from '../modules/venue/venue.service';
-import { Venue, Space, SpacePreset, VenueType } from './types';
+import { Venue, Space, SpacePreset, VenueType, BookingMode, SpaceSlot, SlotType } from './types';
 import { JwtAuthGuard } from '../modules/auth/jwt-auth.guard';
 import { GraphQLJSONObject } from 'graphql-type-json';
+import { GqlUser } from './decorators';
 
 @InputType()
 class DayHoursInput {
@@ -58,6 +59,7 @@ export class VenueResolver {
     @Mutation(() => Venue)
     @UseGuards(JwtAuthGuard)
     async createVenue(
+        @GqlUser() user: any,
         @Args('type', { type: () => VenueType, defaultValue: VenueType.UNIT }) type: VenueType,
         @Args('name') name: string,
         @Args('address', { nullable: true }) address?: string,
@@ -69,6 +71,9 @@ export class VenueResolver {
         @Args('openingHours', { type: () => OpeningHoursInput, nullable: true }) openingHours?: OpeningHoursInput,
         @Args('amenities', { type: () => GraphQLJSONObject, nullable: true }) amenities?: any,
     ) {
+        if (!user.roles.some((r: string) => ['system-admin', 'booking-admin', 'admin'].includes(r))) {
+            throw new Error('Forbidden: Admin access required');
+        }
         return this.venueService.create({
             name,
             address,
@@ -86,23 +91,76 @@ export class VenueResolver {
     @Mutation(() => Space)
     @UseGuards(JwtAuthGuard)
     async createSpace(
+        @GqlUser() user: any,
         @Args('venueId') venueId: string,
         @Args('name') name: string,
         @Args('capacity', { type: () => Int, nullable: true }) capacity?: number,
         @Args('type', { nullable: true }) type?: string,
         @Args('amenities', { type: () => GraphQLJSONObject, nullable: true }) amenities?: any,
+        @Args('activeBookingMode', { type: () => BookingMode, nullable: true }) activeBookingMode?: BookingMode,
+        @Args('totalSlots', { type: () => Int, nullable: true }) totalSlots?: number,
+        @Args('basePrice', { nullable: true }) basePrice?: number,
+        @Args('slotPrice', { nullable: true }) slotPrice?: number,
+        @Args('entireSpacePrice', { nullable: true }) entireSpacePrice?: number,
     ) {
+        if (!user.roles.some((r: string) => ['system-admin', 'booking-admin', 'admin'].includes(r))) {
+            throw new Error('Forbidden: Admin access required');
+        }
         return this.venueService.createSpace(venueId, {
             name,
             capacity,
             type,
-            amenities
+            amenities,
+            activeBookingMode,
+            totalSlots,
+            basePrice,
+            slotPrice,
+            entireSpacePrice,
         });
+    }
+
+    @Mutation(() => SpaceSlot)
+    @UseGuards(JwtAuthGuard)
+    async createSpaceSlot(
+        @GqlUser() user: any,
+        @Args('spaceId') spaceId: string,
+        @Args('slotIdentifier') slotIdentifier: string,
+        @Args('slotType', { type: () => SlotType, defaultValue: SlotType.MAT }) slotType: SlotType,
+        @Args('position', { type: () => Int, nullable: true }) position?: number,
+        @Args('attributes', { type: () => GraphQLJSONObject, nullable: true }) attributes?: any,
+        @Args('pricingModifier', { nullable: true, defaultValue: 1.0 }) pricingModifier?: number,
+        @Args('isPremium', { nullable: true, defaultValue: false }) isPremium?: boolean,
+    ) {
+        if (!user.roles.some((r: string) => ['system-admin', 'booking-admin', 'admin'].includes(r))) {
+            throw new Error('Forbidden: Admin access required');
+        }
+        return this.venueService.createSpaceSlot(spaceId, {
+            slotIdentifier,
+            slotType,
+            position,
+            attributes,
+            pricingModifier,
+            isPremium,
+        });
+    }
+
+    @Mutation(() => Boolean)
+    @UseGuards(JwtAuthGuard)
+    async deleteSpaceSlot(
+        @GqlUser() user: any,
+        @Args('id') id: string
+    ) {
+        if (!user.roles.some((r: string) => ['system-admin', 'booking-admin', 'admin'].includes(r))) {
+            throw new Error('Forbidden: Admin access required');
+        }
+        await this.venueService.removeSpaceSlot(id);
+        return true;
     }
 
     @Mutation(() => Venue)
     @UseGuards(JwtAuthGuard)
     async updateVenue(
+        @GqlUser() user: any,
         @Args('id') id: string,
         @Args('name', { nullable: true }) name?: string,
         @Args('address', { nullable: true }) address?: string,
@@ -115,6 +173,9 @@ export class VenueResolver {
         @Args('openingHours', { type: () => OpeningHoursInput, nullable: true }) openingHours?: OpeningHoursInput,
         @Args('amenities', { type: () => GraphQLJSONObject, nullable: true }) amenities?: any,
     ) {
+        if (!user.roles.some((r: string) => ['system-admin', 'booking-admin', 'admin'].includes(r))) {
+            throw new Error('Forbidden: Admin access required');
+        }
         return this.venueService.update(id, {
             name,
             address,
@@ -131,7 +192,13 @@ export class VenueResolver {
 
     @Mutation(() => Boolean)
     @UseGuards(JwtAuthGuard)
-    async deleteVenue(@Args('id') id: string) {
+    async deleteVenue(
+        @GqlUser() user: any,
+        @Args('id') id: string
+    ) {
+        if (!user.roles.some((r: string) => ['system-admin', 'booking-admin', 'admin'].includes(r))) {
+            throw new Error('Forbidden: Admin access required');
+        }
         await this.venueService.remove(id);
         return true;
     }
@@ -139,17 +206,31 @@ export class VenueResolver {
     @Mutation(() => Space)
     @UseGuards(JwtAuthGuard)
     async updateSpace(
+        @GqlUser() user: any,
         @Args('id') id: string,
         @Args('name', { nullable: true }) name?: string,
         @Args('capacity', { type: () => Int, nullable: true }) capacity?: number,
         @Args('type', { nullable: true }) type?: string,
         @Args('amenities', { type: () => GraphQLJSONObject, nullable: true }) amenities?: any,
+        @Args('activeBookingMode', { type: () => BookingMode, nullable: true }) activeBookingMode?: BookingMode,
+        @Args('totalSlots', { type: () => Int, nullable: true }) totalSlots?: number,
+        @Args('basePrice', { nullable: true }) basePrice?: number,
+        @Args('slotPrice', { nullable: true }) slotPrice?: number,
+        @Args('entireSpacePrice', { nullable: true }) entireSpacePrice?: number,
     ) {
+        if (!user.roles.some((r: string) => ['system-admin', 'booking-admin', 'admin'].includes(r))) {
+            throw new Error('Forbidden: Admin access required');
+        }
         return this.venueService.updateSpace(id, {
             name,
             capacity,
             type,
-            amenities
+            amenities,
+            activeBookingMode,
+            totalSlots,
+            basePrice,
+            slotPrice,
+            entireSpacePrice,
         });
     }
 
@@ -162,11 +243,15 @@ export class VenueResolver {
     @Mutation(() => SpacePreset)
     @UseGuards(JwtAuthGuard)
     async createSpacePreset(
+        @GqlUser() user: any,
         @Args('name') name: string,
         @Args('type') type: string,
         @Args('capacity', { type: () => Int }) capacity: number,
         @Args('amenities', { type: () => GraphQLJSONObject, nullable: true }) amenities?: any,
     ) {
+        if (!user.roles.some((r: string) => ['system-admin', 'booking-admin', 'admin'].includes(r))) {
+            throw new Error('Forbidden: Admin access required');
+        }
         return this.venueService.createSpacePreset({
             name,
             type,
@@ -177,14 +262,26 @@ export class VenueResolver {
 
     @Mutation(() => Boolean)
     @UseGuards(JwtAuthGuard)
-    async deleteSpacePreset(@Args('id') id: string) {
+    async deleteSpacePreset(
+        @GqlUser() user: any,
+        @Args('id') id: string
+    ) {
+        if (!user.roles.some((r: string) => ['system-admin', 'booking-admin', 'admin'].includes(r))) {
+            throw new Error('Forbidden: Admin access required');
+        }
         await this.venueService.removeSpacePreset(id);
         return true;
     }
 
     @Mutation(() => Boolean)
     @UseGuards(JwtAuthGuard)
-    async deleteSpace(@Args('id') id: string) {
+    async deleteSpace(
+        @GqlUser() user: any,
+        @Args('id') id: string
+    ) {
+        if (!user.roles.some((r: string) => ['system-admin', 'booking-admin', 'admin'].includes(r))) {
+            throw new Error('Forbidden: Admin access required');
+        }
         await this.venueService.removeSpace(id);
         return true;
     }
@@ -192,6 +289,11 @@ export class VenueResolver {
     @ResolveField('spaces', () => [Space])
     async getSpaces(@Parent() venue: Venue) {
         return this.venueService.findSpaces(venue.id);
+    }
+
+    @ResolveField('slots', () => [SpaceSlot])
+    async getSlots(@Parent() space: Space) {
+        return this.venueService.findSpaceSlots(space.id);
     }
 }
 
